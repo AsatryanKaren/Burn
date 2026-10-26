@@ -1,0 +1,6 @@
+{
+  "private": true,
+  "type": "module",
+  "main": "index.ts",
+  "description": "Lets `node --experimental-strip-types --test supabase/tests/` run the whole suite on Node 22 (a directory argument resolves to index.ts)."
+}

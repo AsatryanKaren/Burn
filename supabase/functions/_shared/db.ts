@@ -1,0 +1,223 @@
+// Database access with the service role (impure). All writes from edge
+// functions go through here. The browser never gets these privileges.
+
+import { createClient, type SupabaseClient } from "npm:@supabase/supabase-js@2";
+import { getConfig } from "./env.ts";
+import { ApiError, ErrorCode } from "./errors.ts";
+import type { Lang, ModerationStatus, OrderStatus, PaymentProvider, ProductCode } from "./types.ts";
+
+let client: SupabaseClient | null = null;
+
+export function db(): SupabaseClient {
+  if (!client) {
+    const cfg = getConfig();
+    client = createClient(cfg.supabaseUrl, cfg.serviceRoleKey, {
+      auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+      global: { headers: { "x-client-info": "burn-edge-functions" } },
+    });
+  }
+  return client;
+}
+
+function dbError(context: string, error: unknown): ApiError {
+  console.error(`db error (${context})`, error);
+  return new ApiError(500, ErrorCode.INTERNAL, "Something went wrong. Please try again.");
+}
+
+export interface OrderRow {
+  id: number;
+  code: string;
+  product: ProductCode;
+  amount_amd: number;
+  status: OrderStatus;
+  lang: Lang;
+  email: string | null;
+  text: string;
+  wish_text: string | null;
+  recipient_name: string | null;
+  show_on_stream: boolean;
+  moderation: ModerationStatus;
+  burn_number: number | null;
+  provider: PaymentProvider | null;
+  provider_payment_id: string | null;
+  provider_order_num: number;
+  created_at: string;
+  paid_at: string | null;
+}
+
+const ORDER_COLUMNS =
+  "id, code, product, amount_amd, status, lang, email, text, wish_text, recipient_name, show_on_stream, " +
+  "moderation, burn_number, provider, provider_payment_id, provider_order_num, created_at, paid_at";
+
+export const PAYABLE_STATUSES: readonly OrderStatus[] = ["awaiting_launch", "pending", "failed"];
+
+export async function getProduct(code: ProductCode): Promise<{ code: string; price_amd: number; active: boolean } | null> {
+  const { data, error } = await db().from("products").select("code, price_amd, active").eq("code", code).maybeSingle();
+  if (error) throw dbError("getProduct", error);
+  return data;
+}
+
+export async function findOrderByCode(code: string): Promise<OrderRow | null> {
+  const { data, error } = await db().from("orders").select(ORDER_COLUMNS).eq("code", code).maybeSingle();
+  if (error) throw dbError("findOrderByCode", error);
+  return data as OrderRow | null;
+}
+
+export async function findOrderByProviderNum(num: number): Promise<OrderRow | null> {
+  const { data, error } = await db().from("orders").select(ORDER_COLUMNS).eq("provider_order_num", num).maybeSingle();
+  if (error) throw dbError("findOrderByProviderNum", error);
+  return data as OrderRow | null;
+}
+
+export interface NewOrder {
+  code: string;
+  product: ProductCode;
+  amount_amd: number;
+  status: OrderStatus;
+  lang: Lang;
+  email: string | null;
+  text: string;
+  wish_text: string | null;
+  recipient_name: string | null;
+  show_on_stream: boolean;
+  moderation: ModerationStatus;
+  moderation_reason: string | null;
+  provider: PaymentProvider | null;
+  ip_hash: string;
+}
+
+/** Inserts an order; retries with a new code on the (astronomically rare) code collision. */
+export async function insertOrder(row: Omit<NewOrder, "code">, newCode: () => string): Promise<OrderRow> {
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const { data, error } = await db().from("orders").insert({ ...row, code: newCode() }).select(ORDER_COLUMNS).single();
+    if (!error) return data as OrderRow;
+    if (error.code === "23505" && String(error.message).includes("orders_code_key")) continue;
+    throw dbError("insertOrder", error);
+  }
+  throw dbError("insertOrder", "code collision retries exhausted");
+}
+
+export async function markOrderFailed(code: string): Promise<void> {
+  const { error } = await db().from("orders").update({ status: "failed" }).eq("code", code).eq("status", "pending");
+  if (error) throw dbError("markOrderFailed", error);
+}
+
+export async function getGiftShare(orderId: number): Promise<number | null> {
+  const { data, error } = await db().from("gift_ledger").select("amount_amd").eq("order_id", orderId).maybeSingle();
+  if (error) throw dbError("getGiftShare", error);
+  return data ? (data.amount_amd as number) : null;
+}
+
+export interface ConfirmResult {
+  ok: boolean;
+  burn_number: number | null;
+  already: boolean;
+  error?: string;
+}
+
+/** The ONLY way an order becomes paid. Call after verifying the payment with the provider. */
+export async function confirmPayment(
+  code: string,
+  provider: PaymentProvider,
+  paymentId: string,
+  amountAmd: number,
+): Promise<ConfirmResult> {
+  const { data, error } = await db().rpc("confirm_payment", {
+    p_code: code,
+    p_provider: provider,
+    p_payment_id: paymentId,
+    p_amount: amountAmd,
+  });
+  if (error) throw dbError("confirm_payment", error);
+  return data as ConfirmResult;
+}
+
+export type AttemptResult =
+  | {
+    ok: true;
+    code: string;
+    status: OrderStatus;
+    provider: PaymentProvider;
+    provider_order_num: number;
+    amount_amd: number;
+    lang: Lang;
+    email: string | null;
+  }
+  | { ok: false; error: "INVALID_ARGS" | "ORDER_NOT_FOUND" | "ALREADY_PAID" | "ORDER_NOT_PAYABLE" };
+
+export async function beginPaymentAttempt(
+  code: string,
+  provider: PaymentProvider,
+  newOrderNum: boolean,
+): Promise<AttemptResult> {
+  const { data, error } = await db().rpc("begin_payment_attempt", {
+    p_code: code,
+    p_provider: provider,
+    p_new_order_num: newOrderNum,
+  });
+  if (error) throw dbError("begin_payment_attempt", error);
+  return data as AttemptResult;
+}
+
+/** Fixed-window rate limit; true when allowed. */
+export async function rateLimitAllows(key: string, limit: number, windowSeconds: number): Promise<boolean> {
+  const { data, error } = await db().rpc("check_rate_limit", {
+    p_key: key,
+    p_limit: limit,
+    p_window_seconds: windowSeconds,
+  });
+  if (error) throw dbError("check_rate_limit", error);
+  return data === true;
+}
+
+export async function addToWaitlist(row: { email: string; lang: Lang; ip_hash: string }): Promise<void> {
+  const { error } = await db().from("waitlist").upsert(row, { onConflict: "email", ignoreDuplicates: true });
+  if (error) throw dbError("addToWaitlist", error);
+}
+
+/** Raw audit log of provider traffic. Payload must already be sanitized. */
+export async function logPaymentEvent(
+  provider: string,
+  kind: string,
+  orderCode: string | null,
+  payload: unknown,
+): Promise<void> {
+  const { error } = await db().from("payment_events").insert({
+    provider,
+    kind,
+    order_code: orderCode,
+    payload: payload ?? {},
+  });
+  if (error) throw dbError("logPaymentEvent", error);
+}
+
+/** Ameria OrderIDs we sent in InitPayment for this order (from the audit log). */
+export async function ameriaOrderIdsForOrder(code: string): Promise<number[]> {
+  const { data, error } = await db()
+    .from("payment_events")
+    .select("payload")
+    .eq("provider", "ameria")
+    .eq("kind", "init")
+    .eq("order_code", code)
+    .limit(50);
+  if (error) throw dbError("ameriaOrderIdsForOrder", error);
+  const rows = (data ?? []) as { payload: Record<string, unknown> | null }[];
+  return rows
+    .map((r) => Number(r.payload?.OrderID))
+    .filter((n: number) => Number.isSafeInteger(n));
+}
+
+/** Order code for an Ameria OrderID we sent earlier (from the audit log). */
+export async function orderCodeForAmeriaOrderId(orderId: number): Promise<string | null> {
+  const { data, error } = await db()
+    .from("payment_events")
+    .select("order_code")
+    .eq("provider", "ameria")
+    .eq("kind", "init")
+    .eq("payload->>OrderID", String(orderId))
+    .not("order_code", "is", null)
+    .limit(1)
+    .maybeSingle();
+  if (error) throw dbError("orderCodeForAmeriaOrderId", error);
+  return (data?.order_code as string | undefined) ?? null;
+}
