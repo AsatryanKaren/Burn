@@ -1,0 +1,30 @@
+# Supabase CLI config (only the parts this project needs).
+# Every function does its own checks (CORS, rate limits, admin token, bank
+# signatures) and is called from the browser with only the anon key or by a
+# bank with no JWT at all, so JWT verification is off for all of them.
+
+project_id = "burn"
+
+[functions.create-order]
+verify_jwt = false
+
+[functions.order-status]
+verify_jwt = false
+
+[functions.start-payment]
+verify_jwt = false
+
+[functions.join-waitlist]
+verify_jwt = false
+
+[functions.pay-return-ameria]
+verify_jwt = false
+
+[functions.pay-callback-idram]
+verify_jwt = false
+
+[functions.pay-mock]
+verify_jwt = false
+
+[functions.admin]
+verify_jwt = false

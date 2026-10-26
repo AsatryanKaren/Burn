@@ -180,6 +180,8 @@
       setBusy(false);
       var code = err && err.code;
       if (code === "TEXT_REQUIRED") code = "EMPTY";
+      if (code === "INVALID_PRODUCT") code = "PRODUCT_UNAVAILABLE";
+      if (code === "PAYMENT_MISCONFIGURED") code = "PAYMENT_UNAVAILABLE";
       if (["TEXT_REJECTED", "TEXT_TOO_LONG", "EMPTY"].indexOf(code) >= 0) { show(1); setErr("err1", code); return; }
       if (["WISH_REQUIRED", "WISH_TOO_LONG", "WISH_REJECTED", "RECIPIENT_REQUIRED", "RECIPIENT_TOO_LONG", "RECIPIENT_REJECTED", "PRODUCT_UNAVAILABLE"].indexOf(code) >= 0) { show(2); setErr("err2", code); return; }
       setErr("err3", code || "UNKNOWN");

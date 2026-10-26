@@ -13,7 +13,11 @@
     var m = location.pathname.match(/\/p\/([a-z0-9]{8,40})\/?$/i);
     return m ? m[1] : null;
   }
-  var code = codeFromUrl();
+  // Payment pages with a fixed return address (Idram) come back without the code: use the one saved before leaving.
+  function savedCode() {
+    try { return sessionStorage.getItem("justPaid") || (JSON.parse(localStorage.getItem("papers") || "[]")[0] || null); } catch (e) { return null; }
+  }
+  var code = codeFromUrl() || savedCode();
   var privateUrl = location.origin + D.urls.paper + "?c=" + encodeURIComponent(code || "");
   function publicUrl(n) { return location.origin + D.urls.home + (n ? "?n=" + n : ""); }
   var pollTimer = null, polls = 0, errors = 0, lastStatus = null;

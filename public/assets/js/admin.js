@@ -87,7 +87,7 @@
     var m = $("modFilter").value;
     $("modList").innerHTML = '<p class="empty">Loading…</p>';
     call("list_orders", { moderation: m, limit: 100 }).then(function (r) {
-      var rows = (r && r.rows) || r || [];
+      var rows = (r && (r.orders || r.rows)) || (Array.isArray(r) ? r : []);
       if (!rows.length) { $("modList").innerHTML = '<p class="empty">Nothing here.</p>'; return; }
       $("modList").innerHTML = rows.map(function (o) {
         return '<div class="adm-item" data-code="' + esc(o.code) + '"><div><div class="txt">' + esc(o.text) + '</div><div class="meta">' +
@@ -118,7 +118,7 @@
     if ($("ordQ").value.trim()) body.q = $("ordQ").value.trim();
     if (lastId) body.before_id = lastId;
     call("list_orders", body).then(function (r) {
-      var rows = (r && r.rows) || r || [];
+      var rows = (r && (r.orders || r.rows)) || (Array.isArray(r) ? r : []);
       if (!rows.length && reset) { $("ordRows").innerHTML = '<tr><td colspan="9" class="empty">No orders.</td></tr>'; }
       $("ordRows").insertAdjacentHTML("beforeend", rows.map(function (o) {
         var link = D.urls.paper + "?c=" + encodeURIComponent(o.code);

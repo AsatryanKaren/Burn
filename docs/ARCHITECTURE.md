@@ -79,15 +79,20 @@ Response:
 { "code": "k7m2...", "amount_amd": 500, "status": "pending",
   "payment": { "mode": "redirect", "url": "https://bank/..." } }
 ```
-`payment.mode` is one of `redirect` (go to `url`), `mock` (go to `url`, test only), `disabled` (status is `awaiting_launch`; we saved the paper and will email a payment link when payments open).
+`payment.mode` is one of `redirect` (go to `url`), `mock` (go to `url`, test only), `form` (Idram: build a `<form method="POST" action="{action}">` with one hidden input per entry of `fields` and submit it: `{ "mode": "form", "action": "https://...", "method": "POST", "fields": { "EDP_...": "..." } }`), `disabled` (status is `awaiting_launch`; we saved the paper and will email a payment link when payments open).
+Moderation at creation: with `AUTO_APPROVE=1` (default) a text the automatic checks found nothing in is stored as `approved`; otherwise `pending`.
 
 ### `GET order-status?code=...`
 
-Returns the buyer's own order: `{ code, status, product, amount_amd, burn_number, text, wish_text, recipient_name, created_at, paid_at, gift_share_amd }`. 404 if unknown.
+Returns the buyer's own order: `{ code, status, product, amount_amd, burn_number, text, has_wish, recipient_name, created_at, paid_at, gift_share_amd }`. The wish itself is never returned (order links get shared); `has_wish` is a boolean. `gift_share_amd` is the gift_ledger amount once paid, else the floor(20%) the order will contribute. 404 if unknown.
+
+### `POST start-payment`
+
+`{ "code": "...", "lang": "hy" }` starts (or restarts) payment for an existing order in `awaiting_launch`, `pending` or `failed` (launch emails; someone else paying from the order link). Disabled provider: `{ code, status, payment: { mode: "disabled" } }`, nothing changes. Otherwise the order becomes `pending` and the response is `{ code, status, payment }` with the same `payment` shapes as create-order. 404 `NOT_FOUND`, 409 `ALREADY_PAID` / `ORDER_NOT_PAYABLE`. Rate limit 8 per IP hash per 10 minutes.
 
 ### Payment provider endpoints
 
-- `GET/POST pay-return-ameria` — Ameriabank BackURL. Reads `orderID`/`paymentID`, calls `GetPaymentDetails` server-to-server, checks `ResponseCode == "00"` and amount, then `confirm_payment`, then 302 to `${SITE_URL}/{lang}/p/{code}`.
+- `GET/POST pay-return-ameria` — Ameriabank BackURL. Reads `orderID`/`paymentID`, calls `GetPaymentDetails` server-to-server, checks `ResponseCode == "00"` and amount, then `confirm_payment`, then 302 to the order page: `${SITE_URL}/p/{code}` for hy (root) and `${SITE_URL}/{en|ru}/p/{code}` otherwise (vercel.json must rewrite `/p/:code` to the static `/p/?c=:code` page).
 - `POST pay-callback-idram` — Idram EDP precheck + result callback with checksum verification; answers `OK`.
 - `GET pay-mock?code=...` — only when `PAYMENT_PROVIDER=mock`; confirms and redirects. Returns 404 otherwise.
 
@@ -95,11 +100,20 @@ Returns the buyer's own order: `{ code, status, product, amount_amd, burn_number
 
 `{ "email": "...", "lang": "hy" }` → `{ "ok": true }`. Rate limit 5 per IP hash per 10 minutes.
 
+### `POST admin` (for `/admin/`)
+
+Header `x-admin-token` must equal secret `ADMIN_TOKEN` (≥ 32 chars, else always 401). 10 failed attempts per IP hash per 10 minutes → 429. Body `{ "action": ... }`:
+`stats` → `{ orders_by_status, revenue_amd, gift_fund_amd, waitlist_count, papers_burned, pending_moderation }`;
+`list_orders` `{ status?, moderation?, q?, limit ≤ 200, before_id? }` → `{ orders: [...] }` (newest first);
+`moderate` `{ code, moderation: approved|hidden|rejected, reason? }`;
+`mark_refunded` `{ code }` (paid → refunded, removes its gift_ledger row, audit row in payment_events);
+`waitlist_csv` → `{ csv }`; `awaiting_launch_csv` → `{ csv }` with email, lang, code, product, amount_amd, link, created_at.
+
 ## Function secrets
 
 `PAYMENT_PROVIDER` (disabled|mock|ameria|idram), `SITE_URL`, `ALLOWED_ORIGINS`, `IP_HASH_SALT`,
 `AMERIA_CLIENT_ID`, `AMERIA_USERNAME`, `AMERIA_PASSWORD`, `AMERIA_API_BASE` (test: `https://servicestest.ameriabank.am/VPOS`),
-`IDRAM_ACCOUNT_ID`, `IDRAM_SECRET_KEY`. `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` are provided by the platform.
+`IDRAM_ACCOUNT_ID`, `IDRAM_SECRET_KEY` (`IDRAM_ACTION_URL` optional), `ALLOW_LOCALHOST`, `AUTO_APPROVE` (default 1), `ADMIN_TOKEN`. `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` are provided by the platform. Details: `docs/BACKEND.md`.
 
 ## Frontend pages
 
