@@ -1100,7 +1100,7 @@ body.nogl .scene { background: radial-gradient(60% 40% at 60% 92%, rgba(255,120,
 
     var k = Math.min(1, (L.fw * 0.78) / pw);
     var hoverY = L.baseY + L.fh * 0.64, sinkY = L.baseY + L.fh * 0.2;
-    var ashAcc = 0;
+    var ashAcc = 0, rise = { t: 0 };
 
     burnState = {
       tick: function (dt) {
@@ -1134,17 +1134,31 @@ body.nogl .scene { background: radial-gradient(60% 40% at 60% 92%, rgba(255,120,
       .to(paper.position, { x: L.fireX, y: hoverY, duration: 1.2, ease: "power2.inOut" }, 0.35)
       .to(paper.scale, { x: pw * k, y: ph * k, duration: 1.2, ease: "power2.inOut" }, 0.35)
       .to(paper.rotation, { z: -0.16, duration: 1.2, ease: "sine.inOut" }, 0.35)
-      .to(paper.position, { y: sinkY, duration: 3.0, ease: "power1.in" }, 1.55)
-      .to(paper.rotation, { z: 0.1, duration: 3.0, ease: "sine.inOut" }, 1.55)
-      .to(pu.uProgress, { value: 1, duration: 2.75, ease: "power1.in" }, 1.6)
+      // dip into the flames and catch
+      .to(paper.position, { y: sinkY, duration: 0.8, ease: "power2.in" }, 1.55)
+      .to(paper.rotation, { z: 0.06, duration: 0.8, ease: "sine.inOut" }, 1.55)
+      .to(pu.uProgress, { value: 1, duration: 4.3, ease: "sine.in" }, 1.75)
       .to(U.smoke, { value: 2.2, duration: 1.2 }, 1.8)
-      .to(U.intensity, { value: 1.45, duration: 0.9, ease: "power2.out" }, 1.9)
-      .call(function () { U.burstStart.value = clock; playWhoosh(); }, null, 2.5)
-      .to(U.haze, { value: 1.8, duration: 0.8 }, 2.4)
-      .to(U.intensity, { value: 1, duration: 1.8, ease: "power2.inOut" }, 4.0)
+      .to(U.intensity, { value: 1.45, duration: 0.7, ease: "power2.out" }, 1.9)
+      .call(function () { U.burstStart.value = clock; playWhoosh(); }, null, 2.3)
+      .to(U.haze, { value: 1.8, duration: 0.8 }, 2.2)
+      .to("#hero", { opacity: 0, duration: 0.8, ease: "power1.out" }, 2.2)
+      // the hot air lifts the burning paper up into the night sky
+      .to(rise, {
+        t: 1, duration: 3.9, ease: "none",
+        onUpdate: function () {
+          var t = rise.t, e = t * (0.3 + 0.7 * t);
+          paper.position.y = sinkY + (L.H * 0.97 - sinkY) * e;
+          paper.position.x = L.fireX + Math.sin(t * 5.2) * L.fw * 0.28 * t + t * t * L.fw * 0.5;
+          paper.rotation.z = 0.06 + Math.sin(t * 4.1 + 0.5) * 0.28 * t;
+          var sc = 1 - 0.3 * t;
+          paper.scale.set(pw * k * sc, ph * k * sc, 1);
+        }
+      }, 2.35)
+      .to(U.intensity, { value: 1, duration: 1.8, ease: "power2.inOut" }, 3.4)
       .to(U.smoke, { value: 1, duration: 3.0 }, 4.2)
-      .to(U.haze, { value: 1, duration: 1.5 }, 4.2)
-      .to({}, { duration: 0.2 }, 4.45);
+      .to(U.haze, { value: 1, duration: 1.5 }, 3.6)
+      .to({}, { duration: 0.2 }, 6.1);
   }
   $("burn").addEventListener("click", burn);
 
@@ -1156,7 +1170,7 @@ body.nogl .scene { background: radial-gradient(60% 40% at 60% 92%, rgba(255,120,
   }
   $("againBtn").addEventListener("click", function () {
     note.value = ""; $("count").textContent = "0/120";
-    $("result").hidden = true; $("hero").hidden = false;
+    $("result").hidden = true; $("hero").hidden = false; $("hero").style.opacity = 1;
     openSheet();
   });
 
