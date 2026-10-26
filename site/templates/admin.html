@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Admin · {{ cfg.brand.name.en }}</title>
+<link rel="icon" href="/assets/img/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="{{ asset('css/site.css') }}">
+<link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+<script id="site-data" type="application/json">{{ payload }}</script>
+</head>
+<body class="admin">
+<header class="adm-top">
+  <strong>{{ cfg.brand.name.en }} · Admin</strong>
+  <nav class="adm-tabs" id="tabs" hidden>
+    <button type="button" data-tab="overview" aria-pressed="true">Overview</button>
+    <button type="button" data-tab="moderation" aria-pressed="false">Moderation</button>
+    <button type="button" data-tab="orders" aria-pressed="false">Orders</button>
+    <button type="button" data-tab="export" aria-pressed="false">Export</button>
+  </nav>
+  <button type="button" class="btn btn-ghost btn-sm" id="logout" hidden>Sign out</button>
+</header>
+
+<main class="adm-main">
+  <form id="login" class="adm-card adm-login">
+    <h1>Sign in</h1>
+    <label class="field"><span>Admin token</span><input class="input" id="token" type="password" autocomplete="current-password" required></label>
+    <p class="error" id="loginErr"></p>
+    <button class="btn btn-fire" type="submit">Sign in</button>
+    <p class="hint">The token is kept only in this browser tab.</p>
+  </form>
+
+  <section id="overview" hidden>
+    <div class="adm-grid" id="statsGrid"></div>
+  </section>
+
+  <section id="moderation" hidden>
+    <div class="adm-bar">
+      <label>Show <select class="input" id="modFilter"><option value="pending">Waiting for review</option><option value="hidden">Hidden</option><option value="approved">Approved</option><option value="rejected">Rejected</option></select></label>
+      <button type="button" class="btn btn-ghost btn-sm" id="modReload">Reload</button>
+    </div>
+    <div id="modList" class="adm-list"></div>
+  </section>
+
+  <section id="orders" hidden>
+    <div class="adm-bar">
+      <label>Status <select class="input" id="ordStatus"><option value="">All</option><option>paid</option><option>pending</option><option>awaiting_launch</option><option>failed</option><option>refunded</option><option>cancelled</option></select></label>
+      <label>Search <input class="input" id="ordQ" placeholder="code, email or text"></label>
+      <button type="button" class="btn btn-ghost btn-sm" id="ordReload">Search</button>
+    </div>
+    <div class="adm-table-wrap"><table class="adm-table"><thead><tr><th>#</th><th>Code</th><th>Status</th><th>Option</th><th>Amount</th><th>Text</th><th>Email</th><th>Created</th><th></th></tr></thead><tbody id="ordRows"></tbody></table></div>
+    <button type="button" class="btn btn-ghost btn-sm" id="ordMore" hidden>Load more</button>
+  </section>
+
+  <section id="export" hidden>
+    <div class="adm-grid">
+      <div class="adm-card"><h2>Waitlist</h2><p class="hint">Emails of people who asked to be told when payments open.</p><button type="button" class="btn btn-ghost" data-export="waitlist_csv">Download CSV</button></div>
+      <div class="adm-card"><h2>Saved papers</h2><p class="hint">People who saved a paper before payments opened, with the link to pay for it. Use this for the launch email.</p><button type="button" class="btn btn-ghost" data-export="awaiting_launch_csv">Download CSV</button></div>
+    </div>
+  </section>
+</main>
+<script src="{{ asset('js/admin.js') }}" defer></script>
+</body>
+</html>

@@ -396,7 +396,7 @@
       L.mX = wide ? (center ? W * 0.3 : W * 0.5) : W * 0.24;
       L.sX = wide ? L.mX + L.mH * 2.3 : W * 0.86;
       L.sH = L.mH * 0.6;
-      L.moonX = W * (wide ? 0.84 : 0.86); L.moonY = H * (wide ? 0.82 : 0.56); L.moonR = wide ? 11 : 7;
+      L.moonX = wide ? W * 0.84 : -200; L.moonY = H * 0.82; L.moonR = wide ? 11 : 9;
     }
 
     function addBlend(m) { m.blending = THREE.CustomBlending; m.blendSrc = THREE.OneFactor; m.blendDst = THREE.OneFactor; m.blendEquation = THREE.AddEquation; return m; }

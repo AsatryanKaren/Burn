@@ -193,6 +193,12 @@ def build() -> None:
         if lang == DEFAULT:
             (OUT / "404.html").write_text(nf, encoding="utf-8")
 
+    # Private admin page (English only, not linked anywhere, noindex).
+    env = make_env("en", hashes)
+    admin = env.get_template("admin.html").render(page="admin", payload=Markup(js_payload("en", "admin")))
+    (OUT / "admin").mkdir(parents=True, exist_ok=True)
+    (OUT / "admin" / "index.html").write_text(admin, encoding="utf-8")
+
     # robots + sitemap
     base = CONFIG["site_url"].rstrip("/")
     urls = []
@@ -207,7 +213,7 @@ def build() -> None:
         '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" '
         'xmlns:xhtml="http://www.w3.org/1999/xhtml">' + "".join(urls) + "</urlset>\n", encoding="utf-8")
     (OUT / "robots.txt").write_text(
-        f"User-agent: *\nAllow: /\nDisallow: /p/\nDisallow: /en/p/\nDisallow: /ru/p/\nSitemap: {base}/sitemap.xml\n",
+        f"User-agent: *\nAllow: /\nDisallow: /p/\nDisallow: /en/p/\nDisallow: /ru/p/\nDisallow: /admin/\nSitemap: {base}/sitemap.xml\n",
         encoding="utf-8")
     manifest = {
         "name": CONFIG["brand"]["name"][DEFAULT], "short_name": CONFIG["brand"]["name"][DEFAULT],

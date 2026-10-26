@@ -1,0 +1,32 @@
+body.admin { overflow-x: hidden; font-size: 15px; }
+.adm-top { position: sticky; top: 0; z-index: 5; display: flex; flex-wrap: wrap; align-items: center; gap: 14px; padding: calc(env(safe-area-inset-top, 0px) + 12px) var(--gutter-r) 12px var(--gutter); background: rgba(4,6,13,.92); border-bottom: 1px solid var(--line); }
+.adm-tabs { display: flex; gap: 4px; flex-wrap: wrap; }
+.adm-tabs button { background: none; border: 1px solid transparent; color: var(--muted); padding: 7px 12px; border-radius: 8px; cursor: pointer; }
+.adm-tabs button[aria-pressed="true"] { color: var(--text); border-color: var(--line-2); background: rgba(255,255,255,.04); }
+#logout { margin-left: auto; }
+.adm-main { padding: 24px var(--gutter-r) 80px var(--gutter); max-width: 1300px; margin: 0 auto; }
+.adm-card { border: 1px solid var(--line); border-radius: 14px; padding: 18px; background: var(--bg-3); display: flex; flex-direction: column; gap: 10px; }
+.adm-card h2 { font-size: 1.15rem; }
+.adm-login { max-width: 380px; margin: 10vh auto 0; }
+.adm-login .field span { font-size: 14px; color: var(--muted); }
+.adm-grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); }
+.adm-stat .v { font-family: var(--serif); font-size: 28px; font-variant-numeric: tabular-nums; }
+.adm-stat .k { font-size: 13px; color: var(--muted); }
+.adm-bar { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; margin-bottom: 16px; }
+.adm-bar label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--muted); }
+.adm-bar .input { padding: 9px 11px; font-size: 14px; min-width: 180px; }
+.adm-list { display: flex; flex-direction: column; gap: 10px; }
+.adm-item { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: start; border: 1px solid var(--line); border-radius: 12px; padding: 14px; background: var(--bg-3); }
+.adm-item .txt { font-family: var(--serif); font-size: 18px; overflow-wrap: anywhere; }
+.adm-item .meta { font-size: 12.5px; color: var(--muted); margin-top: 4px; }
+.adm-item .acts { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+.adm-table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; }
+.adm-table { border-collapse: collapse; width: 100%; font-size: 13.5px; min-width: 900px; }
+.adm-table th, .adm-table td { padding: 9px 10px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+.adm-table th { color: var(--muted); font-weight: 500; position: sticky; top: 0; background: var(--bg-2); }
+.adm-table td.t { max-width: 320px; overflow-wrap: anywhere; }
+.pill { display: inline-block; font-size: 12px; border-radius: 999px; padding: 2px 8px; border: 1px solid var(--line-2); }
+.pill.paid, .pill.approved { color: var(--ok); border-color: rgba(159,220,171,.4); }
+.pill.pending, .pill.awaiting_launch { color: var(--flame); border-color: rgba(255,196,107,.4); }
+.pill.failed, .pill.rejected, .pill.refunded, .pill.hidden { color: var(--danger); border-color: rgba(255,155,122,.4); }
+.empty { color: var(--muted); padding: 30px 0; }
