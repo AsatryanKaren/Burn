@@ -1,0 +1,930 @@
+<title>Մնաս բարով, 2026</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Armenian:wght@400;500;600&family=Noto+Serif+Armenian:wght@500;600;700&family=Noto+Sans:wght@400;500;600&family=Noto+Serif:wght@500;600;700&display=swap">
+<style>
+/* Layout: one night scene, fire is the only light; copy sits top-left, fire burns on the hill in front of Ararat. */
+:root {
+  color-scheme: dark;
+  --sky-top: #060a16;
+  --sky-mid: #0e1630;
+  --sky-low: #2b1d2c;
+  --ridge: #121a2d;
+  --ground: #05070e;
+  --snow: #4d5774;
+  --ember: #ff8a3d;
+  --flame: #ffc46b;
+  --paper: #efe4cf;
+  --paper-edge: #d9cbb0;
+  --ink: #2a1f16;
+  --text: #f3ece0;
+  --muted: #a9b0c3;
+  --veil: rgba(4, 6, 14, 0.55);
+  --serif: "Noto Serif Armenian", "Noto Serif", Georgia, serif;
+  --sans: "Noto Sans Armenian", "Noto Sans", system-ui, -apple-system, sans-serif;
+  --flick: 1;
+}
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: var(--sky-top);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 16px;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+[hidden] { display: none !important; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--flame); outline-offset: 3px; }
+
+/* ---------- scene ---------- */
+.scene { position: fixed; inset: 0; overflow: hidden; }
+.sky {
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom, var(--sky-top) 0%, var(--sky-mid) 46%, var(--sky-low) 80%, #3a2027 100%);
+}
+#stars { position: absolute; inset: 0; width: 100%; height: 100%; }
+.mountains {
+  position: absolute; left: 0; bottom: 0; width: 100%;
+  height: max(38vh, 37.5vw);
+  display: block;
+}
+.glow {
+  position: absolute; pointer-events: none;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(255, 130, 50, 0.42), rgba(255, 90, 30, 0.16) 45%, rgba(255, 80, 20, 0) 100%);
+  opacity: calc(0.75 + 0.25 * var(--flick));
+  transform: translate(-50%, -50%);
+}
+.logs { position: absolute; pointer-events: none; transform: translate(-50%, -62%); }
+#gl { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+
+/* ---------- top bar ---------- */
+.bar {
+  position: fixed; left: 0; right: 0; top: 0; z-index: 5;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding-top: calc(env(safe-area-inset-top, 0px) + 14px);
+  padding-bottom: 10px;
+  padding-left: max(20px, env(safe-area-inset-left, 0px));
+  padding-right: max(20px, env(safe-area-inset-right, 0px));
+}
+.wordmark { font-family: var(--serif); font-weight: 600; font-size: 15px; letter-spacing: 0.01em; color: var(--text); opacity: 0.9; }
+.tools { display: flex; align-items: center; gap: 6px; }
+.lang {
+  display: flex; border: 1px solid rgba(243, 236, 224, 0.18); border-radius: 999px; padding: 2px;
+}
+.lang button {
+  background: none; border: 0; border-radius: 999px; padding: 6px 10px; font-size: 13px; color: var(--muted); cursor: pointer;
+}
+.lang button[aria-pressed="true"] { background: rgba(243, 236, 224, 0.12); color: var(--text); }
+.icon-btn {
+  width: 36px; height: 36px; border-radius: 50%; border: 1px solid rgba(243, 236, 224, 0.18);
+  background: none; display: grid; place-items: center; cursor: pointer; color: var(--muted);
+}
+.icon-btn[aria-pressed="true"] { color: var(--flame); border-color: rgba(255, 196, 107, 0.5); }
+
+/* ---------- hero copy ---------- */
+.hero {
+  position: fixed; z-index: 4; left: 0; right: 0;
+  top: calc(env(safe-area-inset-top, 0px) + 72px);
+  padding-left: max(24px, env(safe-area-inset-left, 0px));
+  padding-right: max(24px, env(safe-area-inset-right, 0px));
+  max-width: 640px;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 18px;
+}
+.headline {
+  margin: 0;
+  font-family: var(--serif); font-weight: 600;
+  line-height: 0.95; letter-spacing: -0.01em;
+  color: var(--text);
+  text-shadow: 0 calc(10px * var(--flick)) 40px rgba(255, 120, 40, calc(0.18 * var(--flick)));
+}
+.headline .bye { display: block; font-size: clamp(2.4rem, 9.5vw, 4.6rem); }
+.headline .year {
+  display: block; font-size: clamp(5rem, 27vw, 11rem); letter-spacing: -0.035em; line-height: 0.88;
+  margin-left: -0.04em;
+}
+.sub { margin: 0; max-width: 34ch; font-size: clamp(1rem, 3.9vw, 1.125rem); line-height: 1.55; color: var(--muted); text-wrap: pretty; }
+.counter {
+  display: flex; align-items: center; gap: 10px; margin: 0;
+  font-size: 15px; color: var(--text); font-variant-numeric: tabular-nums;
+}
+.counter .dot {
+  width: 8px; height: 8px; border-radius: 50%; background: var(--ember); flex: none;
+  box-shadow: 0 0 0 0 rgba(255, 138, 61, 0.6); animation: live 2.2s ease-out infinite;
+}
+@keyframes live { 0% { box-shadow: 0 0 0 0 rgba(255,138,61,.55); } 80%, 100% { box-shadow: 0 0 0 10px rgba(255,138,61,0); } }
+.counter b { font-weight: 600; }
+.nw { white-space: nowrap; }
+.cta {
+  margin-top: 6px;
+  display: inline-flex; align-items: center; gap: 14px;
+  background: var(--paper); color: var(--ink);
+  border: 0; border-radius: 4px; cursor: pointer;
+  padding: 15px 20px 15px 22px;
+  font-family: var(--serif); font-weight: 600; font-size: 17px;
+  transform: rotate(-1.2deg);
+  box-shadow: 0 1px 0 var(--paper-edge), 0 14px 34px -10px rgba(255, 110, 40, 0.55);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.cta:hover { transform: rotate(0deg) translateY(-2px); box-shadow: 0 1px 0 var(--paper-edge), 0 18px 40px -10px rgba(255, 110, 40, 0.7); }
+.cta .price { font-family: var(--sans); font-weight: 500; font-size: 14px; color: #7a5f45; padding-left: 14px; border-left: 1px solid #cdbb9c; }
+.foot { margin: 2px 0 0; font-size: 12px; line-height: 1.5; color: rgba(169, 176, 195, 0.7); max-width: 36ch; }
+
+/* ---------- sheet (write paper) ---------- */
+.sheet {
+  position: fixed; inset: 0; z-index: 10;
+  display: flex; align-items: flex-end; justify-content: center;
+  background: var(--veil);
+  backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px);
+}
+.sheet-inner {
+  position: relative; width: 100%; max-width: 520px;
+  padding-top: 26px;
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 22px);
+  padding-left: max(20px, env(safe-area-inset-left, 0px));
+  padding-right: max(20px, env(safe-area-inset-right, 0px));
+  background: linear-gradient(to bottom, rgba(14, 18, 34, 0.96), rgba(8, 10, 20, 0.98));
+  border-top: 1px solid rgba(243, 236, 224, 0.1);
+  border-radius: 22px 22px 0 0;
+  display: flex; flex-direction: column; gap: 16px;
+}
+.sheet-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.sheet h2 { margin: 0; font-family: var(--serif); font-weight: 600; font-size: 22px; line-height: 1.25; }
+.paper {
+  position: relative;
+  background:
+    radial-gradient(120% 90% at 30% 20%, rgba(255,255,255,.35), rgba(255,255,255,0) 60%),
+    var(--paper);
+  color: var(--ink);
+  border-radius: 3px;
+  padding: 22px 22px 34px;
+  transform: rotate(-1deg);
+  box-shadow: 0 1px 0 var(--paper-edge), 0 20px 50px -20px rgba(0,0,0,.8);
+}
+.paper .paper-year { position: absolute; top: 10px; right: 16px; font-family: var(--serif); font-size: 13px; color: #9b8466; }
+.paper textarea {
+  display: block; width: 100%; min-height: 128px; resize: none; border: 0; outline: 0; background: transparent;
+  font-family: var(--serif); font-weight: 600; font-size: 24px; line-height: 1.35; color: var(--ink);
+  padding: 0; margin: 0;
+}
+.paper textarea::placeholder { color: rgba(42, 31, 22, 0.32); }
+.paper .count { position: absolute; bottom: 10px; right: 16px; font-size: 12px; color: #9b8466; font-variant-numeric: tabular-nums; }
+.paper:focus-within { box-shadow: 0 1px 0 var(--paper-edge), 0 0 0 2px rgba(255,196,107,.55), 0 20px 50px -20px rgba(0,0,0,.8); }
+.hint { margin: 0; font-size: 14px; line-height: 1.5; color: var(--muted); }
+.error { margin: -6px 0 0; font-size: 14px; color: var(--flame); min-height: 1.2em; }
+.burn {
+  border: 0; border-radius: 12px; cursor: pointer;
+  padding: 16px 20px; font-family: var(--serif); font-weight: 600; font-size: 18px;
+  color: #1c0e05;
+  background: linear-gradient(180deg, #ffc46b, #ff8a3d);
+  box-shadow: 0 12px 30px -12px rgba(255, 120, 40, 0.8);
+}
+.burn:active { transform: translateY(1px); }
+.nopay { margin: -6px 0 0; text-align: center; font-size: 12px; color: rgba(169,176,195,.7); }
+.shake { animation: shake .4s ease; }
+@keyframes shake { 20%,60% { transform: translateX(-6px) rotate(-1deg); } 40%,80% { transform: translateX(6px) rotate(-1deg); } }
+
+/* ---------- result ---------- */
+.result {
+  position: fixed; z-index: 8; left: 0; right: 0;
+  top: calc(env(safe-area-inset-top, 0px) + 72px);
+  padding-left: max(24px, env(safe-area-inset-left, 0px));
+  padding-right: max(24px, env(safe-area-inset-right, 0px));
+  max-width: 600px;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 16px;
+}
+.result-title { margin: 0; font-family: var(--serif); font-weight: 600; font-size: clamp(3rem, 14vw, 6rem); line-height: 1; letter-spacing: -0.02em; }
+.result-line { margin: 0; font-size: clamp(1.1rem, 4.4vw, 1.35rem); line-height: 1.45; max-width: 26ch; }
+.result-line b { font-family: var(--serif); font-weight: 700; color: var(--flame); font-variant-numeric: tabular-nums; }
+.wish { margin: 0; max-width: 34ch; font-size: 15px; line-height: 1.55; color: var(--muted); padding-left: 14px; border-left: 2px solid rgba(255,196,107,.55); }
+.row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
+.btn-light {
+  border: 0; border-radius: 4px; cursor: pointer; padding: 13px 18px;
+  background: var(--paper); color: var(--ink); font-family: var(--serif); font-weight: 600; font-size: 16px;
+}
+.btn-ghost {
+  border: 1px solid rgba(243,236,224,.25); border-radius: 4px; cursor: pointer; padding: 12px 18px;
+  background: rgba(6,10,22,.35); color: var(--text); font-size: 15px;
+}
+
+/* ---------- story card ---------- */
+.story {
+  position: fixed; inset: 0; z-index: 12; background: rgba(3,5,10,.82);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px;
+  padding-block: calc(env(safe-area-inset-top, 0px) + 20px) calc(env(safe-area-inset-bottom, 0px) + 20px);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.story img { height: min(70vh, 640px); max-width: 100%; aspect-ratio: 9 / 16; object-fit: contain; border-radius: 14px; box-shadow: 0 30px 80px -20px rgba(0,0,0,.9); }
+.story p { margin: 0; font-size: 14px; color: var(--muted); text-align: center; max-width: 34ch; }
+
+@media (min-width: 900px) {
+  .hero, .result { left: 6vw; top: 18vh; }
+  .sheet { align-items: center; }
+  .sheet-inner { border-radius: 22px; border: 1px solid rgba(243, 236, 224, 0.1); }
+}
+@media (max-height: 700px) and (max-width: 899px) {
+  .hero { gap: 12px; top: calc(env(safe-area-inset-top, 0px) + 60px); }
+  .headline .year { font-size: clamp(4rem, 22vw, 8rem); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .counter .dot { animation: none; }
+  .cta, .cta:hover { transition: none; }
+}
+</style>
+
+<div class="scene" aria-hidden="true">
+  <div class="sky"></div>
+  <canvas id="stars"></canvas>
+  <svg class="mountains" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice">
+    <defs>
+      <linearGradient id="ridgeFill" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#1a2238"/>
+        <stop offset="1" stop-color="#0c1120"/>
+      </linearGradient>
+    </defs>
+    <path id="ararat" fill="url(#ridgeFill)" d="M0,600 L0,480 C150,470 300,450 420,420 C500,400 560,370 600,352 L620,343 L650,360 C700,390 760,400 820,370 C880,330 930,220 975,150 L1010,120 L1050,142 C1120,200 1210,290 1320,360 C1420,420 1520,445 1600,455 L1600,600 Z"/>
+    <path id="snow1" fill="#4d5774" opacity=".55" d="M925,215 C950,175 975,150 990,135 L1010,120 L1050,142 C1075,165 1095,190 1110,215 C1092,205 1078,222 1062,208 C1046,226 1030,206 1012,222 C996,206 980,224 962,210 C948,222 938,212 925,215 Z"/>
+    <path id="snow2" fill="#4d5774" opacity=".5" d="M592,360 L620,343 L650,360 C640,356 632,366 622,358 C612,366 602,357 592,360 Z"/>
+    <path fill="#05070e" d="M0,600 L0,552 C260,528 520,540 800,548 C1080,556 1340,532 1600,546 L1600,600 Z"/>
+  </svg>
+  <div class="glow" id="glow"></div>
+  <svg class="logs" id="logs" viewBox="0 0 200 60">
+    <defs>
+      <linearGradient id="logFill" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#5a2a12"/>
+        <stop offset=".45" stop-color="#24130b"/>
+        <stop offset="1" stop-color="#0b0605"/>
+      </linearGradient>
+    </defs>
+    <rect x="18" y="26" width="164" height="18" rx="9" fill="url(#logFill)" transform="rotate(-9 100 35)"/>
+    <rect x="18" y="26" width="164" height="18" rx="9" fill="url(#logFill)" transform="rotate(10 100 35)"/>
+    <ellipse cx="100" cy="46" rx="70" ry="7" fill="#ff7a2e" opacity=".35"/>
+  </svg>
+  <canvas id="gl"></canvas>
+</div>
+
+<header class="bar">
+  <span class="wordmark">mnasbarov.am</span>
+  <div class="tools">
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" data-lang="hy" aria-pressed="true">Հայ</button>
+      <button type="button" data-lang="en" aria-pressed="false">Eng</button>
+      <button type="button" data-lang="ru" aria-pressed="false">Рус</button>
+    </div>
+    <button type="button" class="icon-btn" id="sound" aria-pressed="false" aria-label="Sound">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M4 9v6h4l5 4V5L8 9H4z"/>
+        <path id="waves" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12" opacity=".35"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<main class="hero" id="hero">
+  <h1 class="headline"><span class="bye" data-i18n="bye">Մնաս բարով,</span><span class="year">2026</span></h1>
+  <p class="sub" data-i18n="sub">Գրիր այն, ինչ ուզում ես թողնել հին տարում։ Մենք այն կայրենք ուղիղ եթերում՝ բոլորի հետ միասին։</p>
+  <p class="counter"><span class="dot" aria-hidden="true"></span><span id="counterText"></span></p>
+  <button type="button" class="cta" id="openSheet"><span data-i18n="cta">Գրել իմ թուղթը</span><span class="price">500 ֏</span></button>
+  <p class="foot" data-i18n="foot">Նախադիտում։ Թվերը օրինակ են, վճարումը դեռ միացված չէ։</p>
+</main>
+
+
+<div class="sheet" id="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+  <div class="sheet-inner" id="sheetInner">
+    <div class="sheet-head">
+      <h2 id="sheetTitle" data-i18n="sheetTitle">Ի՞նչ ես թողնում 2026-ում</h2>
+      <button type="button" class="icon-btn" id="closeSheet" aria-label="Close">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="paper" id="paper">
+      <span class="paper-year">2026</span>
+      <label for="note" class="sr" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)" data-i18n="sheetTitle">Ի՞նչ ես թողնում 2026-ում</label>
+      <textarea id="note" maxlength="120" rows="4"></textarea>
+      <span class="count" id="count">0/120</span>
+    </div>
+    <p class="error" id="error" role="alert"></p>
+    <p class="hint" data-i18n="hint">Մի՛ գրիր մարդկանց անուններ։ Թուղթդ եթերում կերևա առանց քո անվան։</p>
+    <button type="button" class="burn" id="burn" data-i18n="burn">Այրել</button>
+    <p class="nopay" data-i18n="nopay">Նախադիտման մեջ վճարում չկա</p>
+  </div>
+</div>
+
+<section class="result" id="result" hidden aria-live="polite">
+  <p class="result-title" data-i18n="burned">Այրվեց</p>
+  <p class="result-line" id="resultLine"></p>
+  <p class="wish" data-i18n="wish">Իսկ ի՞նչ ես ուզում 2027-ին։ Ցանկությունդ ոսկե թղթով կպահենք մինչև հաջորդ Ամանորը։</p>
+  <div class="row">
+    <button type="button" class="btn-light" id="shareBtn" data-i18n="share">Կիսվել սթորիում</button>
+    <button type="button" class="btn-ghost" id="againBtn" data-i18n="again">Գրել ևս մեկը</button>
+  </div>
+</section>
+
+<div class="story" id="story" hidden role="dialog" aria-modal="true" aria-label="Story">
+  <img id="storyImg" alt="">
+  <p data-i18n="storyHint">Այսպես կերևա քո սթորին։</p>
+  <button type="button" class="btn-ghost" id="storyClose" data-i18n="back">Հետ</button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  /* ================= i18n ================= */
+  var T = {
+    hy: {
+      bye: "Մնաս բարով,",
+      sub: "Գրիր այն, ինչ ուզում ես թողնել հին տարում։ Մենք այն կայրենք ուղիղ եթերում՝ բոլորի հետ միասին։",
+      counter: function (n) { return "<b>" + n + "</b> մարդ արդեն հրաժեշտ է տվել <span class=\"nw\">2026-ին</span>"; },
+      cta: "Գրել իմ թուղթը",
+      sheetTitle: "Ի՞նչ ես թողնում 2026-ում",
+      hint: "Մի՛ գրիր մարդկանց անուններ։ Թուղթդ եթերում կերևա առանց քո անվան։",
+      burn: "Այրել",
+      nopay: "Նախադիտման մեջ վճարում չկա",
+      burned: "Այրվեց",
+      line: function (n) { return "Դու <span class=\"nw\"><b>" + n + "</b>-րդն</span> ես, ով հրաժեշտ տվեց <span class=\"nw\">2026-ին։</span>"; },
+      wish: "Իսկ ի՞նչ ես ուզում 2027-ին։ Ցանկությունդ ոսկե թղթով կպահենք մինչև հաջորդ Ամանորը։",
+      share: "Կիսվել սթորիում",
+      again: "Գրել ևս մեկը",
+      empty: "Գրիր գոնե մեկ բառ",
+      foot: "Նախադիտում։ Թվերը օրինակ են, վճարումը դեռ միացված չէ։",
+      storyHint: "Այսպես կերևա քո սթորին։",
+      back: "Հետ",
+      storyTitle: "Մնաս բարով, 2026",
+      storyNum: "Իմ համարը",
+      ph: ["Դոլարի կուրսը", "Խցանումները Բաղրամյանում", "Երկուշաբթի առավոտները", "Կիսատ մնացած դիետաս"],
+      sound: "Ձայն", close: "Փակել", locale: "hy-AM"
+    },
+    en: {
+      bye: "Goodbye,",
+      sub: "Write down what you want to leave in the old year. We burn it live, together with everyone.",
+      counter: function (n) { return "<b>" + n + "</b> people have already said goodbye to 2026"; },
+      cta: "Write my paper",
+      sheetTitle: "What are you leaving in 2026?",
+      hint: "Don't write people's names. Your paper appears on the stream without your name.",
+      burn: "Burn it",
+      nopay: "No payment in the preview",
+      burned: "Burned",
+      line: function (n) { return "You're number <b>" + n + "</b> to say goodbye to 2026."; },
+      wish: "And what do you want in 2027? We'll keep your wish on gold paper until next New Year's Eve.",
+      share: "Share to story",
+      again: "Write another",
+      empty: "Write at least one word",
+      foot: "Preview: numbers are examples, payment isn't connected yet.",
+      storyHint: "This is how your story will look.",
+      back: "Back",
+      storyTitle: "Goodbye, 2026",
+      storyNum: "My number",
+      ph: ["The dollar rate", "Traffic on Baghramyan", "Monday mornings", "My unfinished diet"],
+      sound: "Sound", close: "Close", locale: "en-US"
+    },
+    ru: {
+      bye: "Прощай,",
+      sub: "Напишите то, что хотите оставить в старом году. Мы сожжём это в прямом эфире, вместе со всеми.",
+      counter: function (n) { return "<b>" + n + "</b> уже простились с 2026"; },
+      cta: "Написать записку",
+      sheetTitle: "Что вы оставляете в 2026?",
+      hint: "Не пишите имена людей. Записка появится в эфире без вашего имени.",
+      burn: "Сжечь",
+      nopay: "В предпросмотре оплаты нет",
+      burned: "Сгорело",
+      line: function (n) { return "Ваш номер <b>" + n + "</b> среди тех, кто простился с 2026."; },
+      wish: "А что вы хотите в 2027? Ваше желание на золотой бумаге мы сохраним до следующего Нового года.",
+      share: "Поделиться в сторис",
+      again: "Написать ещё",
+      empty: "Напишите хотя бы одно слово",
+      foot: "Предпросмотр: числа примерные, оплата ещё не подключена.",
+      storyHint: "Так будет выглядеть ваша сторис.",
+      back: "Назад",
+      storyTitle: "Прощай, 2026",
+      storyNum: "Мой номер",
+      ph: ["Курс доллара", "Пробки на Баграмяна", "Утро понедельника", "Недоделанная диета"],
+      sound: "Звук", close: "Закрыть", locale: "ru-RU"
+    }
+  };
+  var lang = "hy";
+  var count = 12483;
+  var myNumber = null;
+
+  // Armenian and Russian group thousands with a space, English with a comma.
+  function fmt(n) {
+    var sep = lang === "en" ? "," : " ";
+    return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, sep);
+  }
+  function applyLang() {
+    var t = T[lang];
+    document.documentElement.lang = lang;
+    document.querySelectorAll("[data-i18n]").forEach(function (el) {
+      var v = t[el.getAttribute("data-i18n")];
+      if (typeof v === "string") el.textContent = v;
+    });
+    document.querySelectorAll(".lang button").forEach(function (b) {
+      b.setAttribute("aria-pressed", String(b.getAttribute("data-lang") === lang));
+    });
+    document.getElementById("sound").setAttribute("aria-label", t.sound);
+    document.getElementById("closeSheet").setAttribute("aria-label", t.close);
+    renderCounter();
+    if (myNumber !== null) document.getElementById("resultLine").innerHTML = t.line(fmt(myNumber));
+    setPlaceholder();
+  }
+  function renderCounter() {
+    document.getElementById("counterText").innerHTML = T[lang].counter(fmt(count));
+  }
+  document.querySelectorAll(".lang button").forEach(function (b) {
+    b.addEventListener("click", function () { lang = b.getAttribute("data-lang"); applyLang(); });
+  });
+
+  var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ================= stars ================= */
+  function drawStars() {
+    var c = document.getElementById("stars");
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var w = innerWidth, h = innerHeight;
+    c.width = w * dpr; c.height = h * dpr;
+    var ctx = c.getContext("2d");
+    ctx.scale(dpr, dpr);
+    var seed = 7;
+    function rnd() { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }
+    var n = Math.round(w * h / 2600);
+    for (var i = 0; i < n; i++) {
+      var x = rnd() * w, y = Math.pow(rnd(), 1.6) * h * 0.72;
+      var r = rnd() < 0.08 ? 1.3 : 0.7;
+      ctx.globalAlpha = 0.25 + rnd() * 0.6 * (1 - y / (h * 0.8));
+      ctx.fillStyle = "#e9edf8";
+      ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+    }
+  }
+
+  /* ================= layout of the fire ================= */
+  var L = {};
+  function layout() {
+    var vw = innerWidth, vh = innerHeight;
+    var svgH = Math.max(vh * 0.38, vw * 0.375);
+    var s = Math.max(vw / 1600, svgH / 600);
+    var offY = vh - svgH + (svgH - 600 * s);
+    var wide = vw >= 900;
+    L.vw = vw; L.vh = vh;
+    L.fireX = wide ? vw * 0.66 : vw * 0.5;
+    L.baseY = offY + 548 * s - 6;
+    L.fw = Math.min(vw * 0.7, wide ? 440 : 320);
+    L.fh = Math.min(L.fw * 1.6, vh * (wide ? 0.48 : 0.4));
+    L.unit = vh / 10;
+    var glow = document.getElementById("glow");
+    glow.style.left = L.fireX + "px"; glow.style.top = (L.baseY - L.fh * 0.12) + "px";
+    glow.style.width = (L.fw * 3.2) + "px"; glow.style.height = (L.fw * 2.0) + "px";
+    var logs = document.getElementById("logs");
+    logs.style.left = L.fireX + "px"; logs.style.top = L.baseY + "px";
+    logs.style.width = (L.fw * 0.78) + "px";
+  }
+  function toWorld(px, py) { return { x: (px - L.vw / 2) / L.unit, y: (L.vh / 2 - py) / L.unit }; }
+
+  /* ================= WebGL ================= */
+  var hasGL = !!window.THREE;
+  var renderer, scene, camera, fire, fireBack, embers, paperMesh = null;
+  var U = { time: { value: 0 }, intensity: { value: 1 }, burst: { value: 0 } };
+
+  var NOISE = [
+    "float hash(vec2 p){ p=fract(p*vec2(123.34,456.21)); p+=dot(p,p+45.32); return fract(p.x*p.y); }",
+    "float noise(vec2 p){ vec2 i=floor(p); vec2 f=fract(p); vec2 u=f*f*(3.0-2.0*f);",
+    "  return mix(mix(hash(i),hash(i+vec2(1.0,0.0)),u.x), mix(hash(i+vec2(0.0,1.0)),hash(i+vec2(1.0,1.0)),u.x), u.y); }",
+    "float fbm(vec2 p){ float v=0.0; float a=0.5; for(int i=0;i<5;i++){ v+=a*noise(p); p=p*2.03+vec2(1.7,9.2); a*=0.5; } return v; }"
+  ].join("\n");
+
+  var VERT = "varying vec2 vUv; void main(){ vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }";
+
+  var FIRE_FRAG = [
+    "precision highp float;",
+    "uniform float uTime; uniform float uIntensity; uniform float uSeed; uniform float uGain; uniform vec3 uTint;",
+    "varying vec2 vUv;",
+    NOISE,
+    "void main(){",
+    "  vec2 uv=vUv; float t=uTime*0.9+uSeed*10.0;",
+    "  float x=(uv.x-0.5)*2.0;",
+    "  float y=uv.y/(0.72+0.28*uIntensity);",
+    "  vec2 q=vec2(x*1.6, y*2.4 - t*1.7);",
+    "  float n=fbm(q + vec2(fbm(q*1.4+vec2(0.0,-t*0.9))*0.9, 0.0));",
+    "  float tng=fbm(vec2(x*4.5+uSeed, y*1.6 - t*2.6));",
+    "  float sway=(n-0.5)*0.55*y + sin(t*1.1+y*2.5)*0.05*y;",
+    "  float width=mix(0.5,0.0,pow(clamp(y,0.0,1.0),0.6));",
+    "  float d=abs(x+sway);",
+    "  float body=1.0-smoothstep(width*0.15, width+0.05, d);",
+    "  float lift=y - (tng-0.5)*0.6*y - (n-0.5)*0.35;",
+    "  float h=1.0-smoothstep(0.05,0.85,lift);",
+    "  float base=smoothstep(0.0,0.06,uv.y);",
+    "  float f=body*h*base;",
+    "  f*=smoothstep(0.28,0.78, n*0.75+tng*0.45+(1.0-y)*0.22);",
+    "  f=clamp(f*1.15*uGain,0.0,1.0);",
+    "  vec3 c=mix(vec3(0.25,0.02,0.0), vec3(0.85,0.18,0.02), smoothstep(0.02,0.3,f));",
+    "  c=mix(c, vec3(1.0,0.46,0.07), smoothstep(0.3,0.6,f));",
+    "  c=mix(c, vec3(1.0,0.76,0.32), smoothstep(0.6,0.86,f));",
+    "  c=mix(c, vec3(1.0,0.94,0.8), smoothstep(0.94,1.0,f));",
+    "  c*=uTint;",
+    "  float a=smoothstep(0.02,0.55,f);",
+    "  gl_FragColor=vec4(c*a,a);",
+    "}"
+  ].join("\n");
+
+  var EMBER_VERT = [
+    "attribute float aSeed; attribute float aSpeed; attribute float aOffset;",
+    "uniform float uTime; uniform float uHeight; uniform float uWidth; uniform float uBurst; uniform float uPixel;",
+    "varying float vLife; varying float vSeed;",
+    "void main(){",
+    "  float life=fract(uTime*aSpeed+aOffset);",
+    "  float y=life*uHeight*(1.0+uBurst*0.7);",
+    "  float x=position.x*uWidth*(1.0-life*0.3) + sin(uTime*2.0+aSeed*20.0)*0.22*life + sin(uTime*0.7+aSeed*7.0)*0.45*life*life;",
+    "  gl_Position=projectionMatrix*modelViewMatrix*vec4(x,y,0.0,1.0);",
+    "  gl_PointSize=uPixel*(1.6+aSeed*2.6)*(1.0-life*0.6)*(1.0+uBurst*0.5);",
+    "  vLife=life; vSeed=aSeed;",
+    "}"
+  ].join("\n");
+  var EMBER_FRAG = [
+    "precision highp float;",
+    "uniform float uBurst; varying float vLife; varying float vSeed;",
+    "void main(){",
+    "  vec2 c=gl_PointCoord-0.5; float d=length(c); float a=smoothstep(0.5,0.0,d);",
+    "  float flick=0.6+0.4*sin(vLife*40.0+vSeed*50.0);",
+    "  float fade=smoothstep(0.0,0.08,vLife)*(1.0-smoothstep(0.5,1.0,vLife));",
+    "  vec3 col=mix(vec3(1.0,0.8,0.42),vec3(1.0,0.33,0.07),vLife);",
+    "  float alpha=a*fade*flick*(0.65+uBurst*0.8);",
+    "  gl_FragColor=vec4(col*alpha,alpha);",
+    "}"
+  ].join("\n");
+
+  var PAPER_FRAG = [
+    "precision highp float;",
+    "uniform sampler2D uMap; uniform float uProgress; uniform float uOpacity;",
+    "varying vec2 vUv;",
+    NOISE,
+    "void main(){",
+    "  vec4 tex=texture2D(uMap,vUv);",
+    "  float n=fbm(vUv*vec2(3.0,4.0)+3.1);",
+    "  float burn=n*0.55+vUv.y*0.45;",
+    "  float edge=uProgress*1.15-0.05;",
+    "  if(burn<edge) discard;",
+    "  float glow=1.0-smoothstep(edge,edge+0.035,burn);",
+    "  float charr=1.0-smoothstep(edge,edge+0.15,burn);",
+    "  vec3 c=tex.rgb*(1.0-charr*0.9);",
+    "  vec3 g=mix(vec3(1.0,0.32,0.04),vec3(1.0,0.86,0.45),glow)*glow;",
+    "  c+=g*1.7*step(0.001,uProgress);",
+    "  gl_FragColor=vec4(c,tex.a*uOpacity);",
+    "}"
+  ].join("\n");
+
+  function makeFire(seed, gain, tint) {
+    var m = new THREE.ShaderMaterial({
+      vertexShader: VERT, fragmentShader: FIRE_FRAG,
+      uniforms: { uTime: U.time, uIntensity: U.intensity, uSeed: { value: seed }, uGain: { value: gain }, uTint: { value: new THREE.Vector3(tint[0], tint[1], tint[2]) } },
+      transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending
+    });
+    return new THREE.Mesh(new THREE.PlaneGeometry(1, 1), m);
+  }
+
+  function initGL() {
+    var canvas = document.getElementById("gl");
+    try {
+      renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: false, premultipliedAlpha: true });
+    } catch (e) { hasGL = false; return; }
+    renderer.setClearColor(0x000000, 0);
+    scene = new THREE.Scene();
+    camera = new THREE.OrthographicCamera(-1, 1, 1, -1, -10, 10);
+    fireBack = makeFire(3.7, 0.75, [1.0, 0.55, 0.45]);
+    fire = makeFire(0.0, 1.0, [1, 1, 1]);
+    scene.add(fireBack); scene.add(fire);
+
+    var N = innerWidth < 600 ? 90 : 160;
+    var g = new THREE.BufferGeometry();
+    var pos = new Float32Array(N * 3), seed = new Float32Array(N), speed = new Float32Array(N), off = new Float32Array(N);
+    for (var i = 0; i < N; i++) {
+      pos[i * 3] = (Math.random() - 0.5); pos[i * 3 + 1] = 0; pos[i * 3 + 2] = 0;
+      seed[i] = Math.random(); speed[i] = 0.12 + Math.random() * 0.22; off[i] = Math.random();
+    }
+    g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+    g.setAttribute("aSeed", new THREE.BufferAttribute(seed, 1));
+    g.setAttribute("aSpeed", new THREE.BufferAttribute(speed, 1));
+    g.setAttribute("aOffset", new THREE.BufferAttribute(off, 1));
+    embers = new THREE.Points(g, new THREE.ShaderMaterial({
+      vertexShader: EMBER_VERT, fragmentShader: EMBER_FRAG,
+      uniforms: { uTime: U.time, uHeight: { value: 4 }, uWidth: { value: 1 }, uBurst: U.burst, uPixel: { value: 1 } },
+      transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending
+    }));
+    embers.frustumCulled = false;
+    scene.add(embers);
+    sizeGL();
+  }
+
+  var pixelRatio = Math.min(window.devicePixelRatio || 1, 1.75);
+  function sizeGL() {
+    if (!hasGL) return;
+    renderer.setPixelRatio(pixelRatio);
+    renderer.setSize(innerWidth, innerHeight, false);
+    var vw = 10 * innerWidth / innerHeight;
+    camera.left = -vw / 2; camera.right = vw / 2; camera.top = 5; camera.bottom = -5;
+    camera.updateProjectionMatrix();
+    var base = toWorld(L.fireX, L.baseY);
+    var fw = L.fw / L.unit, fh = L.fh / L.unit;
+    fire.scale.set(fw, fh, 1); fire.position.set(base.x, base.y + fh / 2 - fh * 0.04, 0);
+    fireBack.scale.set(fw * 1.25, fh * 1.12, 1); fireBack.position.set(base.x + fw * 0.03, base.y + fh * 0.56 - fh * 0.06, 0);
+    embers.position.set(base.x, base.y + fh * 0.12, 0);
+    embers.material.uniforms.uHeight.value = fh * 1.7;
+    embers.material.uniforms.uWidth.value = fw * 0.32;
+    embers.material.uniforms.uPixel.value = pixelRatio * Math.max(1, L.unit / 60);
+  }
+
+  /* ================= loop ================= */
+  var clock = 0, last = performance.now(), slowFrames = 0, frames = 0;
+  function flickerAt(t) {
+    return 0.82 + 0.1 * Math.sin(t * 7.3) + 0.06 * Math.sin(t * 13.1 + 1.2) + 0.04 * Math.sin(t * 23.7 + 0.4);
+  }
+  function frame(now) {
+    var dt = Math.min(0.05, (now - last) / 1000); last = now;
+    clock += dt * (reduceMotion ? 0.45 : 1);
+    U.time.value = clock;
+    var fl = flickerAt(clock) * (0.85 + 0.15 * U.intensity.value);
+    document.documentElement.style.setProperty("--flick", fl.toFixed(3));
+    if (hasGL) {
+      renderer.render(scene, camera);
+      frames++;
+      if (frames < 120 && dt > 0.034) slowFrames++;
+      if (frames === 120 && slowFrames > 60 && pixelRatio > 1) { pixelRatio = 1; sizeGL(); }
+    }
+    requestAnimationFrame(frame);
+  }
+
+  /* ================= counter ================= */
+  function tick() {
+    count += 1 + Math.floor(Math.random() * 3);
+    renderCounter();
+    setTimeout(tick, 2600 + Math.random() * 3800);
+  }
+
+  /* ================= sheet ================= */
+  var sheet = document.getElementById("sheet");
+  var note = document.getElementById("note");
+  var paperEl = document.getElementById("paper");
+  var errorEl = document.getElementById("error");
+  var phIndex = 0;
+  function setPlaceholder() { note.placeholder = T[lang].ph[phIndex % T[lang].ph.length]; }
+  setInterval(function () { phIndex++; if (!note.value) setPlaceholder(); }, 2800);
+
+  function openSheet() {
+    document.getElementById("result").hidden = true;
+    sheet.hidden = false;
+    paperEl.style.visibility = "visible";
+    document.getElementById("sheetInner").style.opacity = 1;
+    errorEl.textContent = "";
+    if (!reduceMotion && window.gsap) {
+      gsap.fromTo("#sheetInner", { y: 60, opacity: 0 }, { y: 0, opacity: 1, duration: 0.45, ease: "power3.out" });
+      gsap.fromTo(sheet, { backgroundColor: "rgba(4,6,14,0)" }, { backgroundColor: "rgba(4,6,14,0.55)", duration: 0.4 });
+    }
+    setTimeout(function () { note.focus({ preventScroll: true }); }, 60);
+  }
+  function closeSheet() { sheet.hidden = true; }
+  document.getElementById("openSheet").addEventListener("click", openSheet);
+  document.getElementById("closeSheet").addEventListener("click", closeSheet);
+  sheet.addEventListener("click", function (e) { if (e.target === sheet) closeSheet(); });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") {
+      if (!document.getElementById("story").hidden) document.getElementById("story").hidden = true;
+      else if (!sheet.hidden) closeSheet();
+    }
+  });
+  note.addEventListener("input", function () {
+    document.getElementById("count").textContent = note.value.length + "/120";
+    if (note.value.trim()) errorEl.textContent = "";
+  });
+
+  /* ================= paper texture ================= */
+  function wrapLines(ctx, text, maxW) {
+    var words = text.replace(/\s+/g, " ").trim().split(" ");
+    var lines = [], line = "";
+    words.forEach(function (w) {
+      var test = line ? line + " " + w : w;
+      if (ctx.measureText(test).width > maxW && line) { lines.push(line); line = w; }
+      else line = test;
+    });
+    if (line) lines.push(line);
+    return lines;
+  }
+  function paperTexture(text, w, h) {
+    var c = document.createElement("canvas");
+    var S = 2;
+    c.width = Math.round(w * S); c.height = Math.round(h * S);
+    var ctx = c.getContext("2d");
+    ctx.scale(S, S);
+    ctx.fillStyle = "#efe4cf"; ctx.fillRect(0, 0, w, h);
+    var g = ctx.createRadialGradient(w * 0.3, h * 0.2, 0, w * 0.3, h * 0.2, w * 0.9);
+    g.addColorStop(0, "rgba(255,255,255,.35)"); g.addColorStop(1, "rgba(255,255,255,0)");
+    ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
+    for (var i = 0; i < 900; i++) {
+      ctx.fillStyle = "rgba(120,90,60," + (Math.random() * 0.06) + ")";
+      ctx.fillRect(Math.random() * w, Math.random() * h, 1, Math.random() * 3);
+    }
+    ctx.fillStyle = "#9b8466";
+    ctx.font = "500 13px " + getComputedStyle(document.documentElement).getPropertyValue("--serif");
+    ctx.textAlign = "right"; ctx.fillText("2026", w - 16, 24);
+    ctx.textAlign = "left";
+    ctx.fillStyle = "#2a1f16";
+    ctx.font = "600 24px " + getComputedStyle(document.documentElement).getPropertyValue("--serif");
+    var lines = wrapLines(ctx, text, w - 44);
+    lines.forEach(function (ln, idx) { ctx.fillText(ln, 22, 22 + 24 + idx * 32.4); });
+    var tex = new THREE.CanvasTexture(c);
+    tex.minFilter = THREE.LinearFilter;
+    return tex;
+  }
+
+  /* ================= the burn ================= */
+  var burning = false;
+  function burn() {
+    if (burning) return;
+    var text = note.value.trim();
+    if (!text) {
+      errorEl.textContent = T[lang].empty;
+      paperEl.classList.remove("shake"); void paperEl.offsetWidth; paperEl.classList.add("shake");
+      note.focus();
+      return;
+    }
+    burning = true;
+    note.blur();
+    var rect = paperEl.getBoundingClientRect();
+    var done = function () {
+      burning = false;
+      count += 1; myNumber = count; renderCounter();
+      showResult();
+    };
+
+    if (!hasGL || reduceMotion || !window.gsap) {
+      sheet.hidden = true;
+      U.burst.value = 1; U.intensity.value = 1.5;
+      setTimeout(function () { U.burst.value = 0; U.intensity.value = 1; done(); }, reduceMotion ? 900 : 1600);
+      return;
+    }
+
+    var tex = paperTexture(text, rect.width, rect.height);
+    var mat = new THREE.ShaderMaterial({
+      vertexShader: VERT, fragmentShader: PAPER_FRAG,
+      uniforms: { uMap: { value: tex }, uProgress: { value: 0 }, uOpacity: { value: 1 } },
+      transparent: true, depthTest: false, depthWrite: false
+    });
+    paperMesh = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), mat);
+    paperMesh.renderOrder = 5;
+    var c = toWorld(rect.left + rect.width / 2, rect.top + rect.height / 2);
+    var pw = rect.width / L.unit, ph = rect.height / L.unit;
+    paperMesh.scale.set(pw, ph, 1);
+    paperMesh.position.set(c.x, c.y, 1);
+    paperMesh.rotation.z = -1 * Math.PI / 180;
+    scene.add(paperMesh);
+    paperEl.style.visibility = "hidden";
+
+    var base = toWorld(L.fireX, L.baseY);
+    var fh = L.fh / L.unit, fw = L.fw / L.unit;
+    var targetW = Math.min(fw * 0.62, pw * 0.6);
+    var k = targetW / pw;
+
+    var tl = gsap.timeline({ onComplete: function () {
+      scene.remove(paperMesh); paperMesh.geometry.dispose(); mat.dispose(); tex.dispose(); paperMesh = null;
+      done();
+    } });
+    tl.to("#sheetInner", { opacity: 0, y: 30, duration: 0.35, ease: "power2.in" }, 0)
+      .to(sheet, { backgroundColor: "rgba(4,6,14,0)", duration: 0.5, onComplete: function () { sheet.hidden = true; } }, 0.1)
+      .to(paperMesh.position, { y: c.y + 0.25, duration: 0.35, ease: "power2.out" }, 0)
+      .to(paperMesh.rotation, { z: 0.05, duration: 0.35, ease: "power2.out" }, 0)
+      .to(paperMesh.position, { x: base.x, y: base.y + fh * 0.62, duration: 1.15, ease: "power2.inOut" }, 0.35)
+      .to(paperMesh.scale, { x: pw * k, y: ph * k, duration: 1.15, ease: "power2.inOut" }, 0.35)
+      .to(paperMesh.rotation, { z: -0.22, duration: 1.15, ease: "power1.inOut" }, 0.35)
+      .to(paperMesh.position, { y: base.y + fh * 0.3, duration: 2.6, ease: "power1.in" }, 1.5)
+      .to(paperMesh.rotation, { z: 0.12, duration: 2.6, ease: "sine.inOut" }, 1.5)
+      .to(mat.uniforms.uProgress, { value: 1, duration: 2.5, ease: "power1.in" }, 1.6)
+      .to(U.intensity, { value: 1.55, duration: 0.8, ease: "power2.out" }, 1.7)
+      .to(U.burst, { value: 1, duration: 0.6, ease: "power2.out" }, 2.4)
+      .to(U.intensity, { value: 1, duration: 1.6, ease: "power2.inOut" }, 3.6)
+      .to(U.burst, { value: 0, duration: 1.8, ease: "power2.inOut" }, 3.8);
+  }
+  document.getElementById("burn").addEventListener("click", burn);
+
+  function showResult() {
+    var t = T[lang];
+    document.getElementById("hero").hidden = true;
+    var r = document.getElementById("result");
+    document.getElementById("resultLine").innerHTML = t.line(fmt(myNumber));
+    r.hidden = false;
+    if (!reduceMotion && window.gsap) {
+      gsap.fromTo("#result > *", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.6, stagger: 0.12, ease: "power2.out" });
+    }
+  }
+  document.getElementById("againBtn").addEventListener("click", function () {
+    note.value = ""; document.getElementById("count").textContent = "0/120";
+    document.getElementById("result").hidden = true;
+    document.getElementById("hero").hidden = false;
+    openSheet();
+  });
+
+  /* ================= story card ================= */
+  function storyCard() {
+    var W = 1080, H = 1920;
+    var c = document.createElement("canvas"); c.width = W; c.height = H;
+    var ctx = c.getContext("2d");
+    var g = ctx.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, "#060a16"); g.addColorStop(0.46, "#0e1630"); g.addColorStop(0.8, "#2b1d2c"); g.addColorStop(1, "#3a2027");
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    var seed = 3; function rnd() { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }
+    for (var i = 0; i < 260; i++) {
+      ctx.globalAlpha = 0.2 + rnd() * 0.6; ctx.fillStyle = "#e9edf8";
+      ctx.beginPath(); ctx.arc(rnd() * W, Math.pow(rnd(), 1.5) * H * 0.6, rnd() < 0.1 ? 2.4 : 1.3, 0, 6.3); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    // mountains
+    var sc = 1.4;
+    ctx.save(); ctx.translate(W * 0.7 - 1010 * sc, H - 170 - 548 * sc); ctx.scale(sc, sc);
+    var mg = ctx.createLinearGradient(0, 120, 0, 600); mg.addColorStop(0, "#1a2238"); mg.addColorStop(1, "#0c1120");
+    ctx.fillStyle = mg; ctx.fill(new Path2D(document.getElementById("ararat").getAttribute("d")));
+    ctx.globalAlpha = 0.55; ctx.fillStyle = "#4d5774";
+    ctx.fill(new Path2D(document.getElementById("snow1").getAttribute("d")));
+    ctx.fill(new Path2D(document.getElementById("snow2").getAttribute("d")));
+    ctx.globalAlpha = 1;
+    ctx.restore();
+    ctx.fillStyle = "#05070e"; ctx.fillRect(0, H - 170, W, 170);
+    // fire captured from the live canvas
+    if (hasGL) {
+      renderer.render(scene, camera);
+      var src = renderer.domElement, pr = src.width / innerWidth;
+      var sx = (L.fireX - L.fw * 0.75) * pr, sy = (L.baseY - L.fh * 1.25) * pr, sw = L.fw * 1.5 * pr, sh = L.fh * 1.32 * pr;
+      var dw = 760, dh = dw * sh / sw;
+      ctx.globalCompositeOperation = "lighter";
+      try { ctx.drawImage(src, sx, sy, sw, sh, (W - dw) / 2, H - 150 - dh, dw, dh); } catch (e) {}
+      ctx.globalCompositeOperation = "source-over";
+    }
+    var serif = getComputedStyle(document.documentElement).getPropertyValue("--serif");
+    var sans = getComputedStyle(document.documentElement).getPropertyValue("--sans");
+    var t = T[lang];
+    ctx.fillStyle = "#f3ece0"; ctx.textAlign = "left";
+    ctx.font = "600 92px " + serif; ctx.fillText(t.storyTitle.split(",")[0] + ",", 90, 300);
+    ctx.font = "600 300px " + serif; ctx.fillText("2026", 74, 560);
+    ctx.fillStyle = "#a9b0c3"; ctx.font = "500 42px " + sans; ctx.fillText(t.storyNum, 92, 690);
+    ctx.fillStyle = "#ffc46b"; ctx.font = "700 120px " + serif; ctx.fillText("№ " + fmt(myNumber || count), 86, 820);
+    ctx.fillStyle = "rgba(243,236,224,.85)"; ctx.font = "600 40px " + serif; ctx.textAlign = "center";
+    ctx.fillText("mnasbarov.am", W / 2, H - 70);
+    return c.toDataURL("image/png");
+  }
+  document.getElementById("shareBtn").addEventListener("click", function () {
+    document.getElementById("storyImg").src = storyCard();
+    document.getElementById("storyImg").alt = T[lang].storyTitle;
+    document.getElementById("story").hidden = false;
+  });
+  document.getElementById("storyClose").addEventListener("click", function () { document.getElementById("story").hidden = true; });
+
+  /* ================= sound ================= */
+  var audio = null;
+  function startSound() {
+    var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null;
+    var ac = new AC();
+    var len = ac.sampleRate * 2, buf = ac.createBuffer(1, len, ac.sampleRate), d = buf.getChannelData(0), last = 0;
+    for (var i = 0; i < len; i++) { var w = Math.random() * 2 - 1; last = (last + 0.02 * w) / 1.02; d[i] = last * 3.2; }
+    var src = ac.createBufferSource(); src.buffer = buf; src.loop = true;
+    var lp = ac.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 700;
+    var gain = ac.createGain(); gain.gain.value = 0.0;
+    src.connect(lp); lp.connect(gain); gain.connect(ac.destination); src.start();
+    gain.gain.linearRampToValueAtTime(0.5, ac.currentTime + 1.2);
+    var cbuf = ac.createBuffer(1, Math.floor(ac.sampleRate * 0.03), ac.sampleRate), cd = cbuf.getChannelData(0);
+    for (var j = 0; j < cd.length; j++) cd[j] = (Math.random() * 2 - 1) * Math.pow(1 - j / cd.length, 6);
+    var alive = true;
+    (function crackle() {
+      if (!alive) return;
+      var s = ac.createBufferSource(); s.buffer = cbuf;
+      var hp = ac.createBiquadFilter(); hp.type = "highpass"; hp.frequency.value = 1200 + Math.random() * 2500;
+      var g2 = ac.createGain(); g2.gain.value = (0.08 + Math.random() * 0.25) * (1 + U.burst.value);
+      s.connect(hp); hp.connect(g2); g2.connect(ac.destination); s.start();
+      setTimeout(crackle, 40 + Math.random() * (U.burst.value > 0.3 ? 120 : 420));
+    })();
+    return { ac: ac, gain: gain, stop: function () { alive = false; gain.gain.linearRampToValueAtTime(0, ac.currentTime + 0.4); setTimeout(function () { ac.close(); }, 500); } };
+  }
+  document.getElementById("sound").addEventListener("click", function () {
+    var b = this, on = b.getAttribute("aria-pressed") !== "true";
+    b.setAttribute("aria-pressed", String(on));
+    document.getElementById("waves").setAttribute("opacity", on ? "1" : ".35");
+    if (on) { audio = startSound(); } else if (audio) { audio.stop(); audio = null; }
+  });
+
+  /* ================= boot ================= */
+  function boot() {
+    layout(); drawStars();
+    if (hasGL) initGL();
+    applyLang();
+    requestAnimationFrame(frame);
+    setTimeout(tick, 3000);
+  }
+  var resizeT;
+  window.addEventListener("resize", function () {
+    clearTimeout(resizeT);
+    resizeT = setTimeout(function () { layout(); drawStars(); sizeGL(); }, 120);
+  });
+  boot();
+})();
+</script>
