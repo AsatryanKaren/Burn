@@ -1,13 +1,13 @@
 // CORS origin policy. Pure module.
 //
-//   ALLOWED_ORIGINS  comma-separated origins; entries may use one leading
-//                    wildcard label, e.g. "https://*.vercel.app".
-//   ALLOW_LOCALHOST  "1" also allows http://localhost:*, http://127.0.0.1:*, http://[::1]:*
-//   SITE_URL         its origin is always allowed (unless it is a .invalid placeholder).
+//   ALLOWED_ORIGINS        comma-separated origins; entries may use one leading
+//                          wildcard label, e.g. "https://*.example.am".
+//   SITE_URL               its origin is always allowed (unless it is a .invalid placeholder).
+//   ALLOW_LOCALHOST        "1" also allows http://localhost:*, http://127.0.0.1:*, http://[::1]:*
+//   ALLOW_VERCEL_PREVIEWS  "1" also allows any https://*.vercel.app origin (preview deployments).
 //
-// When ALLOWED_ORIGINS is empty we do NOT allow everything: we fall back to
-// any https://*.vercel.app origin plus localhost, which covers Vercel preview
-// deployments before the real domain exists.
+// An empty ALLOWED_ORIGINS means SITE_URL's origin only — never "*", and no
+// *.vercel.app or localhost unless their switch is set.
 
 export interface CorsConfig {
   /** Exact origins ("https://a.b") or wildcard patterns ("https://*.vercel.app"). */
@@ -15,7 +15,7 @@ export interface CorsConfig {
   allowLocalhost: boolean;
 }
 
-export const FALLBACK_ORIGINS = ["https://*.vercel.app"];
+export const VERCEL_PREVIEW_ORIGIN = "https://*.vercel.app";
 
 const LOCALHOST_RE = /^http:\/\/(?:localhost|127\.0\.0\.1|\[::1\])(?::\d{1,5})?$/;
 
@@ -34,28 +34,31 @@ export function originOf(url: string | undefined | null): string | null {
   }
 }
 
+function flag(v: string | undefined): boolean {
+  const s = (v ?? "").trim().toLowerCase();
+  return s === "1" || s === "true";
+}
+
 export function parseCorsConfig(env: {
   ALLOWED_ORIGINS?: string;
   ALLOW_LOCALHOST?: string;
+  ALLOW_VERCEL_PREVIEWS?: string;
   SITE_URL?: string;
 }): CorsConfig {
-  const listed = (env.ALLOWED_ORIGINS ?? "")
+  const origins = (env.ALLOWED_ORIGINS ?? "")
     .split(",")
     .map((s) => s.trim().replace(/\/+$/, "").toLowerCase())
     .filter((s) => s.length > 0);
-
-  const empty = listed.length === 0;
-  const origins = empty ? [...FALLBACK_ORIGINS] : listed;
 
   const site = originOf(env.SITE_URL);
   if (site && !new URL(site).hostname.endsWith(".invalid") && !origins.includes(site)) {
     origins.push(site);
   }
+  if (flag(env.ALLOW_VERCEL_PREVIEWS) && !origins.includes(VERCEL_PREVIEW_ORIGIN)) {
+    origins.push(VERCEL_PREVIEW_ORIGIN);
+  }
 
-  return {
-    origins,
-    allowLocalhost: empty || env.ALLOW_LOCALHOST === "1" || env.ALLOW_LOCALHOST === "true",
-  };
+  return { origins, allowLocalhost: flag(env.ALLOW_LOCALHOST) };
 }
 
 function matchesPattern(origin: string, pattern: string): boolean {

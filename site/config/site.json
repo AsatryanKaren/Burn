@@ -79,5 +79,18 @@
     "en",
     "ru"
   ],
-  "default_language": "hy"
+  "default_language": "hy",
+  "light_products": [
+    {
+      "code": "light",
+      "price": 1500
+    },
+    {
+      "code": "light_big",
+      "price": 4900
+    }
+  ],
+  "map": {
+    "total_plots": 7048
+  }
 }

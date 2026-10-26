@@ -42,7 +42,7 @@
     </a>
     <nav class="nav" aria-label="{{ t('nav.menu') }}">
       <a href="{{ url('home') }}#how">{{ t('nav.how') }}</a>
-      <a href="{{ url('home') }}#options">{{ t('nav.options') }}</a>
+      <a href="{{ url('lights') }}" {% if page == 'lights' %}aria-current="page"{% endif %}>{{ t('nav.lights') }}</a>
       <a href="{{ url('gifts') }}" {% if page == 'gifts' %}aria-current="page"{% endif %}>{{ t('nav.gifts') }}</a>
       <a href="{{ url('live') }}" {% if page == 'live' %}aria-current="page"{% endif %}>{{ t('nav.live') }}</a>
       <a href="{{ url('faq') }}" {% if page == 'faq' %}aria-current="page"{% endif %}>{{ t('nav.faq') }}</a>
@@ -68,6 +68,7 @@
   <nav class="menu-inner" aria-label="{{ t('nav.menu') }}">
     <a href="{{ url('home') }}#how">{{ t('nav.how') }}</a>
     <a href="{{ url('home') }}#options">{{ t('nav.options') }}</a>
+    <a href="{{ url('lights') }}">{{ t('lights.title') }}</a>
     <a href="{{ url('gifts') }}">{{ t('nav.gifts') }}</a>
     <a href="{{ url('live') }}">{{ t('nav.live') }}</a>
     <a href="{{ url('faq') }}">{{ t('nav.faq') }}</a>
@@ -95,6 +96,7 @@
     <nav class="footer-col" aria-label="{{ t('footer.pages') }}">
       <h2>{{ t('footer.pages') }}</h2>
       <a href="{{ url('burn') }}">{{ t('nav.cta') }}</a>
+      <a href="{{ url('lights') }}">{{ t('lights.title') }}</a>
       <a href="{{ url('live') }}">{{ t('nav.live') }}</a>
       <a href="{{ url('gifts') }}">{{ t('nav.gifts') }}</a>
       <a href="{{ url('faq') }}">{{ t('nav.faq') }}</a>

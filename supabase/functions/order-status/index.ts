@@ -4,9 +4,10 @@ import { getConfig } from "../_shared/env.ts";
 import { browserEndpoint, jsonResponse } from "../_shared/http.ts";
 import { ApiError, ErrorCode } from "../_shared/errors.ts";
 import { normalizeOrderCode } from "../_shared/codes.ts";
-import { findOrderByCode, getGiftShare } from "../_shared/db.ts";
+import { findOrderByCode, getGiftShare, getMapCell } from "../_shared/db.ts";
 import { enforceRateLimit, requestIpHash } from "../_shared/ratelimit.ts";
 import { giftShareAmd } from "../_shared/money.ts";
+import { isLightProduct } from "../_shared/validation.ts";
 
 const cfg = getConfig();
 
@@ -25,6 +26,20 @@ Deno.serve(browserEndpoint(["GET"], cfg.cors, async (req) => {
   // share this order will contribute (same floor(20%) rule).
   const ledger = order.status === "paid" ? await getGiftShare(order.id) : null;
 
+  // Lights: the plot and the design (the message is `text`).
+  const light = isLightProduct(order.product) && order.cell_id !== null;
+  const cell = light ? await getMapCell(order.cell_id!) : null;
+  const lightFields = light
+    ? {
+      cell_id: order.cell_id,
+      light_icon: order.light_icon,
+      light_color: order.light_color,
+      light_signature: order.light_signature,
+      province: cell?.province ?? null,
+      town_index: cell?.town_index ?? null,
+    }
+    : {};
+
   return jsonResponse({
     code: order.code,
     status: order.status,
@@ -38,5 +53,6 @@ Deno.serve(browserEndpoint(["GET"], cfg.cors, async (req) => {
     created_at: order.created_at,
     paid_at: order.paid_at,
     gift_share_amd: ledger ?? giftShareAmd(order.amount_amd),
+    ...lightFields,
   });
 }));

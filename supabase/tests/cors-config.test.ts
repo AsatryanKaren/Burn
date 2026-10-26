@@ -3,17 +3,31 @@ import assert from "node:assert/strict";
 import { corsHeaders, isOriginAllowed, parseCorsConfig } from "../functions/_shared/cors.ts";
 import { orderPageUrl, parseConfig, parseProvider, providerReady } from "../functions/_shared/config.ts";
 
-test("empty ALLOWED_ORIGINS falls back to *.vercel.app + localhost, never to *", () => {
-  const cfg = parseCorsConfig({ ALLOWED_ORIGINS: "", SITE_URL: "https://example.invalid" });
+test("empty ALLOWED_ORIGINS means SITE_URL only, never *", () => {
+  const cfg = parseCorsConfig({ ALLOWED_ORIGINS: "", SITE_URL: "https://real.am" });
+  assert.equal(isOriginAllowed("https://real.am", cfg), true);
+  assert.equal(isOriginAllowed("https://burn-git-main-x.vercel.app", cfg), false);
+  assert.equal(isOriginAllowed("http://localhost:8000", cfg), false);
+  assert.equal(isOriginAllowed("https://evil.com", cfg), false);
+  assert.equal(isOriginAllowed(null, cfg), false);
+  // placeholder SITE_URL and nothing else: no browser origin at all
+  const none = parseCorsConfig({ ALLOWED_ORIGINS: "", SITE_URL: "https://example.invalid" });
+  assert.deepEqual(none.origins, []);
+  assert.equal(none.allowLocalhost, false);
+  assert.equal(isOriginAllowed("https://example.invalid", none), false);
+});
+
+test("ALLOW_VERCEL_PREVIEWS and ALLOW_LOCALHOST switches", () => {
+  const cfg = parseCorsConfig({ SITE_URL: "https://real.am", ALLOW_VERCEL_PREVIEWS: "1", ALLOW_LOCALHOST: "1" });
   assert.equal(isOriginAllowed("https://burn-git-main-x.vercel.app", cfg), true);
   assert.equal(isOriginAllowed("http://localhost:8000", cfg), true);
   assert.equal(isOriginAllowed("http://127.0.0.1:3000", cfg), true);
-  assert.equal(isOriginAllowed("https://evil.com", cfg), false);
   assert.equal(isOriginAllowed("http://x.vercel.app", cfg), false);
   assert.equal(isOriginAllowed("https://vercel.app", cfg), false);
   assert.equal(isOriginAllowed("https://x.vercel.app.evil.com", cfg), false);
-  assert.equal(isOriginAllowed("https://example.invalid", cfg), false);
-  assert.equal(isOriginAllowed(null, cfg), false);
+  const off = parseCorsConfig({ SITE_URL: "https://real.am", ALLOW_VERCEL_PREVIEWS: "0", ALLOW_LOCALHOST: "0" });
+  assert.equal(isOriginAllowed("https://x.vercel.app", off), false);
+  assert.equal(isOriginAllowed("http://localhost:8000", off), false);
 });
 
 test("explicit origins", () => {
@@ -32,7 +46,7 @@ test("SITE_URL origin is always allowed", () => {
 });
 
 test("cors headers", () => {
-  const cfg = parseCorsConfig({});
+  const cfg = parseCorsConfig({ ALLOW_LOCALHOST: "1" });
   const h = corsHeaders("http://localhost:8000", cfg);
   assert.equal(h["Access-Control-Allow-Origin"], "http://localhost:8000");
   assert.match(h["Access-Control-Allow-Headers"], /apikey/);
@@ -51,8 +65,12 @@ test("config defaults are safe", () => {
   assert.equal(parseProvider("paypal"), "disabled");
   assert.equal(providerReady(parseConfig({ PAYMENT_PROVIDER: "ameria" })), false);
   assert.equal(providerReady(parseConfig({ PAYMENT_PROVIDER: "idram", IDRAM_ACCOUNT_ID: "1", IDRAM_SECRET_KEY: "s" })), true);
-  assert.equal(cfg.autoApprove, true);
+  assert.equal(cfg.autoApprove, false);
   assert.equal(parseConfig({ AUTO_APPROVE: "0" }).autoApprove, false);
+  assert.equal(parseConfig({ AUTO_APPROVE: "yes" }).autoApprove, false);
+  assert.equal(parseConfig({ AUTO_APPROVE: " 1 " }).autoApprove, true);
+  assert.deepEqual(cfg.cors, { origins: [], allowLocalhost: false });
+  assert.ok(parseConfig({ ALLOW_VERCEL_PREVIEWS: "1" }).cors.origins.includes("https://*.vercel.app"));
   assert.equal(cfg.adminToken, null);
   assert.equal(parseConfig({ ADMIN_TOKEN: "short" }).adminToken, null);
   assert.equal(parseConfig({ ADMIN_TOKEN: "x".repeat(32) }).adminToken, "x".repeat(32));

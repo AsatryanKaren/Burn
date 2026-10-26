@@ -3,6 +3,8 @@
 //   reject  — strong profanity / slurs (BLOCKLIST)          -> 400 TEXT_REJECTED
 //   hidden  — contact data or personal names that should
 //             never be shown publicly (order still allowed)  -> moderation = 'hidden'
+//             (a light's signature: contact data only — a first name there
+//             is the buyer's own signature)
 //   pending — everything else; a human approves before the text can appear
 //             publicly (moderation = 'approved').
 //
@@ -17,12 +19,16 @@ export interface ModerationResult {
   decision: ModerationDecision;
   /** Short machine reason, stored in orders.moderation_reason for hidden. */
   reason: string | null;
+  /** Only when rejected because of the light signature (-> SIGNATURE_REJECTED). */
+  field?: "signature";
 }
 
 export interface ModerationFields {
   text: string;
   wish_text?: string | null;
   recipient_name?: string | null;
+  /** A light's signature: public, but it is the buyer's own name, so names don't hide it. */
+  light_signature?: string | null;
 }
 
 // ---------------------------------------------------------------------------
@@ -236,6 +242,10 @@ export function moderate(fields: ModerationFields): ModerationResult {
   for (const f of all) {
     if (f && findBlockedWord(f)) return { decision: "rejected", reason: "auto:blocklist" };
   }
+  const signature = fields.light_signature ?? "";
+  if (signature && findBlockedWord(signature)) {
+    return { decision: "rejected", reason: "auto:blocklist", field: "signature" };
+  }
 
   // recipient_name is never shown publicly, so only text and wish matter here.
   for (const f of [fields.text, fields.wish_text ?? ""]) {
@@ -243,6 +253,12 @@ export function moderate(fields: ModerationFields): ModerationResult {
     const contact = detectContact(f);
     if (contact) return { decision: "hidden", reason: `auto:${contact}` };
     if (findName(f)) return { decision: "hidden", reason: "auto:name" };
+  }
+
+  // The signature is public: contact data hides it, a first name does not.
+  if (signature) {
+    const contact = detectContact(signature);
+    if (contact) return { decision: "hidden", reason: `auto:signature_${contact}` };
   }
 
   return { decision: "pending", reason: null };

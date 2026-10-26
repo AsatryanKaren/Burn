@@ -109,4 +109,18 @@
     var flared = false;
     note.addEventListener("input", function () { if (!flared && note.value.length > 2) { flared = true; scene.flare(0.6); } });
   }
+
+  /* "Light up Armenia" teaser: a live, non-interactive map, loaded when it comes near the screen */
+  var lt = document.getElementById("ltTeaser");
+  if (lt && window.MapCore && "IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (es) {
+      if (!es[0].isIntersecting) return;
+      io.disconnect();
+      window.MapCore.loadMap(lt.getAttribute("data-map")).then(function (m) {
+        var v = new window.MapCore.MapView(lt.querySelector("canvas"), m, { lang: D.lang, labels: false, pad: 14 });
+        A.api.rpc("get_map").then(function (r) { v.setLights((r && r.lit) || [], (r && r.held) || []); }).catch(function () {});
+      }).catch(function () {});
+    }, { rootMargin: "300px" });
+    io.observe(lt);
+  }
 })();

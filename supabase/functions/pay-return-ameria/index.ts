@@ -4,9 +4,15 @@
 // We ask the bank server-to-server (GetPaymentDetails) and only then call
 // confirm_payment. Always ends with a 302 to the buyer's order page (or to
 // the site root when the order can't be identified).
+//
+// Hardening: body / query capped at 8 KB (413), 60 requests per caller IP
+// hash per 10 minutes (429), only whitelisted keys (orderID, paymentID,
+// resposneCode/responseCode, opaque; values cut to 200 chars) are logged, and
+// the bank is asked only when `opaque` is an existing order code or `orderID`
+// is one of our payment attempts.
 
 import { getConfig } from "../_shared/env.ts";
-import { redirectResponse } from "../_shared/http.ts";
+import { redirectResponse, textResponse } from "../_shared/http.ts";
 import { orderPageUrl } from "../_shared/config.ts";
 import { isValidOrderCode } from "../_shared/codes.ts";
 import { evaluatePaymentDetails, parseBackUrlParams } from "../_shared/ameria.ts";
@@ -15,25 +21,37 @@ import {
   confirmPayment,
   findOrderByCode,
   findOrderByProviderNum,
+  logNeedsRefund,
   logPaymentEvent,
   markOrderFailed,
   type OrderRow,
   orderCodeForAmeriaOrderId,
 } from "../_shared/db.ts";
 import { ameriaPaymentDetails, sanitizeForLog } from "../_shared/payments.ts";
+import {
+  BodyTooLargeError,
+  CALLBACK_MAX_BODY_BYTES,
+  readCappedText,
+  whitelistCallbackFields,
+} from "../_shared/callbacks.ts";
+import { requestIpHash, withinRateLimit } from "../_shared/ratelimit.ts";
 
 const cfg = getConfig();
 const PROVIDER = "ameria";
 
+/** Query string + (POST) form/JSON body. Throws BodyTooLargeError above 8 KB. */
 async function readParams(req: Request): Promise<URLSearchParams> {
-  const params = new URLSearchParams(new URL(req.url).search);
+  const search = new URL(req.url).search;
+  if (search.length > CALLBACK_MAX_BODY_BYTES) throw new BodyTooLargeError();
+  const params = new URLSearchParams(search);
   if (req.method === "POST") {
     const type = req.headers.get("content-type") ?? "";
+    const raw = await readCappedText(req);
     try {
       if (type.includes("application/x-www-form-urlencoded")) {
-        for (const [k, v] of new URLSearchParams(await req.text())) if (!params.has(k)) params.set(k, v);
+        for (const [k, v] of new URLSearchParams(raw)) if (!params.has(k)) params.set(k, v);
       } else if (type.includes("application/json")) {
-        const body = await req.json() as Record<string, unknown>;
+        const body = JSON.parse(raw) as Record<string, unknown>;
         for (const [k, v] of Object.entries(body ?? {})) if (!params.has(k)) params.set(k, String(v));
       }
     } catch {
@@ -41,6 +59,15 @@ async function readParams(req: Request): Promise<URLSearchParams> {
     }
   }
   return params;
+}
+
+/** True when the return refers to one of our payment attempts (by code or by Ameria OrderID). */
+async function refersToOurAttempt(hintedOrder: OrderRow | null, orderIdParam: string | null): Promise<boolean> {
+  if (hintedOrder) return true;
+  const orderId = Number(orderIdParam);
+  if (!orderIdParam || !Number.isSafeInteger(orderId) || orderId <= 0) return false;
+  if (await findOrderByProviderNum(orderId)) return true;
+  return (await orderCodeForAmeriaOrderId(orderId)) !== null;
 }
 
 /** Finds our order for the bank's details: by Opaque (we set it to the code), then by OrderID. */
@@ -65,12 +92,24 @@ Deno.serve(async (req) => {
   const home = `${cfg.siteUrl}/`;
 
   try {
-    const params = await readParams(req);
+    let params: URLSearchParams;
+    try {
+      params = await readParams(req);
+    } catch (err) {
+      if (err instanceof BodyTooLargeError) return textResponse("Payload too large", 413);
+      throw err;
+    }
+
+    const ipHash = await requestIpHash(req, cfg.ipHashSalt);
+    if (!(await withinRateLimit("ameriaReturn", ipHash))) {
+      return textResponse("Too many requests", 429, { "Retry-After": "600" });
+    }
+
     const back = parseBackUrlParams(params);
     const hinted = back.opaque && isValidOrderCode(back.opaque) ? back.opaque : null;
 
-    // 1. Audit log before anything else.
-    await logPaymentEvent(PROVIDER, "return", hinted, await sanitizeForLog(cfg, Object.fromEntries(params)));
+    // 1. Audit log before anything else (whitelisted keys only).
+    await logPaymentEvent(PROVIDER, "return", hinted, await sanitizeForLog(cfg, whitelistCallbackFields(Object.fromEntries(params))));
 
     const hintedOrder = hinted ? await findOrderByCode(hinted) : null;
     const fallbackUrl = hintedOrder ? orderPageUrl(cfg.siteUrl, hintedOrder.lang, hintedOrder.code) : home;
@@ -81,6 +120,12 @@ Deno.serve(async (req) => {
     }
     if (!back.paymentId || !/^[A-Za-z0-9-]{8,64}$/.test(back.paymentId)) {
       await logPaymentEvent(PROVIDER, "outcome", hinted, { result: "NO_PAYMENT_ID" });
+      return redirectResponse(fallbackUrl);
+    }
+
+    // Only ask the bank about payments we started.
+    if (!(await refersToOurAttempt(hintedOrder, back.orderId))) {
+      await logPaymentEvent(PROVIDER, "outcome", hinted, { result: "UNKNOWN_ORDER" });
       return redirectResponse(fallbackUrl);
     }
 
@@ -120,7 +165,12 @@ Deno.serve(async (req) => {
       // 3. The only place money becomes `paid`.
       const result = await confirmPayment(order.code, PROVIDER, back.paymentId, verdict.amountAmd);
       await logPaymentEvent(PROVIDER, "outcome", order.code, { PaymentID: back.paymentId, result });
-      if (!result.ok) console.error("confirm_payment refused", order.code, result.error);
+      if (!result.ok) {
+        console.error("confirm_payment refused", order.code, result.error);
+        if (result.error === "ORDER_PAID_BY_OTHER_PAYMENT") {
+          await logNeedsRefund(PROVIDER, order.code, back.paymentId, verdict.amountAmd, { reason: result.error });
+        }
+      }
     } else {
       if (verdict.declined) await markOrderFailed(order.code);
       await logPaymentEvent(PROVIDER, "outcome", order.code, {

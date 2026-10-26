@@ -4,7 +4,15 @@
 import { createClient, type SupabaseClient } from "npm:@supabase/supabase-js@2";
 import { getConfig } from "./env.ts";
 import { ApiError, ErrorCode } from "./errors.ts";
-import type { Lang, ModerationStatus, OrderStatus, PaymentProvider, ProductCode } from "./types.ts";
+import type {
+  Lang,
+  LightColor,
+  LightIcon,
+  ModerationStatus,
+  OrderStatus,
+  PaymentProvider,
+  ProductCode,
+} from "./types.ts";
 
 let client: SupabaseClient | null = null;
 
@@ -43,11 +51,17 @@ export interface OrderRow {
   provider_order_num: number;
   created_at: string;
   paid_at: string | null;
+  // light products only (null for papers)
+  cell_id: number | null;
+  light_icon: LightIcon | null;
+  light_color: LightColor | null;
+  light_signature: string | null;
 }
 
 const ORDER_COLUMNS =
   "id, code, product, amount_amd, status, lang, email, text, wish_text, recipient_name, show_on_stream, " +
-  "moderation, burn_number, provider, provider_payment_id, provider_order_num, created_at, paid_at";
+  "moderation, burn_number, provider, provider_payment_id, provider_order_num, created_at, paid_at, " +
+  "cell_id, light_icon, light_color, light_signature";
 
 export const PAYABLE_STATUSES: readonly OrderStatus[] = ["awaiting_launch", "pending", "failed"];
 
@@ -84,6 +98,11 @@ export interface NewOrder {
   moderation_reason: string | null;
   provider: PaymentProvider | null;
   ip_hash: string;
+  // light products only
+  cell_id?: number | null;
+  light_icon?: LightIcon | null;
+  light_color?: LightColor | null;
+  light_signature?: string | null;
 }
 
 /** Inserts an order; retries with a new code on the (astronomically rare) code collision. */
@@ -102,6 +121,46 @@ export async function markOrderFailed(code: string): Promise<void> {
   if (error) throw dbError("markOrderFailed", error);
 }
 
+/** Cancels a still-pending order (e.g. its plot was taken between check and hold). */
+export async function cancelPendingOrder(id: number): Promise<void> {
+  const { error } = await db().from("orders").update({ status: "cancelled" }).eq("id", id).eq("status", "pending");
+  if (error) throw dbError("cancelPendingOrder", error);
+}
+
+// ---------------------------------------------------------------------------
+// Map plots
+// ---------------------------------------------------------------------------
+
+/** Minutes a plot stays reserved for an unpaid light (contract: 30). */
+export const CELL_HOLD_MINUTES = 30;
+
+export interface CellInfo {
+  cell_id: number;
+  province: string;
+  town_index: number;
+  status: "free" | "held" | "lit";
+}
+
+/** Public view of a plot (get_cell RPC); null when the id is not a map plot. */
+export async function getCell(cellId: number): Promise<CellInfo | null> {
+  const { data, error } = await db().rpc("get_cell", { p_cell_id: cellId });
+  if (error) throw dbError("get_cell", error);
+  return (data as CellInfo | null) ?? null;
+}
+
+/** Takes or re-takes the plot for this light order (hold_cell RPC). False when another order has it. */
+export async function holdCell(orderId: number, cellId: number, minutes = CELL_HOLD_MINUTES): Promise<boolean> {
+  const { data, error } = await db().rpc("hold_cell", { p_order_id: orderId, p_cell_id: cellId, p_minutes: minutes });
+  if (error) throw dbError("hold_cell", error);
+  return data === true;
+}
+
+export async function getMapCell(cellId: number): Promise<{ province: string; town_index: number } | null> {
+  const { data, error } = await db().from("map_cells").select("province, town_index").eq("id", cellId).maybeSingle();
+  if (error) throw dbError("getMapCell", error);
+  return data as { province: string; town_index: number } | null;
+}
+
 export async function getGiftShare(orderId: number): Promise<number | null> {
   const { data, error } = await db().from("gift_ledger").select("amount_amd").eq("order_id", orderId).maybeSingle();
   if (error) throw dbError("getGiftShare", error);
@@ -110,9 +169,12 @@ export async function getGiftShare(orderId: number): Promise<number | null> {
 
 export interface ConfirmResult {
   ok: boolean;
+  /** null for lights (they get no burn number). */
   burn_number: number | null;
   already: boolean;
   error?: string;
+  /** Lights only: paid, but another order holds the plot (admin moves or refunds). */
+  cell_conflict?: boolean;
 }
 
 /** The ONLY way an order becomes paid. Call after verifying the payment with the provider. */
@@ -189,6 +251,25 @@ export async function logPaymentEvent(
     payload: payload ?? {},
   });
   if (error) throw dbError("logPaymentEvent", error);
+}
+
+/**
+ * A payment that reached the bank for an order already paid by another
+ * payment (possible double charge). Logged as kind 'needs_refund'; admin
+ * stats count these (migration 0006).
+ */
+export async function logNeedsRefund(
+  provider: PaymentProvider,
+  orderCode: string,
+  paymentId: string,
+  amountAmd: number | null,
+  detail: Record<string, unknown> = {},
+): Promise<void> {
+  await logPaymentEvent(provider, "needs_refund", orderCode, {
+    payment_id: String(paymentId).slice(0, 200),
+    amount_amd: amountAmd,
+    ...detail,
+  });
 }
 
 /** Ameria OrderIDs we sent in InitPayment for this order (from the audit log). */

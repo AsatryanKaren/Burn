@@ -6,14 +6,16 @@
 // { code, status, payment: { mode: "disabled" } } and changes nothing.
 // Otherwise the order moves to `pending` and `payment` has the same shape as
 // in create-order. 404 unknown code, 409 ALREADY_PAID / ORDER_NOT_PAYABLE.
+// Lights: the plot is (re-)held for 30 minutes before payment starts; if
+// another order has it -> 409 CELL_TAKEN.
 
 import { getConfig } from "../_shared/env.ts";
 import { browserEndpoint, jsonResponse, readJson } from "../_shared/http.ts";
 import { ApiError, ErrorCode } from "../_shared/errors.ts";
 import { normalizeOrderCode } from "../_shared/codes.ts";
-import { parseLang } from "../_shared/validation.ts";
+import { isLightProduct, parseLang } from "../_shared/validation.ts";
 import { providerReady } from "../_shared/config.ts";
-import { beginPaymentAttempt, findOrderByCode, PAYABLE_STATUSES } from "../_shared/db.ts";
+import { beginPaymentAttempt, findOrderByCode, holdCell, PAYABLE_STATUSES } from "../_shared/db.ts";
 import { enforceRateLimit, requestIpHash } from "../_shared/ratelimit.ts";
 import { paymentInstruction, paymentMisconfiguredError } from "../_shared/payments.ts";
 
@@ -52,6 +54,14 @@ Deno.serve(browserEndpoint(["POST"], cfg.cors, async (req) => {
   if (!providerReady(cfg)) {
     console.error(`PAYMENT_PROVIDER=${cfg.provider} is missing its secrets`);
     throw paymentMisconfiguredError();
+  }
+
+  // Lights: re-take the plot for this order (free, expired, or already ours).
+  if (isLightProduct(order.product) && order.cell_id !== null) {
+    const held = await holdCell(order.id, order.cell_id);
+    if (!held) {
+      throw new ApiError(409, ErrorCode.CELL_TAKEN, "This plot was taken by someone else. Please choose another one.");
+    }
   }
 
   // Ameriabank needs a fresh numeric OrderID for every InitPayment.

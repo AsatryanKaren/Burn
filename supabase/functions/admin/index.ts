@@ -2,7 +2,10 @@
 //
 // Auth: header `x-admin-token` must equal the ADMIN_TOKEN secret (constant
 // time). If ADMIN_TOKEN is unset or shorter than 32 chars every request gets
-// 401. Failed attempts are rate-limited per IP hash (10 / 10 min -> 429).
+// 401. Failed attempts are rate-limited per IP hash (10 / 10 min -> 429):
+// every request first counts as a failure, atomically, via check_rate_limit
+// (so parallel guesses can't slip past the limit), and a request with the
+// right token gives its count back (release_rate_limit, migration 0006).
 //
 // Body: { "action": "stats" | "list_orders" | "moderate" | "mark_refunded"
 //                  | "waitlist_csv" | "awaiting_launch_csv", ...params }
@@ -44,16 +47,17 @@ async function authenticate(req: Request): Promise<void> {
   const ipHash = await requestIpHash(req, cfg.ipHashSalt);
   const key = `admin_fail:${ipHash}`;
 
-  const failures = await rpc<number>("peek_rate_limit", { p_key: key, p_window_seconds: FAIL_WINDOW_SECONDS });
-  if (failures >= FAIL_LIMIT) {
-    throw new ApiError(429, ErrorCode.RATE_LIMITED, "Too many failed attempts. Try again later.");
-  }
+  // Count this attempt before looking at the token (atomic increment).
+  const allowed = await rateLimitAllows(key, FAIL_LIMIT, FAIL_WINDOW_SECONDS);
+  if (!allowed) throw new ApiError(429, ErrorCode.RATE_LIMITED, "Too many failed attempts. Try again later.");
 
+  // Constant-time comparison (strings.timingSafeEqual).
   if (!adminTokenMatches(cfg.adminToken, req.headers.get("x-admin-token"))) {
-    const allowed = await rateLimitAllows(key, FAIL_LIMIT, FAIL_WINDOW_SECONDS);
-    if (!allowed) throw new ApiError(429, ErrorCode.RATE_LIMITED, "Too many failed attempts. Try again later.");
     throw new ApiError(401, "UNAUTHORIZED", "Invalid admin token.");
   }
+
+  // Right token: this attempt was not a failure.
+  await rpc("release_rate_limit", { p_key: key, p_window_seconds: FAIL_WINDOW_SECONDS });
 }
 
 Deno.serve(browserEndpoint(["POST"], cfg.cors, async (req) => {

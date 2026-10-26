@@ -107,6 +107,21 @@
   </div>
 </section>
 
+<section class="section bg-deep rule-top" id="lights" aria-labelledby="ltTitle">
+  <div class="wrap lt-teaser">
+    <div data-reveal>
+      <p class="kicker">{{ fmt(cfg.map.total_plots) }} · {{ price(cfg.light_products[0].price) }}</p>
+      <h2 class="h-section" id="ltTitle">{{ t('lights.home_t') }}</h2>
+      <p class="lead" style="margin-top:16px;max-width:44ch">{{ t('lights.home_d') }}</p>
+      <p class="scarce">✦ {{ t('lights.home_yer') }}</p><br>
+      <a class="btn btn-fire" href="{{ url('lights') }}">{{ t('lights.home_cta') }}</a>
+    </div>
+    <a class="lt-teaser-map" href="{{ url('lights') }}" id="ltTeaser" data-map="{{ asset('data/map.json') }}" aria-label="{{ t('lights.home_cta') }}" data-reveal>
+      <canvas aria-hidden="true"></canvas>
+    </a>
+  </div>
+</section>
+
 <section class="section bg-warm" id="wish" aria-labelledby="wishTitle">
   <div class="wrap wish-grid">
     <div class="wish-visual" data-reveal aria-hidden="true">
@@ -185,5 +200,6 @@
 <script src="{{ asset('vendor/ScrollTrigger-3.12.5.min.js') }}" defer></script>
 <script src="{{ asset('js/scene.js') }}" defer></script>
 <script src="{{ asset('js/site.js') }}" defer></script>
+<script src="{{ asset('js/mapcore.js') }}" defer></script>
 <script src="{{ asset('js/home.js') }}" defer></script>
 {% endblock %}

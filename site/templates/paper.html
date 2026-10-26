@@ -13,7 +13,7 @@
     <canvas id="gl" class="scene-canvas" aria-hidden="true"></canvas>
   </div>
   <div class="flow-wrap">
-    <div class="result" id="view" aria-live="polite">
+    <div class="result" id="view" aria-live="polite" data-map="{{ asset('data/map.json') }}">
       <p class="muted" id="loading">{{ t('paper.loading') }}</p>
     </div>
   </div>
@@ -25,5 +25,6 @@
 <script src="{{ asset('vendor/gsap-3.12.5.min.js') }}" defer></script>
 <script src="{{ asset('js/scene.js') }}" defer></script>
 <script src="{{ asset('js/site.js') }}" defer></script>
+<script src="{{ asset('js/mapcore.js') }}" defer></script>
 <script src="{{ asset('js/paper.js') }}" defer></script>
 {% endblock %}

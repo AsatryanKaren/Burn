@@ -7,7 +7,7 @@ import { errorResponse, redirectResponse } from "../_shared/http.ts";
 import { ApiError, ErrorCode } from "../_shared/errors.ts";
 import { orderPageUrl } from "../_shared/config.ts";
 import { normalizeOrderCode } from "../_shared/codes.ts";
-import { confirmPayment, findOrderByCode, logPaymentEvent } from "../_shared/db.ts";
+import { confirmPayment, findOrderByCode, logNeedsRefund, logPaymentEvent } from "../_shared/db.ts";
 
 const cfg = getConfig();
 const PROVIDER = "mock";
@@ -31,6 +31,9 @@ Deno.serve(async (req) => {
 
     const result = await confirmPayment(order.code, PROVIDER, `mock-${order.code}`, order.amount_amd);
     await logPaymentEvent(PROVIDER, "outcome", order.code, { result });
+    if (result.error === "ORDER_PAID_BY_OTHER_PAYMENT") {
+      await logNeedsRefund(PROVIDER, order.code, `mock-${order.code}`, order.amount_amd, { reason: result.error });
+    }
 
     return redirectResponse(orderPageUrl(cfg.siteUrl, order.lang, order.code));
   } catch (err) {

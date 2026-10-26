@@ -189,10 +189,13 @@
     return canvas;
   }
   function shareStory(scene, number, pageUrl) {
-    var canvas = storyImage(scene, number);
+    return shareCanvas(storyImage(scene, number), "story-" + number + ".png", pageUrl);
+  }
+  // Share an image through the system sheet when files are supported, otherwise show it to save.
+  function shareCanvas(canvas, name, pageUrl) {
     return new Promise(function (resolve) {
       canvas.toBlob(function (blob) {
-        var file = blob ? new File([blob], "story-" + number + ".png", { type: "image/png" }) : null;
+        var file = blob ? new File([blob], name, { type: "image/png" }) : null;
         if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
           navigator.share({ files: [file], url: pageUrl }).then(function () { resolve("shared"); }, function () { resolve(openModal(canvas)); });
         } else {
@@ -242,7 +245,7 @@
   window.APP = {
     D: D, t: t, fmt: fmt, price: price, giftShare: giftShare, esc: esc, api: api,
     loadStats: loadStats, paintStats: paintStats, mountScene: mountScene, toast: toast, copy: copy,
-    shareStory: shareStory, reduceMotion: reduceMotion, inApp: inApp,
+    shareStory: shareStory, shareCanvas: shareCanvas, reduceMotion: reduceMotion, inApp: inApp,
     safePaymentUrl: safePaymentUrl, postForm: postForm
   };
 

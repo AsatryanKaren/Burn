@@ -37,6 +37,7 @@ PAGES = {
     "paper": ("paper.html", "p"),
     "live": ("live.html", "live"),
     "gifts": ("gifts.html", "gifts"),
+    "lights": ("lights.html", "lights"),
     "faq": ("faq.html", "faq"),
     "terms": ("legal.html", "terms"),
     "refund": ("legal.html", "refund"),
@@ -142,9 +143,10 @@ def js_payload(lang: str, page: str) -> str:
         "giftPct": CONFIG["gift_share_percent"],
         "showCounterFrom": CONFIG["show_counter_from"],
         "products": CONFIG["products"],
+        "lightProducts": CONFIG["light_products"],
         "supabase": CONFIG["supabase"],
         "urls": {k: page_url(k, lang) for k in PAGES},
-        "t": {k: s[k] for k in ("hero", "burn", "paper", "story", "live", "feed", "gifts", "gifts_page", "nav", "options", "common")},
+        "t": {k: s[k] for k in ("hero", "burn", "paper", "story", "live", "feed", "gifts", "gifts_page", "nav", "options", "common", "lights")},
     }
     # Escape so the JSON can't break out of the <script> element.
     return json.dumps(payload, ensure_ascii=False).replace("</", "<\\/")

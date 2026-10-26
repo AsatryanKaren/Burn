@@ -75,3 +75,14 @@ test("timing safe equal", () => {
   assert.equal(timingSafeEqual("abc", "abd"), false);
   assert.equal(timingSafeEqual("abc", "abcd"), false);
 });
+
+test("sanitize drops IP address keys", async () => {
+  for (const k of ["ip", "IP", "Ip", "ProcessingIP", "processing_ip", "processingIp", "PROCESSING-IP"]) {
+    assert.equal(shouldDropKey(k), true, k);
+  }
+  for (const k of ["description", "EDP_DESCRIPTION", "OrderID", "PaymentID", "zip_code", "TrxnDescription"]) {
+    assert.equal(shouldDropKey(k), false, k);
+  }
+  const out = await sanitizePayload({ OrderID: 1, ProcessingIP: "1.2.3.4", nested: { ip: "5.6.7.8", Amount: 5 } }, async (v) => v);
+  assert.deepEqual(out, { OrderID: 1, nested: { Amount: 5 } });
+});

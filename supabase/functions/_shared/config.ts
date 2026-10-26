@@ -23,7 +23,11 @@ export interface Config {
   ipHashSaltIsFallback: boolean;
   ameria: AmeriaCredentials | null;
   idram: IdramConfig | null;
-  /** AUTO_APPROVE (default "1"): clean texts get moderation='approved' at creation. */
+  /**
+   * AUTO_APPROVE (default "0"): only "1" stores texts the automatic checks found
+   * nothing in as moderation='approved'; otherwise they are 'pending' until a
+   * human approves them in admin.
+   */
   autoApprove: boolean;
   /** ADMIN_TOKEN; null when unset or shorter than ADMIN_TOKEN_MIN_LENGTH (admin then always 401). */
   adminToken: string | null;
@@ -75,13 +79,18 @@ export function parseConfig(env: Env): Config {
     functionsBase: `${supabaseUrl}/functions/v1`,
     supabaseUrl,
     serviceRoleKey,
-    cors: parseCorsConfig({ ALLOWED_ORIGINS: env.ALLOWED_ORIGINS, ALLOW_LOCALHOST: env.ALLOW_LOCALHOST, SITE_URL: siteUrl }),
+    cors: parseCorsConfig({
+      ALLOWED_ORIGINS: env.ALLOWED_ORIGINS,
+      ALLOW_LOCALHOST: env.ALLOW_LOCALHOST,
+      ALLOW_VERCEL_PREVIEWS: env.ALLOW_VERCEL_PREVIEWS,
+      SITE_URL: siteUrl,
+    }),
     // Fallback keeps hashes stable and secret even if IP_HASH_SALT is unset.
     ipHashSalt: salt || `fallback:${serviceRoleKey}`,
     ipHashSaltIsFallback: !salt,
     ameria,
     idram,
-    autoApprove: (env.AUTO_APPROVE ?? "1").trim() !== "0",
+    autoApprove: (env.AUTO_APPROVE ?? "0").trim() === "1",
     adminToken: (env.ADMIN_TOKEN ?? "").length >= ADMIN_TOKEN_MIN_LENGTH ? env.ADMIN_TOKEN! : null,
   };
 }

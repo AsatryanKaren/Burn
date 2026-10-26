@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% block title %}{{ t('meta.lights_title') }} · {{ brand }}{% endblock %}
+{% block description %}{{ t('lights.meta_desc') }}{% endblock %}
+{% block main %}
+{% set lp = cfg.light_products %}
+<header class="lt-head wrap">
+  <p class="kicker">{{ fmt(cfg.map.total_plots) }} · 2×2 km</p>
+  <h1>{{ t('lights.title') }}</h1>
+  <p class="lead">{{ t('lights.lead') }}</p>
+  <div class="lt-progress" aria-live="polite">
+    <div class="lt-bar" aria-hidden="true"><i id="ltBar"></i></div>
+    <p><span id="ltCount">{{ t('lights.progress', n='0', total=fmt(cfg.map.total_plots)) }}</span> · <span class="muted">{{ t('lights.goal') }}</span></p>
+  </div>
+</header>
+
+<section class="lt-stage" id="stage" data-map="{{ asset('data/map.json') }}" aria-label="{{ t('lights.title') }}">
+  <canvas id="map" tabindex="0" aria-label="{{ t('lights.tap_hint') }}"></canvas>
+  <div class="lt-tools">
+    <label class="sr-only" for="townPick">{{ t('lights.find') }}</label>
+    <select id="townPick" class="input lt-select"><option value="">{{ t('lights.find') }}</option></select>
+    <button type="button" class="btn btn-ghost btn-sm" id="randomBtn">✦ {{ t('lights.random') }}</button>
+  </div>
+  <div class="lt-zoom" role="group" aria-label="{{ t('lights.zoom_in') }} / {{ t('lights.zoom_out') }}">
+    <button type="button" class="icon-btn" id="zIn" aria-label="{{ t('lights.zoom_in') }}">+</button>
+    <button type="button" class="icon-btn" id="zOut" aria-label="{{ t('lights.zoom_out') }}">−</button>
+    <button type="button" class="icon-btn" id="zFit" aria-label="{{ t('lights.reset') }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+  </div>
+  <p class="lt-ticker" id="ticker" aria-live="polite"></p>
+  <p class="lt-hint" id="hintPill">{{ t('lights.tap_hint') }}</p>
+
+  <aside class="lt-panel" id="panel" aria-labelledby="panelTitle">
+    <button type="button" class="icon-btn lt-close" id="panelClose" aria-label="{{ t('lights.close') }}">×</button>
+
+    <div data-view="hint">
+      <h2 class="h-sub" id="panelTitle">{{ t('lights.design_t') }}</h2>
+      <p class="muted">{{ t('lights.tap_hint') }}</p>
+      <p class="muted">{{ t('lights.only_one') }}</p>
+      <ol class="lt-steps">
+        <li>{{ t('lights.s1') }}</li><li>{{ t('lights.s2') }}</li><li>{{ t('lights.s3') }}</li>
+      </ol>
+    </div>
+
+    <div data-view="lit" hidden>
+      <div class="lt-badge" id="litIcon"></div>
+      <h2 class="h-sub" id="litPlace"></h2>
+      <p class="muted" id="litNear"></p>
+      <blockquote class="lt-msg" id="litMsg"></blockquote>
+      <p class="lt-sig" id="litSig"></p>
+      <p class="hint" id="litDate"></p>
+      <div class="row lt-row">
+        <button type="button" class="btn btn-paper btn-sm" id="litShare">{{ t('lights.share') }}</button>
+        <button type="button" class="btn btn-ghost btn-sm" id="litCopy">{{ t('lights.copy') }}</button>
+      </div>
+    </div>
+
+    <div data-view="held" hidden>
+      <h2 class="h-sub" id="heldPlace"></h2>
+      <p class="muted">{{ t('lights.held') }}</p>
+      <button type="button" class="btn btn-ghost btn-sm" data-random>✦ {{ t('lights.random') }}</button>
+    </div>
+
+    <form data-view="design" id="designForm" novalidate hidden>
+      <p class="kicker" style="margin:0">{{ t('lights.free') }}</p>
+      <h2 class="h-sub" id="dPlace"></h2>
+      <p class="muted" id="dNear" style="margin-top:-6px"></p>
+
+      <fieldset class="lt-fs">
+        <legend>{{ t('lights.icon') }}</legend>
+        <div class="lt-icons" id="iconPick">
+          {% for ic in ['tree','home','candle','star','gift','pomegranate'] %}
+          <label class="lt-icon"><input type="radio" name="icon" value="{{ ic }}" {% if loop.first %}checked{% endif %}><span class="lt-ic" data-icon="{{ ic }}"></span><span class="lt-il">{{ t('lights.icons.' ~ ic) }}</span></label>
+          {% endfor %}
+        </div>
+      </fieldset>
+
+      <fieldset class="lt-fs">
+        <legend>{{ t('lights.color') }}</legend>
+        <div class="lt-colors" id="colorPick">
+          {% for c in ['amber','red','green','white','blue','violet'] %}
+          <label class="lt-color" title="{{ t('lights.colors.' ~ c) }}"><input type="radio" name="color" value="{{ c }}" {% if loop.first %}checked{% endif %}><span class="sw sw-{{ c }}"></span><span class="sr-only">{{ t('lights.colors.' ~ c) }}</span></label>
+          {% endfor %}
+        </div>
+      </fieldset>
+
+      <div class="field">
+        <label for="lMsg">{{ t('lights.message') }}</label>
+        <textarea class="input" id="lMsg" maxlength="60" rows="2" placeholder="{{ t('lights.message_ph') }}"></textarea>
+        <p class="hint"><span id="lMsgCount">0/60</span> · {{ t('lights.message_hint') }}</p>
+      </div>
+      <div class="field">
+        <label for="lSig">{{ t('lights.signature') }}</label>
+        <input class="input" id="lSig" maxlength="30" autocomplete="off" placeholder="{{ t('lights.signature_ph') }}">
+      </div>
+
+      <fieldset class="lt-fs">
+        <legend>{{ t('lights.size') }}</legend>
+        <div class="choices">
+          <label class="choice"><input type="radio" name="size" value="light" checked><span><span class="c-title">{{ t('lights.size_light') }}</span></span><span class="c-price">{{ price(lp[0].price) }}</span></label>
+          <label class="choice"><input type="radio" name="size" value="light_big"><span><span class="c-title">{{ t('lights.size_big') }}</span><span class="c-desc">{{ t('lights.size_big_d') }}</span></span><span class="c-price">{{ price(lp[1].price) }}</span></label>
+        </div>
+      </fieldset>
+
+      <div class="field">
+        <label for="lEmail">{{ t('burn.email_label') }}</label>
+        <input class="input" id="lEmail" type="email" inputmode="email" autocomplete="email" placeholder="{{ t('burn.email_ph') }}">
+        <p class="hint">{{ t('lights.email_hint') }}</p>
+      </div>
+      <label class="check"><input type="checkbox" id="lConsent"><span>{{ t('burn.consent', terms=url('terms'), privacy=url('privacy')) }}</span></label>
+      <p class="hint" id="lGift"></p>
+      <p class="error" id="lErr" role="alert"></p>
+      <button type="submit" class="btn btn-fire btn-block" id="lSubmit"></button>
+      <p class="hint" style="text-align:center">{{ t('burn.secure') }}</p>
+    </form>
+
+    <div data-view="saved" hidden>
+      <h2 class="h-sub">{{ t('lights.saved_t') }}</h2>
+      <p class="muted" id="savedText"></p>
+      <a class="link-arrow" id="savedLink" href="#">{{ t('lights.your_light') }} →</a>
+    </div>
+  </aside>
+</section>
+
+<section class="section bg-deep" aria-labelledby="boardTitle">
+  <div class="wrap lt-lower">
+    <div>
+      <h2 class="h-section" id="boardTitle" data-reveal>{{ t('lights.board_t') }}</h2>
+      <ol class="lt-board" id="board" data-reveal></ol>
+    </div>
+    <div data-reveal>
+      <h2 class="h-sub">{{ t('lights.how_t') }}</h2>
+      <ol class="lt-steps lt-steps-big">
+        <li>{{ t('lights.s1') }}</li><li>{{ t('lights.s2') }}</li><li>{{ t('lights.s3') }}</li>
+      </ol>
+      <p style="margin-top:28px"><a class="link-arrow" href="{{ url('burn') }}">{{ t('lights.fire_cta') }} →</a></p>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script src="{{ asset('js/site.js') }}" defer></script>
+<script src="{{ asset('js/mapcore.js') }}" defer></script>
+<script src="{{ asset('js/lights.js') }}" defer></script>
+{% endblock %}

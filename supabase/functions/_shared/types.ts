@@ -2,7 +2,17 @@
 
 export type Lang = "hy" | "en" | "ru";
 
-export type ProductCode = "burn" | "burn_wish" | "gift" | "midnight";
+/** Papers burn in the fire. */
+export type PaperProductCode = "burn" | "burn_wish" | "gift" | "midnight";
+
+/** Lights on a map plot ("Light up Armenia"). */
+export type LightProductCode = "light" | "light_big";
+
+export type ProductCode = PaperProductCode | LightProductCode;
+
+export type LightIcon = "tree" | "home" | "candle" | "star" | "gift" | "pomegranate";
+
+export type LightColor = "amber" | "red" | "green" | "white" | "blue" | "violet";
 
 export type ProviderName = "disabled" | "mock" | "ameria" | "idram";
 
