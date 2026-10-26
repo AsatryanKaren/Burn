@@ -1099,7 +1099,7 @@ body.nogl .scene { background: radial-gradient(60% 40% at 60% 92%, rgba(255,120,
     paperEl.style.visibility = "hidden";
 
     var k = Math.min(1, (L.fw * 0.78) / pw);
-    var hoverY = L.baseY + L.fh * 0.64, sinkY = L.baseY + L.fh * 0.2;
+    var hoverY = L.baseY + L.fh * 0.5, sinkY = hoverY;
     var ashAcc = 0, rise = { t: 0 };
 
     burnState = {
@@ -1135,7 +1135,6 @@ body.nogl .scene { background: radial-gradient(60% 40% at 60% 92%, rgba(255,120,
       .to(paper.scale, { x: pw * k, y: ph * k, duration: 1.2, ease: "power2.inOut" }, 0.35)
       .to(paper.rotation, { z: -0.16, duration: 1.2, ease: "sine.inOut" }, 0.35)
       // dip into the flames and catch
-      .to(paper.position, { y: sinkY, duration: 0.8, ease: "power2.in" }, 1.55)
       .to(paper.rotation, { z: 0.06, duration: 0.8, ease: "sine.inOut" }, 1.55)
       .to(pu.uProgress, { value: 1, duration: 4.3, ease: "sine.in" }, 1.75)
       .to(U.smoke, { value: 2.2, duration: 1.2 }, 1.8)
