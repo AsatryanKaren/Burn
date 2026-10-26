@@ -302,7 +302,7 @@
     "size": "Size",
     "size_light": "Light",
     "size_big": "Big light",
-    "size_big_d": "Larger and brighter, signed, always visible on the map",
+    "size_big_d": "Larger and brighter, always visible on the map, even fully zoomed out",
     "pay": "Light it for {price}",
     "save": "Save my light",
     "saved_t": "Your light is saved",
