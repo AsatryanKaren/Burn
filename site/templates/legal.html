@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}{{ legal_title }} · {{ brand }}{% endblock %}
+{% block description %}{{ legal_title }} · {{ brand }}{% endblock %}
+{% block main %}
+<header class="page-head wrap wrap-narrow">
+  <h1>{{ legal_title }}</h1>
+</header>
+<article class="legal wrap wrap-narrow">
+  <div class="prose">{{ legal_html }}</div>
+</article>
+{% endblock %}

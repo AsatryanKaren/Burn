@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block title %}{{ t('meta.burn_title') }} · {{ brand }}{% endblock %}
+{% block sound %}
+<button type="button" class="icon-btn" id="soundBtn" aria-pressed="false" aria-label="{{ t('nav.sound_on') }}" data-label-on="{{ t('nav.sound_off') }}" data-label-off="{{ t('nav.sound_on') }}">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path class="waves" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12" opacity=".35"/></svg>
+</button>
+{% endblock %}
+{% block main %}
+<div class="flow-page">
+  <div class="scene-fixed">
+    <div class="scene-poster" aria-hidden="true"></div>
+    <canvas id="gl" class="scene-canvas" aria-hidden="true"></canvas>
+  </div>
+  <div class="flow-wrap">
+    <form class="flow" id="flow" novalidate>
+      <div class="flow-meta">
+        <span id="stepLabel">{{ t('burn.step', n=1, total=3) }}</span>
+        <span class="progress" aria-hidden="true"><i class="on"></i><i></i><i></i></span>
+      </div>
+
+      <!-- step 1: the paper -->
+      <section class="flow-step" data-step="1" aria-labelledby="s1Title">
+        <h1 id="s1Title">{{ t('burn.s1') }}</h1>
+        <div class="paper" id="paper">
+          <span class="paper-year">{{ cfg.year }}</span>
+          <label class="sr-only" for="note">{{ t('burn.s1') }}</label>
+          <textarea id="note" maxlength="120" rows="4" autocomplete="off" placeholder="{{ t('burn.placeholders')[0] }}"></textarea>
+          <span class="count" id="count" aria-live="polite">0/120</span>
+        </div>
+        <p class="error" id="err1" role="alert"></p>
+        <label class="check"><input type="checkbox" id="showOnStream" checked><span>{{ t('burn.show_on_stream') }}</span></label>
+        <p class="hint">{{ t('burn.s1_hint') }}</p>
+        <div class="actions"><button type="button" class="btn btn-fire" data-next>{{ t('burn.next') }}</button></div>
+      </section>
+
+      <!-- step 2: the option -->
+      <section class="flow-step" data-step="2" aria-labelledby="s2Title" hidden>
+        <h2 id="s2Title">{{ t('burn.s2') }}</h2>
+        <fieldset class="choices" style="border:0;margin:0;padding:0">
+          <legend class="sr-only">{{ t('burn.s2') }}</legend>
+          {% for p in cfg.products %}
+          <label class="choice">
+            <input type="radio" name="product" value="{{ p.code }}" {% if loop.first %}checked{% endif %}>
+            <span><span class="c-title">{{ t('options.' ~ p.code ~ '_t') }}{% if p.featured %}<span class="c-badge">{{ t('options.popular') }}</span>{% endif %}</span><span class="c-desc">{{ t('options.' ~ p.code ~ '_d') }}</span></span>
+            <span class="c-price">{{ price(p.price) }}</span>
+          </label>
+          {% endfor %}
+        </fieldset>
+        <div class="field" id="wishField" hidden>
+          <label for="wish">{{ t('burn.wish_label') }}</label>
+          <div class="paper paper-gold">
+            <span class="paper-year">{{ cfg.next_year }}</span>
+            <textarea id="wish" maxlength="200" rows="3" autocomplete="off" placeholder="{{ t('burn.wish_ph') }}"></textarea>
+            <span class="count" id="wishCount">0/200</span>
+          </div>
+          <p class="hint">{{ t('burn.wish_hint') }}</p>
+        </div>
+        <div class="field" id="recipientField" hidden>
+          <label for="recipient">{{ t('burn.recipient_label') }}</label>
+          <input class="input" id="recipient" maxlength="40" autocomplete="off" placeholder="{{ t('burn.recipient_ph') }}">
+          <p class="hint">{{ t('burn.recipient_hint') }}</p>
+        </div>
+        <p class="error" id="err2" role="alert"></p>
+        <div class="actions"><button type="button" class="btn btn-ghost" data-back>{{ t('burn.back') }}</button><button type="button" class="btn btn-fire" data-next>{{ t('burn.next') }}</button></div>
+      </section>
+
+      <!-- step 3: email, consent, pay -->
+      <section class="flow-step" data-step="3" aria-labelledby="s3Title" hidden>
+        <h2 id="s3Title">{{ t('burn.s3') }}</h2>
+        {% if not cfg.payments_open %}
+        <div class="notice"><b>{{ t('burn.soon_t') }}</b><p>{{ t('burn.soon_d') }}</p></div>
+        {% endif %}
+        <div class="field">
+          <label for="email">{{ t('burn.email_label') }}</label>
+          <input class="input" id="email" type="email" inputmode="email" autocomplete="email" placeholder="{{ t('burn.email_ph') }}" {% if not cfg.payments_open %}required{% endif %}>
+          <p class="hint">{{ t('burn.email_hint') if cfg.payments_open else t('burn.email_hint_soon') }}</p>
+        </div>
+        <div class="summary" id="summary" aria-live="polite">
+          <div class="line"><span>{{ t('paper.your_text') }}</span><b id="sumText"></b></div>
+          <div class="line"><span>{{ t('burn.s2') }}</span><b id="sumProduct"></b></div>
+          <div class="total"><span>{{ t('burn.total') }}</span><span id="sumTotal"></span></div>
+          <div class="gift" id="sumGift"></div>
+        </div>
+        <label class="check"><input type="checkbox" id="consent"><span>{{ t('burn.consent', terms=url('terms'), privacy=url('privacy')) }}</span></label>
+        <p class="error" id="err3" role="alert"></p>
+        <div class="actions">
+          <button type="button" class="btn btn-ghost" data-back>{{ t('burn.back') }}</button>
+          <button type="submit" class="btn btn-fire" id="payBtn">{{ t('burn.save_soon') if not cfg.payments_open else t('burn.pay', price=price(cfg.products[0].price)) }}</button>
+        </div>
+        <div class="secure">
+          <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>{{ t('burn.secure') }}</span>
+          <span class="cards"><span class="card-badge">VISA</span><span class="card-badge">Mastercard</span><span class="card-badge">ArCa</span></span>
+        </div>
+      </section>
+
+      <!-- saved (payments not open yet) -->
+      <section class="flow-step" data-step="saved" hidden aria-live="polite">
+        <h2>{{ t('burn.saved_t') }}</h2>
+        <p class="hint" style="font-size:15px" id="savedText"></p>
+        <div class="actions"><button type="button" class="btn btn-fire" id="previewBtn">{{ t('burn.preview') }}</button></div>
+        <p class="hint">{{ t('burn.preview_note') }}</p>
+        <p><a class="link-arrow" id="savedLink" href="#">{{ t('paper.your_text') }} →</a></p>
+      </section>
+
+      <!-- redirecting to the bank -->
+      <section class="flow-step" data-step="redirect" hidden aria-live="polite">
+        <h2>{{ t('burn.redirecting') }}</h2>
+        <div class="actions"><span class="spinner" style="border-color:rgba(255,255,255,.2);border-top-color:#ffc46b"></span></div>
+      </section>
+    </form>
+  </div>
+</div>
+{% endblock %}
+{% block footer %}{% endblock %}
+{% block scripts %}
+<script src="{{ asset('vendor/three-r128.min.js') }}" defer></script>
+<script src="{{ asset('vendor/gsap-3.12.5.min.js') }}" defer></script>
+<script src="{{ asset('js/scene.js') }}" defer></script>
+<script src="{{ asset('js/site.js') }}" defer></script>
+<script src="{{ asset('js/burn.js') }}" defer></script>
+{% endblock %}

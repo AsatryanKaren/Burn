@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /p/
+Disallow: /en/p/
+Disallow: /ru/p/
+Sitemap: https://example.am/sitemap.xml

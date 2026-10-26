@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+{% block title %}{{ t('meta.home_title') }} · {{ brand }}{% endblock %}
+{% block sound %}
+<button type="button" class="icon-btn" id="soundBtn" aria-pressed="false" aria-label="{{ t('nav.sound_on') }}" data-label-on="{{ t('nav.sound_off') }}" data-label-off="{{ t('nav.sound_on') }}">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path class="waves" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12" opacity=".35"/></svg>
+</button>
+{% endblock %}
+{% block main %}
+{% set p0 = cfg.products[0].price %}
+<section class="hero" id="top" aria-labelledby="heroTitle">
+  <div class="scene-poster" aria-hidden="true"></div>
+  <canvas id="gl" class="scene-canvas" aria-hidden="true"></canvas>
+  <div class="hero-inner wrap">
+    <h1 class="headline" id="heroTitle"><span class="bye">{{ t('hero.bye') }}</span><span class="year">{{ cfg.year }}</span></h1>
+    <p class="sub">{{ t('hero.sub') }}</p>
+    <form class="hero-form" id="heroForm" action="{{ url('burn') }}" method="get" novalidate>
+      <div class="paper" id="heroPaper">
+        <span class="paper-year">{{ cfg.year }}</span>
+        <label class="sr-only" for="heroNote">{{ t('burn.s1') }}</label>
+        <textarea id="heroNote" name="text" maxlength="120" rows="2" autocomplete="off" placeholder="{{ t('burn.placeholders')[0] }}"></textarea>
+      </div>
+      <button type="submit" class="btn btn-fire">{{ t('hero.cta') }}<span class="price-tag">{{ price(p0) }}</span></button>
+    </form>
+    <p class="counter" id="counter"><span class="dot" aria-hidden="true"></span><span data-counter>{{ t('hero.counter_soon') }}</span></p>
+    <p class="gift-line"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M12 8v13M3 12h18M12 8c-2-4-6-4-6-1s6 1 6 1zm0 0c2-4 6-4 6-1s-6 1-6 1z"/></svg>{{ t('hero.gift_line') }}</p>
+  </div>
+  <a class="scroll-cue" href="#how">{{ t('hero.scroll') }}</a>
+</section>
+
+<section class="section bg-deep" id="how" aria-labelledby="howTitle">
+  <div class="wrap">
+    <div class="section-head" data-reveal>
+      <h2 class="h-section" id="howTitle">{{ t('how.title') }}</h2>
+    </div>
+    <ol class="steps" role="list">
+      <li class="step" data-reveal>
+        <div class="step-visual" aria-hidden="true">
+          <div class="paper mini-paper"><span class="paper-year">{{ cfg.year }}</span><div class="paper-text"><span id="typeDemo" data-text="{{ t('how.demo_paper') }}">{{ t('how.demo_paper') }}</span><span class="caret"></span></div></div>
+        </div>
+        <span class="step-num">1</span>
+        <h3>{{ t('how.s1_t') }}</h3>
+        <p>{{ t('how.s1_d') }}</p>
+      </li>
+      <li class="step" data-reveal>
+        <div class="step-visual" aria-hidden="true">
+          <div class="mini-pay">
+            <div class="row"><span>{{ brand }}</span><span class="check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></div>
+            <div class="amount">{{ price(p0) }}</div>
+            <div class="row"><span>VISA · Mastercard · ArCa</span><span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span></div>
+          </div>
+        </div>
+        <span class="step-num">2</span>
+        <h3>{{ t('how.s2_t', price=price(p0)) }}</h3>
+        <p>{{ t('how.s2_d') }}</p>
+      </li>
+      <li class="step" data-reveal>
+        <div class="step-visual" aria-hidden="true">
+          <div class="mini-flame"></div>
+          <div class="mini-num" id="miniNum">№ 12 847</div>
+        </div>
+        <span class="step-num">3</span>
+        <h3>{{ t('how.s3_t') }}</h3>
+        <p>{{ t('how.s3_d') }}</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<section class="section bg-deep rule-top" id="feed" aria-labelledby="feedTitle">
+  <div class="wrap">
+    <div class="section-head" data-reveal>
+      <h2 class="h-section" id="feedTitle">{{ t('feed.title') }}</h2>
+      <p class="lead">{{ t('feed.sub') }}</p>
+      <span class="feed-label" id="feedLabel">{{ t('feed.examples') }}</span>
+    </div>
+  </div>
+  <div class="marquee" id="marquee" aria-hidden="true">
+    {% set items = t('feed.items') %}
+    <div class="marquee-row">{% for it in items[:6] %}<span class="chip-paper">{{ it }}</span>{% endfor %}{% for it in items[:6] %}<span class="chip-paper">{{ it }}</span>{% endfor %}</div>
+    <div class="marquee-row reverse">{% for it in items[6:] %}<span class="chip-paper">{{ it }}</span>{% endfor %}{% for it in items[6:] %}<span class="chip-paper">{{ it }}</span>{% endfor %}</div>
+  </div>
+  <ul class="sr-only">{% for it in items %}<li>{{ it }}</li>{% endfor %}</ul>
+</section>
+
+<section class="section bg-deep rule-top" id="options" aria-labelledby="optTitle">
+  <div class="wrap">
+    <div class="section-head" data-reveal>
+      <h2 class="h-section" id="optTitle">{{ t('options.title') }}</h2>
+      <p class="lead">{{ t('options.sub') }}</p>
+    </div>
+    <div class="options">
+      {% for p in cfg.products %}
+      <article class="option{% if p.featured %} featured{% endif %}" data-reveal>
+        {% if p.featured %}<span class="badge">{{ t('options.popular') }}</span>{% endif %}
+        <h3>{{ t('options.' ~ p.code ~ '_t') }}</h3>
+        <p>{{ t('options.' ~ p.code ~ '_d') }}</p>
+        <div class="option-foot">
+          <div>
+            <div class="price">{{ price(p.price) }}</div>
+            <div class="giftbit">{{ t('options.includes_gift', amount=price(gift_share(p.price))) }}</div>
+          </div>
+          <a class="btn {% if p.featured %}btn-fire{% else %}btn-ghost{% endif %}" href="{{ url('burn') }}?product={{ p.code }}">{{ t('options.pick') }}</a>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section bg-warm" id="wish" aria-labelledby="wishTitle">
+  <div class="wrap wish-grid">
+    <div class="wish-visual" data-reveal aria-hidden="true">
+      <div class="paper paper-gold"><span class="paper-year">{{ cfg.next_year }}</span><div class="paper-text">✦ ✦ ✦</div></div>
+      <div class="seal">{{ cfg.next_year }}</div>
+    </div>
+    <div class="section-head" data-reveal style="margin:0">
+      <h2 class="h-section" id="wishTitle">{{ t('wish.title') }}</h2>
+      <p class="lead" style="max-width:46ch">{{ t('wish.body') }}</p>
+      <div><a class="btn btn-fire" href="{{ url('burn') }}?product=burn_wish">{{ t('wish.cta') }}<span class="price-tag">{{ price(cfg.products[1].price) }}</span></a></div>
+    </div>
+  </div>
+</section>
+
+<section class="section bg-deep" id="gifts" aria-labelledby="giftsTitle">
+  <div class="wrap gift-grid">
+    <div data-reveal>
+      <p class="big-pct" aria-hidden="true">20%</p>
+      <h2 class="h-section" id="giftsTitle">{{ t('gifts.title') }}</h2>
+      <p class="lead" style="margin-top:16px;max-width:46ch">{{ t('gifts.body') }}</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:22px" data-reveal>
+      <div class="fund">
+        <span class="label">{{ t('gifts.fund') }}</span>
+        <span class="value" data-stat="gift_fund_amd" data-format="price">—</span>
+        <span class="sub2">{{ t('gifts.per_paper', amount=price(gift_share(p0))) }}</span>
+      </div>
+      <div class="honest">
+        <h3>{{ t('gifts.honest_t') }}</h3>
+        <p>{{ t('gifts.honest') }}</p>
+      </div>
+      <a class="link-arrow" href="{{ url('gifts') }}">{{ t('gifts.more') }} →</a>
+    </div>
+  </div>
+</section>
+
+<section class="section bg-deep rule-top" id="live" aria-labelledby="liveTitle">
+  <div class="wrap">
+    <div class="live-card" data-reveal>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <span class="live-pill"><span class="dot" aria-hidden="true"></span>YouTube Live</span>
+        <h2 class="h-section" id="liveTitle">{{ t('live.title') }}</h2>
+        <p class="lead">{{ t('live.body') }}</p>
+        <div><a class="btn btn-ghost" href="{{ url('live') }}">{{ t('live.cta') }} →</a></div>
+      </div>
+      <div class="live-dates" aria-hidden="true">{{ cfg.stream.start[-2:] }}–{{ cfg.stream.end[-2:] }}.12</div>
+    </div>
+  </div>
+</section>
+
+<section class="section bg-deep rule-top" id="faq" aria-labelledby="faqTitle">
+  <div class="wrap wrap-narrow">
+    <div class="section-head" data-reveal>
+      <h2 class="h-section" id="faqTitle">{{ t('faq.title') }}</h2>
+    </div>
+    <div class="faq-list" data-reveal>
+      {% for item in faq[:6] %}
+      <details class="faq-item"><summary>{{ item.q }}</summary><div class="answer"><p>{{ item.a }}</p></div></details>
+      {% endfor %}
+    </div>
+    <p style="margin-top:24px"><a class="link-arrow" href="{{ url('faq') }}">{{ t('faq.all') }} →</a></p>
+  </div>
+</section>
+
+<section class="section final" aria-labelledby="finalTitle">
+  <div class="embers-css" id="embersCss" aria-hidden="true"></div>
+  <div class="wrap">
+    <h2 id="finalTitle" data-reveal>{{ t('final.title') }}</h2>
+    <a class="btn btn-fire" href="{{ url('burn') }}" data-reveal>{{ t('final.cta') }}<span class="price-tag">{{ price(p0) }}</span></a>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script src="{{ asset('vendor/three-r128.min.js') }}" defer></script>
+<script src="{{ asset('vendor/gsap-3.12.5.min.js') }}" defer></script>
+<script src="{{ asset('vendor/ScrollTrigger-3.12.5.min.js') }}" defer></script>
+<script src="{{ asset('js/scene.js') }}" defer></script>
+<script src="{{ asset('js/site.js') }}" defer></script>
+<script src="{{ asset('js/home.js') }}" defer></script>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}{{ t('meta.faq_title') }} · {{ brand }}{% endblock %}
+{% block head %}
+<script type="application/ld+json">{{ {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": faq_ld(faq)} | tojson }}</script>
+{% endblock %}
+{% block main %}
+<header class="page-head wrap wrap-narrow">
+  <h1>{{ t('meta.faq_title') }}</h1>
+</header>
+<section class="wrap wrap-narrow" style="padding-bottom:100px">
+  <div class="faq-list">
+    {% for item in faq %}
+    <details class="faq-item" {% if loop.first %}open{% endif %}><summary>{{ item.q }}</summary><div class="answer"><p>{{ item.a }}</p></div></details>
+    {% endfor %}
+  </div>
+  <p style="margin-top:40px"><a class="btn btn-fire" href="{{ url('burn') }}">{{ t('nav.cta') }}<span class="price-tag">{{ price(cfg.products[0].price) }}</span></a></p>
+</section>
+{% endblock %}

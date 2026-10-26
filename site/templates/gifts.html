@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}{{ t('meta.gifts_title') }} · {{ brand }}{% endblock %}
+{% block description %}{{ t('gifts.body') }}{% endblock %}
+{% block main %}
+{% set p0 = cfg.products[0].price %}
+<header class="page-head wrap">
+  <p class="kicker">20%</p>
+  <h1>{{ t('gifts_page.title') }}</h1>
+  <p class="lead">{{ t('gifts_page.lead', price=price(p0)) }}</p>
+</header>
+
+<section class="wrap" style="padding-bottom:80px">
+  <div class="gift-grid">
+    <div class="split" data-reveal>
+      <h2 class="h-sub">{{ t('gifts_page.split_t', price=price(p0)) }}</h2>
+      <div class="split-bar" role="img" aria-label="20% / 80%"><div class="g">20%</div><div class="c">80%</div></div>
+      <div class="split-legend">
+        <div><i style="background:linear-gradient(180deg,#ffd27a,#ff8a3d)"></i><span>{{ t('gifts_page.split_gift') }}</span><b>{{ price(gift_share(p0)) }}</b></div>
+        <div><i style="background:var(--bg-3);border:1px solid var(--line-2)"></i><span>{{ t('gifts_page.split_company') }}</span><b>{{ price(p0 - gift_share(p0)) }}</b></div>
+      </div>
+    </div>
+    <div class="fund" data-reveal>
+      <span class="label">{{ t('gifts_page.fund_t') }}</span>
+      <span class="value" data-stat="gift_fund_amd" data-format="price">—</span>
+      <span class="sub2" id="giftCount" data-per="{{ cfg.gifts.estimated_gift_cost }}"></span>
+    </div>
+  </div>
+</section>
+
+<section class="section bg-warm" aria-labelledby="honestTitle">
+  <div class="wrap wrap-narrow">
+    <div class="honest" data-reveal>
+      <h2 class="h-sub" id="honestTitle">{{ t('gifts_page.honest_t') }}</h2>
+      <p>{{ t('gifts_page.honest_1') }}</p>
+      <p>{{ t('gifts_page.honest_2') }}</p>
+      <p>{{ t('gifts_page.honest_3') }}</p>
+    </div>
+  </div>
+</section>
+
+<section class="section bg-deep" aria-labelledby="tlTitle">
+  <div class="wrap wrap-narrow">
+    <h2 class="h-section" id="tlTitle" data-reveal style="margin-bottom:40px">{{ t('gifts_page.timeline_t') }}</h2>
+    <ol class="timeline" data-reveal>
+      <li><h3>{{ t('gifts_page.t1_t') }}</h3><p>{{ t('gifts_page.t1_d') }}</p></li>
+      <li><h3>{{ t('gifts_page.t2_t') }}</h3><p>{{ t('gifts_page.t2_d') }}</p></li>
+      <li><h3>{{ t('gifts_page.t3_t') }}</h3><p>{{ t('gifts_page.t3_d') }}</p></li>
+      <li><h3>{{ t('gifts_page.t4_t') }}</h3><p>{{ t('gifts_page.t4_d') }}</p></li>
+    </ol>
+  </div>
+</section>
+
+<section class="section bg-deep rule-top">
+  <div class="wrap" style="display:grid;gap:20px;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr))">
+    <div class="card" data-reveal>
+      <h2 class="h-sub" style="margin-bottom:10px">{{ t('gifts_page.partner_t') }}</h2>
+      <p class="muted" style="margin:0">{% if cfg.gifts.partner_announced and cfg.gifts.partner_name %}{{ cfg.gifts.partner_name }}{% else %}{{ t('gifts_page.partner_soon') }}{% endif %}</p>
+    </div>
+    <div class="card" data-reveal>
+      <h2 class="h-sub" style="margin-bottom:10px">{{ t('gifts_page.reports_t') }}</h2>
+      {% if cfg.gifts.reports %}
+      <ul>{% for r in cfg.gifts.reports %}<li><a href="{{ r.url }}">{{ r.title }}</a></li>{% endfor %}</ul>
+      {% else %}
+      <p class="muted" style="margin:0">{{ t('gifts_page.reports_empty') }}</p>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<section class="section final">
+  <div class="wrap">
+    <h2 data-reveal>{{ t('final.title') }}</h2>
+    <a class="btn btn-fire" href="{{ url('burn') }}" data-reveal>{{ t('final.cta') }}<span class="price-tag">{{ price(p0) }}</span></a>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script src="{{ asset('vendor/gsap-3.12.5.min.js') }}" defer></script>
+<script src="{{ asset('js/site.js') }}" defer></script>
+<script src="{{ asset('js/gifts.js') }}" defer></script>
+{% endblock %}

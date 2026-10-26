@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}{{ t('meta.live_title') }} · {{ brand }}{% endblock %}
+{% block sound %}
+<button type="button" class="icon-btn" id="soundBtn" aria-pressed="false" aria-label="{{ t('nav.sound_on') }}" data-label-on="{{ t('nav.sound_off') }}" data-label-off="{{ t('nav.sound_on') }}">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path class="waves" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12" opacity=".35"/></svg>
+</button>
+{% endblock %}
+{% block main %}
+<div class="scene-fixed">
+  <div class="scene-poster" aria-hidden="true"></div>
+  <canvas id="gl" class="scene-canvas" aria-hidden="true"></canvas>
+</div>
+<div class="live-overlay">
+  <div class="live-head">
+    <span class="live-pill" style="align-self:flex-start"><span class="dot" aria-hidden="true"></span>{{ t('live.page_title') }}</span>
+    <h1>{{ t('final.title') }}</h1>
+    <div class="live-stats">
+      <span><b data-stat="papers_burned">—</b>{{ t('live.burned_label') }}</span>
+      <span><b data-stat="gift_fund_amd" data-format="price">—</b>{{ t('gifts.fund') }}</span>
+    </div>
+  </div>
+  <div class="now-burning" id="now" aria-live="polite">
+    <div class="label" id="nowLabel">{{ t('live.waiting') }}</div>
+    <div class="num" id="nowNum"></div>
+    <div class="txt" id="nowTxt"></div>
+  </div>
+</div>
+<div class="live-below">
+  <section class="section">
+    <div class="wrap wrap-narrow" style="display:flex;flex-direction:column;gap:22px">
+      <h2 class="h-section">{{ t('live.title') }}</h2>
+      <p class="lead">{{ t('live.body') }}</p>
+      <div class="stream-box" id="streamBox">
+        {% if cfg.stream.youtube_embed_id %}
+        <a class="btn btn-fire" href="https://www.youtube.com/watch?v={{ cfg.stream.youtube_embed_id }}" target="_blank" rel="noopener">{{ t('live.stream_watch') }}</a>
+        {% else %}
+        <p style="margin:0">{{ t('live.stream_soon') }}</p>
+        {% endif %}
+      </div>
+      <div><a class="btn btn-fire" href="{{ url('burn') }}">{{ t('nav.cta') }}<span class="price-tag">{{ price(cfg.products[0].price) }}</span></a></div>
+    </div>
+  </section>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ asset('vendor/three-r128.min.js') }}" defer></script>
+<script src="{{ asset('vendor/gsap-3.12.5.min.js') }}" defer></script>
+<script src="{{ asset('js/scene.js') }}" defer></script>
+<script src="{{ asset('js/site.js') }}" defer></script>
+<script src="{{ asset('js/live.js') }}" defer></script>
+{% endblock %}

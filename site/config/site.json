@@ -1,0 +1,83 @@
+{
+  "_comment": "Single place for everything that may change. The brand name is a placeholder until the final name is chosen.",
+  "brand": {
+    "name": {
+      "hy": "Ամանորյա կրակ",
+      "en": "New Year Fire",
+      "ru": "Новогодний костёр"
+    }
+  },
+  "domain": "example.am",
+  "site_url": "https://example.am",
+  "year": 2026,
+  "next_year": 2027,
+  "payments_open": false,
+  "gift_share_percent": 20,
+  "show_counter_from": 50,
+  "currency_symbol": "֏",
+  "products": [
+    {
+      "code": "burn",
+      "price": 500,
+      "featured": false,
+      "needs_wish": false,
+      "needs_recipient": false
+    },
+    {
+      "code": "burn_wish",
+      "price": 1900,
+      "featured": true,
+      "needs_wish": true,
+      "needs_recipient": false
+    },
+    {
+      "code": "gift",
+      "price": 900,
+      "featured": false,
+      "needs_wish": false,
+      "needs_recipient": true
+    },
+    {
+      "code": "midnight",
+      "price": 2900,
+      "featured": false,
+      "needs_wish": true,
+      "needs_recipient": false
+    }
+  ],
+  "stream": {
+    "start": "2026-12-20",
+    "end": "2026-12-31",
+    "youtube_channel_url": null,
+    "youtube_embed_id": null
+  },
+  "gifts": {
+    "partner_announced": false,
+    "partner_name": null,
+    "reports": [],
+    "estimated_gift_cost": 10000
+  },
+  "company": {
+    "legal_name": "[Company legal name]",
+    "tax_id": "[Tax ID]",
+    "address": "[Registered address]",
+    "email": "hello@example.am",
+    "phone": "[Phone number]"
+  },
+  "social": {
+    "instagram": null,
+    "tiktok": null,
+    "telegram": null,
+    "facebook": null
+  },
+  "supabase": {
+    "url": "https://maqcaowpfhmqcavboszy.supabase.co",
+    "anon_key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1hcWNhb3dwZmhtcWNhdmJvc3p5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMwNDIxODksImV4cCI6MjEwODYxODE4OX0.lmvLmjjniC2uF1bK2MFZ4R788tXU98COeu8ECuTHMfc"
+  },
+  "languages": [
+    "hy",
+    "en",
+    "ru"
+  ],
+  "default_language": "hy"
+}

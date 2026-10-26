@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}{{ t('meta.notfound_title') }} · {{ brand }}{% endblock %}
+{% block head %}<meta name="robots" content="noindex">{% endblock %}
+{% block main %}
+<section class="nf">
+  <div>
+    <h1>{{ t('notfound.title') }}</h1>
+    <p>{{ t('notfound.body') }}</p>
+    <a class="btn btn-fire" href="{{ url('home') }}">{{ t('notfound.home') }}</a>
+  </div>
+</section>
+{% endblock %}
