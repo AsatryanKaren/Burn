@@ -12,7 +12,8 @@ You get a full refund of the amount paid if:
 - **you were charged twice** for the same order (duplicate payment);
 - **a technical error** occurred: for example, money was taken from your card but the order was not marked as paid, or you were charged a wrong amount;
 - **we refused your text after payment** because it was illegal, so the paper did not burn;
-- **your paper has not burned yet** and you want to cancel (see below).
+- **your paper has not burned yet** and you want to cancel (see below);
+- **with Light up Armenia:** your light did not appear on the map, or someone else took your plot at the same moment and you chose a refund instead of the nearest free plot (see below).
 
 ## Cancelling before your paper burns
 
@@ -35,6 +36,16 @@ Also not grounds for a refund:
 - Before your paper burns, the whole order, including the wish, can be cancelled as described above.
 - After your paper has burned, you can ask us to delete your wish at any time, but this does not give a refund.
 - If we are unable to keep your wish and open it on 31 December 2027, we will refund the wish part of the price: **1,400 AMD** (the difference between "Burn + 2027 wish" and "Burn"). If the refund to your original card is no longer technically possible by then, we will agree another way with you.
+
+## Light up Armenia
+
+- The service counts as delivered when your light appears on the map, which happens right after payment. After that, **a change of mind is not a reason for a refund**, except where the law requires it.
+- If, rarely, someone else takes your plot at the same moment, we offer you the nearest free plot or **a full refund**, whichever you prefer.
+- If, after payment, we refused your message or signature because it was illegal, the light is not placed on the map (or is removed) and you get a full refund.
+- It is not grounds for a refund that your message or signature was **hidden** while being checked or because it broke the rules. The light itself stays on the map and the service counts as delivered.
+- Nor is it grounds for a refund that, after 31 January 2027, the map became a read-only archive page or was removed.
+- Nothing is charged for a light saved before payments open.
+- When a light is refunded in full, it is removed from the map and the plot becomes free again.
 
 ## How to request a refund
 

@@ -17,7 +17,9 @@ We process personal data in line with the Law of the Republic of Armenia on Prot
 | Your paper text (up to 120 characters) | To burn it in the fire and, if you allowed it and it passed moderation, show it publicly | Yes |
 | Your 2027 wish (up to 200 characters) | To keep it privately and show it to you on 31 December 2027 | Only for options with a wish |
 | Your friend's first name | To show it on the paper and page you send them | Only for "For a friend" |
-| Email address | To send you the link to your page and receipt, the 2027 wish reminder, and the launch notification if you asked for it | No (optional) |
+| Your light: plot, icon, colour and message (up to 60 characters) | To place your light on the map and show it to visitors (the message only after it passes moderation) | Only for Light up Armenia |
+| Your light's signature (up to 30 characters) | To show it publicly with your light (after it passes moderation) | No (optional) |
+| Email address | To send you the link to your page or light and receipt, the 2027 wish reminder, a payment link for a saved paper or light, and the launch notification if you asked for it | No (optional) |
 | Language you chose | To show pages and emails in your language | Yes |
 | Order and payment status | To deliver the service, handle refunds and keep accounting records | Yes |
 | A salted hash of your IP address | To protect the service from abuse (for example, limiting how many orders can be made in a short time) | Yes |
@@ -32,9 +34,15 @@ We process personal data in line with the Law of the Republic of Armenia on Prot
 
 Your personal page has a long random address that cannot be guessed. Anyone who has this link can see your paper and, if you have one, your wish. Keep the link private unless you want to share it.
 
+## Lights on the map
+
+With Light up Armenia your light is public: any visitor can tap it and see its icon, colour, message, signature (if approved), the date it was lit, the province and the nearest town. The signature is public by your choice, so don't put anything in it you wouldn't want others to see, and don't include other people's private data. Your email is never shown.
+
+A plot is an illustrative cell of the map; it does not stand for your or anyone's real address.
+
 ## Why we may use your data (legal bases)
 
-- **To provide the service you ordered** (paper, wish, page, email with the link).
+- **To provide the service you ordered** (paper, wish, light, page, email with the link).
 - **To meet legal obligations**, such as accounting and tax records of payments.
 - **Our legitimate interest** in keeping the service safe from abuse and spam (IP hash, moderation).
 - **Your consent**, for the launch notification. You can withdraw it at any time.
@@ -57,6 +65,7 @@ We never sell or rent your data and never share it for advertising.
 
 - **Order and payment records:** as long as Armenian accounting and tax law requires.
 - **Paper texts:** you can ask us to delete your text at any time. We will delete it, but keep the record of the payment itself (amount, date, status) as the law requires.
+- **Light data** (plot, icon, colour, message, signature, email and language): kept under the same rules as other orders. You can ask us to delete your light's message or signature at any time; we will delete it, but keep the record of the payment itself as the law requires.
 - **2027 wishes:** deleted 30 days after they are opened on 31 December 2027.
 - **Email addresses:** kept while needed for the purposes above. An email given only for the launch notification is deleted after the 2026 season ends, or earlier if you ask.
 - **IP hashes:** kept only as long as needed for abuse protection.
@@ -64,6 +73,8 @@ We never sell or rent your data and never share it for advertising.
 ## Public content
 
 If your text was approved and you allowed it, it may appear in the fire on the website, on the live stream and in its recordings. If you want it removed later, write to us: we will remove it from the website and, where technically possible, from stream recordings.
+
+Your light's message and signature, if approved, are shown on the map and on the light's page. We can remove them too if you ask.
 
 ## Your rights
 
