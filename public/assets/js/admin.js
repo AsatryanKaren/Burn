@@ -77,7 +77,8 @@
       ["Pending payment", fmt(by.pending)],
       ["Failed", fmt(by.failed)],
       ["Refunded", fmt(by.refunded)],
-      ["Waitlist", fmt(s.waitlist_count)]
+      ["Waitlist", fmt(s.waitlist_count)],
+      ["Need a bank refund", fmt(s.needs_refund)]
     ];
     $("statsGrid").innerHTML = cards.map(function (c) { return '<div class="adm-card adm-stat"><span class="v">' + esc(c[1]) + '</span><span class="k">' + esc(c[0]) + "</span></div>"; }).join("");
   }
@@ -92,7 +93,7 @@
       $("modList").innerHTML = rows.map(function (o) {
         return '<div class="adm-item" data-code="' + esc(o.code) + '"><div><div class="txt">' + esc(o.text) + '</div><div class="meta">' +
           '<span class="pill ' + esc(o.status) + '">' + esc(o.status) + "</span> " + (o.burn_number ? "№ " + fmt(o.burn_number) + " · " : "") +
-          esc(o.product) + " · " + esc(o.lang) + " · " + (o.show_on_stream ? "public allowed" : "private") + " · " + esc(when(o.created_at)) +
+          esc(o.product) + (o.light_signature ? " · signature: " + esc(o.light_signature) : "") + " · " + esc(o.lang) + " · " + (o.show_on_stream ? "public allowed" : "private") + " · " + esc(when(o.created_at)) +
           (o.moderation_reason ? " · reason: " + esc(o.moderation_reason) : "") + '</div></div><div class="acts">' +
           '<button type="button" class="btn btn-ghost btn-sm" data-mod="approved">Approve</button>' +
           '<button type="button" class="btn btn-ghost btn-sm" data-mod="hidden">Hide text</button>' +
@@ -124,7 +125,8 @@
         var link = D.urls.paper + "?c=" + encodeURIComponent(o.code);
         return "<tr data-code=\"" + esc(o.code) + "\"><td>" + (o.burn_number ? fmt(o.burn_number) : "") + '</td><td><a href="' + esc(link) + '" target="_blank" rel="noopener">' + esc(o.code) + "</a></td>" +
           '<td><span class="pill ' + esc(o.status) + '">' + esc(o.status) + "</span></td><td>" + esc(o.product) + "</td><td>" + fmt(o.amount_amd) + " ֏</td>" +
-          '<td class="t">' + esc(o.text) + (o.wish_text ? '<div class="hint">wish: ' + esc(o.wish_text) + "</div>" : "") + (o.recipient_name ? '<div class="hint">for: ' + esc(o.recipient_name) + "</div>" : "") + "</td>" +
+          '<td class="t">' + esc(o.text) + (o.wish_text ? '<div class="hint">wish: ' + esc(o.wish_text) + "</div>" : "") + (o.recipient_name ? '<div class="hint">for: ' + esc(o.recipient_name) + "</div>" : "") +
+          (o.cell_id != null ? '<div class="hint">plot ' + esc(o.cell_id) + " · " + esc(o.light_icon) + " · " + esc(o.light_color) + (o.light_signature ? " · signed: " + esc(o.light_signature) : "") + "</div>" : "") + "</td>" +
           "<td>" + esc(o.email || "") + "</td><td>" + esc(when(o.created_at)) + "</td>" +
           "<td>" + (o.status === "paid" ? '<button type="button" class="btn btn-ghost btn-sm" data-refund>Mark refunded</button>' : "") + "</td></tr>";
       }).join(""));

@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block title %}{{ t('meta.lights_title') }} · {{ brand }}{% endblock %}
 {% block description %}{{ t('lights.meta_desc') }}{% endblock %}
+{% block og_image %}og-lights-{{ lang }}.jpg{% endblock %}
 {% block main %}
 {% set lp = cfg.light_products %}
 <header class="lt-head wrap">

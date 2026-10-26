@@ -117,7 +117,7 @@
         (o.text ? '<p style="margin:8px 0 0;font-family:var(--serif)">' + (D.lang === "en" ? "“" : "«") + esc(o.text) + (D.lang === "en" ? "”" : "»") + "</p>" : "") +
         (o.light_signature ? '<p style="margin:4px 0 0;color:var(--flame);font-size:14px">' + esc(t("lights.lit_by", { name: o.light_signature })) + "</p>" : "") +
         "</div></div>" +
-        (paid && o.gift_share_amd ? '<div class="meta"><p>' + esc(t("paper.gift_share", { amount: A.price(o.gift_share_amd) })) + "</p></div>" : "") +
+        (paid && o.gift_share_amd ? '<div class="meta"><p>' + esc(t("lights.gift_share", { amount: A.price(o.gift_share_amd) })) + "</p></div>" : "") +
         (paid ? '<div class="row"><button type="button" class="btn btn-paper" id="lShare">' + esc(t("lights.share")) + "</button>" +
           '<button type="button" class="btn btn-ghost" id="lCopy">' + esc(t("lights.copy")) + "</button>" +
           '<a class="btn btn-ghost" href="' + esc(mapLink) + '">' + esc(t("lights.paper_see")) + "</a></div>" : payButton(o)) +
