@@ -32,7 +32,8 @@ Deno.serve(browserEndpoint(["GET"], cfg.cors, async (req) => {
     amount_amd: order.amount_amd,
     burn_number: order.burn_number,
     text: order.text,
-    wish_text: order.wish_text,
+    // The wish itself is never returned: order links get shared.
+    has_wish: order.wish_text !== null,
     recipient_name: order.recipient_name,
     created_at: order.created_at,
     paid_at: order.paid_at,

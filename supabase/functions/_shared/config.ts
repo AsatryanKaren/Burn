@@ -1,10 +1,11 @@
 // Function configuration parsed from environment variables. Pure module:
 // `parseConfig` takes a plain env record (env.ts passes Deno.env.toObject()).
 
-import type { Lang, ProviderName } from "./types.ts";
+import type { AmeriaCredentials, IdramConfig, Lang, ProviderName } from "./types.ts";
 import { type CorsConfig, parseCorsConfig } from "./cors.ts";
-import type { AmeriaCredentials } from "./ameria.ts";
-import { IDRAM_DEFAULT_ACTION, type IdramConfig } from "./idram.ts";
+
+/** Idram EDP payment form action (override with IDRAM_ACTION_URL). */
+export const IDRAM_DEFAULT_ACTION = "https://banking.idram.am/Payment/GetPayment";
 
 export type Env = Record<string, string | undefined>;
 
@@ -22,7 +23,13 @@ export interface Config {
   ipHashSaltIsFallback: boolean;
   ameria: AmeriaCredentials | null;
   idram: IdramConfig | null;
+  /** AUTO_APPROVE (default "1"): clean texts get moderation='approved' at creation. */
+  autoApprove: boolean;
+  /** ADMIN_TOKEN; null when unset or shorter than ADMIN_TOKEN_MIN_LENGTH (admin then always 401). */
+  adminToken: string | null;
 }
+
+export const ADMIN_TOKEN_MIN_LENGTH = 32;
 
 const PROVIDERS: readonly ProviderName[] = ["disabled", "mock", "ameria", "idram"];
 
@@ -74,6 +81,8 @@ export function parseConfig(env: Env): Config {
     ipHashSaltIsFallback: !salt,
     ameria,
     idram,
+    autoApprove: (env.AUTO_APPROVE ?? "1").trim() !== "0",
+    adminToken: (env.ADMIN_TOKEN ?? "").length >= ADMIN_TOKEN_MIN_LENGTH ? env.ADMIN_TOKEN! : null,
   };
 }
 
@@ -95,12 +104,13 @@ export function providerReady(cfg: Config): boolean {
 // ---------------------------------------------------------------------------
 
 /**
- * The buyer's order page. Armenian lives at "/", the others under "/en/", "/ru/".
- * The page is /p/?c=CODE (see ARCHITECTURE.md "Frontend pages").
+ * The buyer's order page: `${SITE_URL}/p/{code}` for Armenian (the default
+ * language lives at the root) and `${SITE_URL}/{lang}/p/{code}` for en/ru.
+ * The static site serves /p/?c=CODE; vercel.json must rewrite /p/:code to it.
  */
 export function orderPageUrl(siteUrl: string, lang: Lang, code: string): string {
   const prefix = lang === "hy" ? "" : `/${lang}`;
-  return `${trimSlash(siteUrl)}${prefix}/p/?c=${encodeURIComponent(code)}`;
+  return `${trimSlash(siteUrl)}${prefix}/p/${encodeURIComponent(code)}`;
 }
 
 export function mockPayUrl(functionsBase: string, code: string): string {

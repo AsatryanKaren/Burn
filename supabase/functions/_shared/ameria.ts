@@ -42,18 +42,13 @@
 //       point it at pay-return-ameria too (it is idempotent).
 // ============================================================================
 
-import type { Lang } from "./types.ts";
+import type { AmeriaCredentials, Lang } from "./types.ts";
 import { parseWholeAmd } from "./money.ts";
 
 export const AMERIA_TEST_BASE = "https://servicestest.ameriabank.am/VPOS";
 export const AMERIA_CURRENCY_AMD = "051";
 
-export interface AmeriaCredentials {
-  clientId: string;
-  username: string;
-  password: string;
-  apiBase: string;
-}
+export type { AmeriaCredentials };
 
 export interface HttpRequestSpec {
   url: string;

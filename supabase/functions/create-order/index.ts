@@ -5,7 +5,7 @@ import { getConfig } from "../_shared/env.ts";
 import { browserEndpoint, jsonResponse, readJson } from "../_shared/http.ts";
 import { ApiError, ErrorCode } from "../_shared/errors.ts";
 import { validateOrderInput } from "../_shared/validation.ts";
-import { moderate } from "../_shared/moderation.ts";
+import { initialModeration, moderate } from "../_shared/moderation.ts";
 import { generateOrderCode } from "../_shared/codes.ts";
 import { providerReady } from "../_shared/config.ts";
 import { getProduct, insertOrder } from "../_shared/db.ts";
@@ -52,7 +52,7 @@ Deno.serve(browserEndpoint(["POST"], cfg.cors, async (req) => {
       wish_text: input.wish_text,
       recipient_name: input.recipient_name,
       show_on_stream: input.show_on_stream,
-      moderation: mod.decision,
+      moderation: initialModeration(mod, cfg.autoApprove),
       moderation_reason: mod.reason,
       provider: cfg.provider === "disabled" ? null : cfg.provider,
       ip_hash: ipHash,

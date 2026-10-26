@@ -89,7 +89,7 @@
       countUp(n, Number(v), n.getAttribute("data-format"));
     });
     var c = document.querySelector("[data-counter]");
-    if (c && s.papers_burned >= D.showCounterFrom) c.innerHTML = t("hero.counter", { n: fmt(s.papers_burned) });
+    if (c && !c.hasAttribute("data-ref") && s.papers_burned >= D.showCounterFrom) c.innerHTML = t("hero.counter", { n: fmt(s.papers_burned) });
   }
 
   /* ---------- header, menu ---------- */
@@ -216,6 +216,24 @@
     return "modal";
   }
 
+  /* ---------- payment redirects: only to known payment hosts ---------- */
+  function safePaymentUrl(u) {
+    try {
+      var url = new URL(u, location.href);
+      if (url.protocol !== "https:") return false;
+      var h = url.hostname, sb = new URL(D.supabase.url).hostname;
+      return h === sb || h === "banking.idram.am" || /(^|\.)ameriabank\.am$/.test(h);
+    } catch (e) { return false; }
+  }
+  function postForm(action, fields) {
+    var f = document.createElement("form");
+    f.method = "POST"; f.action = action;
+    Object.keys(fields || {}).forEach(function (k) {
+      var i = document.createElement("input"); i.type = "hidden"; i.name = k; i.value = fields[k]; f.appendChild(i);
+    });
+    document.body.appendChild(f); f.submit();
+  }
+
   // Instagram / TikTok / Facebook in-app browsers: some payment pages and file sharing misbehave there.
   var ua = navigator.userAgent || "";
   var inApp = /Instagram|FBAN|FBAV|FB_IAB|TikTok|musical_ly|Bytedance|Line\/|Telegram/i.test(ua);
@@ -224,7 +242,8 @@
   window.APP = {
     D: D, t: t, fmt: fmt, price: price, giftShare: giftShare, esc: esc, api: api,
     loadStats: loadStats, paintStats: paintStats, mountScene: mountScene, toast: toast, copy: copy,
-    shareStory: shareStory, reduceMotion: reduceMotion, inApp: inApp
+    shareStory: shareStory, reduceMotion: reduceMotion, inApp: inApp,
+    safePaymentUrl: safePaymentUrl, postForm: postForm
   };
 
   function boot() {

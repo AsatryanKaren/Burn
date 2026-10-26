@@ -19,7 +19,7 @@ export const FALLBACK_ORIGINS = ["https://*.vercel.app"];
 
 const LOCALHOST_RE = /^http:\/\/(?:localhost|127\.0\.0\.1|\[::1\])(?::\d{1,5})?$/;
 
-export const CORS_ALLOW_HEADERS = "authorization, x-client-info, apikey, content-type";
+export const CORS_ALLOW_HEADERS = "authorization, x-client-info, apikey, content-type, x-admin-token";
 export const CORS_ALLOW_METHODS = "GET, POST, OPTIONS";
 
 /** Returns the normalized origin ("scheme://host[:port]") of a URL, or null. */

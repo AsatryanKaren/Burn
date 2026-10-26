@@ -28,18 +28,12 @@
 //     (we answer non-OK for checksum/amount/order problems).
 //   - Whether SUCCESS_URL / FAIL_URL can carry EDP_BILL_NO back to the site.
 
-import type { Lang } from "./types.ts";
+import type { IdramConfig, Lang } from "./types.ts";
 import { md5Hex } from "./md5.ts";
 import { timingSafeEqual } from "./strings.ts";
 import { parseWholeAmd } from "./money.ts";
 
-export const IDRAM_DEFAULT_ACTION = "https://banking.idram.am/Payment/GetPayment";
-
-export interface IdramConfig {
-  accountId: string;
-  secretKey: string;
-  actionUrl: string;
-}
+export type { IdramConfig };
 
 export interface IdramFormOrder {
   billNo: number | string;

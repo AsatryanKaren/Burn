@@ -29,13 +29,14 @@
   if (draft.email) email.value = draft.email;
   if (draft.show === false) $("showOnStream").checked = false;
   var want = params.get("product") || draft.product;
-  if (want && products[want]) state.product = want;
+  if (want && Object.prototype.hasOwnProperty.call(products, want)) state.product = want;
   var radio = form.querySelector('input[name="product"][value="' + state.product + '"]');
   if (radio) radio.checked = true;
 
   /* ---------- helpers ---------- */
   function clean(s) { return (s || "").replace(/\s+/g, " ").trim(); }
-  function setErr(id, code) { $(id).textContent = code ? (t("burn.errors." + code) || t("burn.errors.UNKNOWN")) : ""; }
+  function errText(code) { var k = "burn.errors." + code, v = t(k); return v === k ? t("burn.errors.UNKNOWN") : v; }
+  function setErr(id, code) { $(id).textContent = code ? errText(code) : ""; }
   function counts() {
     $("count").textContent = note.value.length + "/120";
     $("wishCount").textContent = wish.value.length + "/200";
@@ -129,8 +130,8 @@
     state.busy = b;
     var btn = $("payBtn");
     btn.disabled = b;
-    btn.innerHTML = b ? '<span class="spinner" aria-hidden="true"></span>' : "";
-    if (!b) syncProduct();
+    if (b) { btn.setAttribute("aria-busy", "true"); btn.innerHTML = '<span class="spinner" aria-hidden="true"></span><span class="sr-only">' + A.esc(t("common.loading")) + "</span>"; }
+    else { btn.removeAttribute("aria-busy"); btn.innerHTML = ""; syncProduct(); }
   }
 
   function rememberOrder(code) {
@@ -157,19 +158,16 @@
     A.api.fn("create-order", body).then(function (res) {
       rememberOrder(res.code);
       var pay = res.payment || { mode: "disabled" };
-      if (pay.mode === "redirect" || pay.mode === "mock") {
+      if ((pay.mode === "redirect" || pay.mode === "mock") && A.safePaymentUrl(pay.url)) {
         show("redirect");
         try { sessionStorage.setItem("justPaid", res.code); } catch (e) {}
         location.href = pay.url;
-      } else if (pay.mode === "form") {
+      } else if (pay.mode === "form" && A.safePaymentUrl(pay.action)) {
         show("redirect");
         try { sessionStorage.setItem("justPaid", res.code); } catch (e) {}
-        var f = document.createElement("form");
-        f.method = "POST"; f.action = pay.action;
-        Object.keys(pay.fields || {}).forEach(function (k) {
-          var i = document.createElement("input"); i.type = "hidden"; i.name = k; i.value = pay.fields[k]; f.appendChild(i);
-        });
-        document.body.appendChild(f); f.submit();
+        A.postForm(pay.action, pay.fields);
+      } else if (pay.mode === "redirect" || pay.mode === "mock" || pay.mode === "form") {
+        setBusy(false); setErr("err3", "UNKNOWN");
       } else {
         setBusy(false);
         $("savedText").innerHTML = t("burn.saved_d", { email: A.esc(body.email || "") });
@@ -181,10 +179,10 @@
     }).catch(function (err) {
       setBusy(false);
       var code = err && err.code;
-      if (code === "TEXT_REJECTED" || code === "TEXT_TOO_LONG" || code === "EMPTY") { show(1); setErr("err1", code); return; }
-      if (code === "WISH_REQUIRED" || code === "RECIPIENT_REQUIRED") { show(2); setErr("err2", code); return; }
-      var known = ["EMAIL_INVALID", "EMAIL_REQUIRED", "CONSENT_REQUIRED", "RATE_LIMITED", "NETWORK"];
-      setErr("err3", known.indexOf(code) >= 0 ? code : "UNKNOWN");
+      if (code === "TEXT_REQUIRED") code = "EMPTY";
+      if (["TEXT_REJECTED", "TEXT_TOO_LONG", "EMPTY"].indexOf(code) >= 0) { show(1); setErr("err1", code); return; }
+      if (["WISH_REQUIRED", "WISH_TOO_LONG", "WISH_REJECTED", "RECIPIENT_REQUIRED", "RECIPIENT_TOO_LONG", "RECIPIENT_REJECTED", "PRODUCT_UNAVAILABLE"].indexOf(code) >= 0) { show(2); setErr("err2", code); return; }
+      setErr("err3", code || "UNKNOWN");
     });
   }
 
@@ -202,6 +200,9 @@
       scene.setDim(innerWidth < 900 ? 0.18 : 0);
     });
   });
+
+  // Coming back from the bank page with the browser's Back button restores this page from cache: unlock it.
+  window.addEventListener("pageshow", function (e) { if (e.persisted && state.busy) { setBusy(false); show(3); } });
 
   /* ---------- start ---------- */
   counts(); syncProduct();

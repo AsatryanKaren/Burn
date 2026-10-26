@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { detectContact, findBlockedWord, findName, foldToken, moderate } from "../functions/_shared/moderation.ts";
+import { detectContact, findBlockedWord, findName, foldToken, initialModeration, moderate } from "../functions/_shared/moderation.ts";
 
 const decision = (text: string, extra: { wish_text?: string; recipient_name?: string } = {}) =>
   moderate({ text, ...extra }).decision;
@@ -90,4 +90,11 @@ test("names in the private recipient field are fine", () => {
 test("everything else is pending", () => {
   assert.deepEqual(moderate({ text: "fear of the dark" }), { decision: "pending", reason: null });
   assert.equal(findBlockedWord("calm year"), null);
+});
+
+test("auto-approval applies only to clean texts", () => {
+  assert.equal(initialModeration(moderate({ text: "fear" }), true), "approved");
+  assert.equal(initialModeration(moderate({ text: "fear" }), false), "pending");
+  assert.equal(initialModeration(moderate({ text: "Aram" }), true), "hidden");
+  assert.equal(initialModeration(moderate({ text: "a@b.am" }), true), "hidden");
 });

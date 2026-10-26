@@ -51,10 +51,15 @@ test("config defaults are safe", () => {
   assert.equal(parseProvider("paypal"), "disabled");
   assert.equal(providerReady(parseConfig({ PAYMENT_PROVIDER: "ameria" })), false);
   assert.equal(providerReady(parseConfig({ PAYMENT_PROVIDER: "idram", IDRAM_ACCOUNT_ID: "1", IDRAM_SECRET_KEY: "s" })), true);
+  assert.equal(cfg.autoApprove, true);
+  assert.equal(parseConfig({ AUTO_APPROVE: "0" }).autoApprove, false);
+  assert.equal(cfg.adminToken, null);
+  assert.equal(parseConfig({ ADMIN_TOKEN: "short" }).adminToken, null);
+  assert.equal(parseConfig({ ADMIN_TOKEN: "x".repeat(32) }).adminToken, "x".repeat(32));
 });
 
 test("order page URL", () => {
-  assert.equal(orderPageUrl("https://site.am/", "hy", "abc"), "https://site.am/p/?c=abc");
-  assert.equal(orderPageUrl("https://site.am", "en", "abc"), "https://site.am/en/p/?c=abc");
-  assert.equal(orderPageUrl("https://site.am", "ru", "abc"), "https://site.am/ru/p/?c=abc");
+  assert.equal(orderPageUrl("https://site.am/", "hy", "abc"), "https://site.am/p/abc");
+  assert.equal(orderPageUrl("https://site.am", "en", "abc"), "https://site.am/en/p/abc");
+  assert.equal(orderPageUrl("https://site.am", "ru", "abc"), "https://site.am/ru/p/abc");
 });

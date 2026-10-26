@@ -46,8 +46,12 @@
   }
 
   // Start a few papers back so the fire isn't empty on arrival.
-  A.loadStats().then(function (s) {
-    lastNumber = s ? Math.max(0, (s.papers_burned || 0) - 4) : 0;
-    poll();
-  });
+  // Never replay the whole history: wait until the current total is known.
+  (function start(attempt) {
+    A.loadStats(attempt > 0).then(function (s) {
+      if (!s) { setTimeout(function () { start(attempt + 1); }, Math.min(30000, 3000 * (attempt + 1))); return; }
+      lastNumber = Math.max(0, (s.papers_burned || 0) - 4);
+      poll();
+    });
+  })(0);
 })();

@@ -30,3 +30,16 @@ export type PaymentInstruction =
 export type Result<T> =
   | { ok: true; value: T }
   | { ok: false; code: string; message: string };
+
+export interface AmeriaCredentials {
+  clientId: string;
+  username: string;
+  password: string;
+  apiBase: string;
+}
+
+export interface IdramConfig {
+  accountId: string;
+  secretKey: string;
+  actionUrl: string;
+}

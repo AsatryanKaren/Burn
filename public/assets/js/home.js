@@ -30,6 +30,13 @@
     });
   }
 
+  /* arriving from someone's shared story: "No. 12 847 said goodbye to 2026. Your turn." */
+  var refN = new URLSearchParams(location.search).get("n");
+  if (refN && /^\d{1,7}$/.test(refN)) {
+    var c = document.querySelector("[data-counter]");
+    if (c) { c.innerHTML = t("hero.ref", { n: "<b>" + A.fmt(Number(refN)) + "</b>" }); c.setAttribute("data-ref", "1"); }
+  }
+
   /* step 1 typing demo */
   var demo = document.getElementById("typeDemo");
   if (demo && !A.reduceMotion) {

@@ -247,3 +247,12 @@ export function moderate(fields: ModerationFields): ModerationResult {
 
   return { decision: "pending", reason: null };
 }
+
+/**
+ * The moderation status stored at creation. With AUTO_APPROVE, texts the
+ * automatic checks found nothing in are approved right away.
+ */
+export function initialModeration(result: ModerationResult, autoApprove: boolean): ModerationStatus {
+  if (result.decision === "pending" && autoApprove) return "approved";
+  return result.decision;
+}

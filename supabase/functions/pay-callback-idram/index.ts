@@ -12,7 +12,7 @@ import {
 } from "../_shared/idram.ts";
 import { parseWholeAmd } from "../_shared/money.ts";
 import { confirmPayment, findOrderByProviderNum, logPaymentEvent, PAYABLE_STATUSES } from "../_shared/db.ts";
-import { sanitizeForLog } from "../_shared/payments.ts";
+import { sanitizePayload, saltedHasher } from "../_shared/sanitize.ts";
 
 const cfg = getConfig();
 const PROVIDER = "idram";
@@ -41,7 +41,7 @@ Deno.serve(async (req) => {
     const order = Number.isSafeInteger(billNo) && billNo > 0 ? await findOrderByProviderNum(billNo) : null;
 
     // Audit log before processing (payer account is stored only as a hash).
-    await logPaymentEvent(PROVIDER, kind, order?.code ?? null, await sanitizeForLog(cfg, fields));
+    await logPaymentEvent(PROVIDER, kind, order?.code ?? null, await sanitizePayload(fields, saltedHasher(cfg.ipHashSalt)));
 
     const refuse = async (reason: string) => {
       await logPaymentEvent(PROVIDER, "outcome", order?.code ?? null, { kind, result: reason });
