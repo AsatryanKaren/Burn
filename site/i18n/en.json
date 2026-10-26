@@ -34,7 +34,8 @@
     "counter": "<b>{n}</b> people have already said goodbye to {year}",
     "counter_soon": "The fire is lit in December. You can write your paper now.",
     "gift_line": "20% of every paper goes to New Year gifts for children in orphanages",
-    "scroll": "How it works"
+    "scroll": "How it works",
+    "ref": "No. {n} has already said goodbye to {year}. Your turn."
   },
   "how": {
     "title": "Three steps into the new year",
@@ -83,7 +84,7 @@
   },
   "wish": {
     "title": "Gold paper for {next}",
-    "body": "Once the old is gone, one thing is left: what you want from the year ahead. Write your wish on gold paper. It doesn't burn. We keep it sealed all year and open it live on 31 December {next}. We'll email you so you can see whether it came true.",
+    "body": "Once the old is gone, one thing is left: what you want from the year ahead. Write your wish on gold paper. It doesn't burn. We keep it sealed all year and open it live on 31 December {next}. If you leave your email, we'll remind you so you can see whether it came true.",
     "cta": "Burn and keep my wish"
   },
   "gifts": {
@@ -99,7 +100,7 @@
   },
   "live": {
     "title": "Live stream",
-    "body": "From {start} to {end} December the fire burns live, day and night. At midnight on 31 December, a great fire burns every paper of the year.",
+    "body": "From {start} to {end} December the fire burns live, day and night. At midnight on 31 December, the special midnight fire is lit.",
     "cta": "See the fire",
     "page_title": "The shared fire",
     "page_sub": "Everyone's papers burn here, one after another.",
@@ -172,7 +173,16 @@
       "CONSENT_REQUIRED": "Please confirm you agree to the terms",
       "RATE_LIMITED": "Too many attempts. Try again in a few minutes.",
       "NETWORK": "Connection problem. Check your internet and try again.",
-      "UNKNOWN": "Something went wrong. Please try again."
+      "UNKNOWN": "Something went wrong. Please try again.",
+      "WISH_TOO_LONG": "The wish is too long",
+      "WISH_REJECTED": "We can't accept this wish. Please write it without insults.",
+      "RECIPIENT_TOO_LONG": "The name is too long",
+      "RECIPIENT_REJECTED": "Write only your friend's first name",
+      "PRODUCT_UNAVAILABLE": "This option isn't available right now. Please choose another.",
+      "ALREADY_PAID": "This paper is already paid for",
+      "ORDER_NOT_PAYABLE": "This paper can no longer be paid for",
+      "PAYMENT_UNAVAILABLE": "Payment isn't available right now. Please try again a little later.",
+      "NOT_FOUND": "Paper not found"
     }
   },
   "paper": {
@@ -198,7 +208,8 @@
     "replay": "Watch again",
     "story_hint": "Save the image and post it to your story. On a phone, press and hold the image.",
     "story_save": "Save image",
-    "your_text": "Your paper"
+    "your_text": "Your paper",
+    "check_t": "Couldn't check the status"
   },
   "story": {
     "bye": "Goodbye,",
@@ -222,7 +233,7 @@
     "t1_d": "With every payment, 20% is recorded in the gift fund automatically. The total is shown on this page.",
     "t2_t": "By 15 December",
     "t2_d": "We'll announce which orphanage or orphanages we're working with.",
-    "t3_t": "1–13 January",
+    "t3_t": "6–13 January",
     "t3_d": "We buy the gifts and deliver them to the children with our blogger friends. We only show children's faces with permission from their parents or guardians.",
     "t4_t": "January",
     "t4_d": "We publish a report: the gifts bought, the receipts and the total amount.",
