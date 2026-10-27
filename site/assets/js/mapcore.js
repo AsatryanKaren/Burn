@@ -13,11 +13,17 @@
 
   /* ---------- data ---------- */
   var mapPromise = null;
+  // The plot data ships as a small script (window.MAP_DATA) rather than JSON: a script tag loads in every
+  // host, including sandboxed previews where fetch() of a same-site file is blocked.
   function loadMap(url) {
     if (!mapPromise) {
-      mapPromise = fetch(url, { credentials: "omit" }).then(function (r) {
-        if (!r.ok) throw new Error("map " + r.status);
-        return r.json();
+      mapPromise = new Promise(function (resolve, reject) {
+        if (window.MAP_DATA) return resolve(window.MAP_DATA);
+        var s = document.createElement("script");
+        s.src = url; s.async = true;
+        s.onload = function () { window.MAP_DATA ? resolve(window.MAP_DATA) : reject(new Error("map data missing")); };
+        s.onerror = function () { mapPromise = null; reject(new Error("map data failed to load")); };
+        document.head.appendChild(s);
       }).then(index);
     }
     return mapPromise;
