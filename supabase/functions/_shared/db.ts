@@ -237,6 +237,22 @@ export async function addToWaitlist(row: { email: string; lang: Lang; ip_hash: s
   if (error) throw dbError("addToWaitlist", error);
 }
 
+/** One blogger application (join-bloggers). Duplicate emails simply add another row. */
+export async function addBloggerApplication(row: {
+  name: string;
+  link: string;
+  platform: string | null;
+  audience: string | null;
+  email: string;
+  phone: string | null;
+  message: string | null;
+  lang: Lang;
+  ip_hash: string;
+}): Promise<void> {
+  const { error } = await db().from("blogger_applications").insert(row);
+  if (error) throw dbError("addBloggerApplication", error);
+}
+
 /** Raw audit log of provider traffic. Payload must already be sanitized. */
 export async function logPaymentEvent(
   provider: string,

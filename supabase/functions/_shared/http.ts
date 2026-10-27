@@ -32,7 +32,7 @@ export function redirectResponse(location: string, status = 302): Response {
 export function errorResponse(err: ApiError, headers: Record<string, string> = {}): Response {
   const extra: Record<string, string> = { ...headers };
   if (err.status === 429) extra["Retry-After"] = "600";
-  return jsonResponse(errorBody(err.code, err.message), err.status, extra);
+  return jsonResponse(errorBody(err.code, err.message, err.field), err.status, extra);
 }
 
 /** Reads a JSON body with a size limit. Throws ApiError on bad input. */

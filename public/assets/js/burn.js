@@ -1,37 +1,29 @@
-/* Burn page: write → choose → pay (or save until payments open). */
+/* Burn page: write → pay (or save until payments open). One product, one price. */
 (function () {
   "use strict";
   var A = window.APP, D = A.D, t = A.t;
   var $ = function (id) { return document.getElementById(id); };
 
   var scene = A.mountScene({ layout: "hero", dim: innerWidth < 900 ? 0.18 : 0 });
-  var form = $("flow"), note = $("note"), wish = $("wish"), recipient = $("recipient"), email = $("email");
+  var form = $("flow"), note = $("note"), email = $("email");
   var steps = form.querySelectorAll("[data-step]");
-  var products = {};
-  D.products.forEach(function (p) { products[p.code] = p; });
-  var state = { step: 1, product: "burn", busy: false };
+  var product = D.products[0];
+  var state = { step: 1, busy: false };
 
   /* ---------- draft (session only) ---------- */
   function loadDraft() { try { return JSON.parse(sessionStorage.getItem("draft") || "{}") || {}; } catch (e) { return {}; } }
   function saveDraft() {
     try {
       sessionStorage.setItem("draft", JSON.stringify({
-        text: note.value, wish: wish.value, recipient: recipient.value, product: state.product,
-        show: $("showOnStream").checked, email: email.value
+        text: note.value, show: $("showOnStream").checked, email: email.value
       }));
     } catch (e) {}
   }
   var params = new URLSearchParams(location.search);
   var draft = loadDraft();
   if (draft.text) note.value = draft.text;
-  if (draft.wish) wish.value = draft.wish;
-  if (draft.recipient) recipient.value = draft.recipient;
   if (draft.email) email.value = draft.email;
   if (draft.show === false) $("showOnStream").checked = false;
-  var want = params.get("product") || draft.product;
-  if (want && Object.prototype.hasOwnProperty.call(products, want)) state.product = want;
-  var radio = form.querySelector('input[name="product"][value="' + state.product + '"]');
-  if (radio) radio.checked = true;
 
   /* ---------- helpers ---------- */
   function clean(s) { return (s || "").replace(/\s+/g, " ").trim(); }
@@ -39,13 +31,12 @@
   function setErr(id, code) { $(id).textContent = code ? errText(code) : ""; }
   function counts() {
     $("count").textContent = note.value.length + "/120";
-    $("wishCount").textContent = wish.value.length + "/200";
   }
   function show(step) {
     state.step = step;
     steps.forEach(function (s) { s.hidden = s.getAttribute("data-step") !== String(step); });
-    var n = typeof step === "number" ? step : 3;
-    $("stepLabel").textContent = t("burn.step", { n: n, total: 3 });
+    var n = typeof step === "number" ? step : 2;
+    $("stepLabel").textContent = t("burn.step", { n: n, total: 2 });
     form.querySelectorAll(".progress i").forEach(function (i, idx) { i.classList.toggle("on", idx < n); });
     var active = form.querySelector('[data-step="' + step + '"]');
     var focusable = active && active.querySelector("h1, h2");
@@ -53,11 +44,8 @@
     window.scrollTo({ top: 0, behavior: A.reduceMotion ? "auto" : "smooth" });
   }
   function syncProduct() {
-    var p = products[state.product];
-    $("wishField").hidden = !p.needs_wish;
-    $("recipientField").hidden = !p.needs_recipient;
+    var p = product;
     $("sumText").textContent = clean(note.value);
-    $("sumProduct").textContent = t("options." + p.code + "_t");
     $("sumTotal").textContent = A.price(p.price);
     $("sumGift").textContent = t("burn.of_which", { amount: A.price(A.giftShare(p.price)) });
     $("payBtn").textContent = D.paymentsOpen ? t("burn.pay", { price: A.price(p.price) }) : t("burn.save_soon");
@@ -68,12 +56,6 @@
     var v = clean(note.value);
     if (!v) return "EMPTY";
     if (v.length > 120) return "TEXT_TOO_LONG";
-    return null;
-  }
-  function validate2() {
-    var p = products[state.product];
-    if (p.needs_wish && !clean(wish.value)) return "WISH_REQUIRED";
-    if (p.needs_recipient && !clean(recipient.value)) return "RECIPIENT_REQUIRED";
     return null;
   }
   function validate3() {
@@ -90,27 +72,18 @@
   setInterval(function () { if (!note.value && document.activeElement !== note && Array.isArray(ph)) { phI = (phI + 1) % ph.length; note.placeholder = ph[phI]; } }, 2600);
 
   /* ---------- events ---------- */
-  [note, wish, recipient, email].forEach(function (n) { n.addEventListener("input", function () { counts(); saveDraft(); syncProduct(); }); });
+  [note, email].forEach(function (n) { n.addEventListener("input", function () { counts(); saveDraft(); syncProduct(); }); });
   $("showOnStream").addEventListener("change", saveDraft);
-  form.querySelectorAll('input[name="product"]').forEach(function (r) {
-    r.addEventListener("change", function () { state.product = r.value; setErr("err2"); syncProduct(); saveDraft(); });
-  });
   form.querySelectorAll("[data-next]").forEach(function (b) {
     b.addEventListener("click", function () {
-      if (state.step === 1) {
-        var e1 = validate1(); setErr("err1", e1);
-        if (e1) { shake($("paper")); note.focus(); return; }
-        if (scene) scene.flare(0.5);
-        show(2);
-      } else if (state.step === 2) {
-        var e2 = validate2(); setErr("err2", e2);
-        if (e2) { (products[state.product].needs_wish ? wish : recipient).focus(); return; }
-        syncProduct(); show(3);
-      }
+      var e1 = validate1(); setErr("err1", e1);
+      if (e1) { shake($("paper")); note.focus(); return; }
+      if (scene) scene.flare(0.5);
+      syncProduct(); show(2);
     });
   });
   form.querySelectorAll("[data-back]").forEach(function (b) {
-    b.addEventListener("click", function () { show(state.step === 3 ? 2 : 1); });
+    b.addEventListener("click", function () { show(1); });
   });
   note.addEventListener("keydown", function (e) {
     if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); form.querySelector('[data-step="1"] [data-next]').click(); }
@@ -120,7 +93,6 @@
     e.preventDefault();
     if (state.busy) return;
     var e1 = validate1(); if (e1) { setErr("err1", e1); show(1); return; }
-    var e2 = validate2(); if (e2) { setErr("err2", e2); show(2); return; }
     var e3 = validate3(); setErr("err3", e3);
     if (e3) { if (e3 === "CONSENT_REQUIRED") $("consent").focus(); else email.focus(); return; }
     submitOrder();
@@ -143,12 +115,9 @@
   }
 
   function submitOrder() {
-    var p = products[state.product];
     var body = {
-      product: p.code,
+      product: product.code,
       text: clean(note.value),
-      wish_text: p.needs_wish ? clean(wish.value) : null,
-      recipient_name: p.needs_recipient ? clean(recipient.value) : null,
       email: clean(email.value) || null,
       lang: D.lang,
       show_on_stream: $("showOnStream").checked,
@@ -183,7 +152,6 @@
       if (code === "INVALID_PRODUCT") code = "PRODUCT_UNAVAILABLE";
       if (code === "PAYMENT_MISCONFIGURED") code = "PAYMENT_UNAVAILABLE";
       if (["TEXT_REJECTED", "TEXT_TOO_LONG", "EMPTY"].indexOf(code) >= 0) { show(1); setErr("err1", code); return; }
-      if (["WISH_REQUIRED", "WISH_TOO_LONG", "WISH_REJECTED", "RECIPIENT_REQUIRED", "RECIPIENT_TOO_LONG", "RECIPIENT_REJECTED", "PRODUCT_UNAVAILABLE"].indexOf(code) >= 0) { show(2); setErr("err2", code); return; }
       setErr("err3", code || "UNKNOWN");
     });
   }
@@ -204,10 +172,10 @@
   });
 
   // Coming back from the bank page with the browser's Back button restores this page from cache: unlock it.
-  window.addEventListener("pageshow", function (e) { if (e.persisted && state.busy) { setBusy(false); show(3); } });
+  window.addEventListener("pageshow", function (e) { if (e.persisted && state.busy) { setBusy(false); show(2); } });
 
   /* ---------- start ---------- */
   counts(); syncProduct();
-  if (params.get("from") === "hero" && clean(note.value)) show(2); else show(1);
+  show(1);
   if (state.step === 1) setTimeout(function () { note.focus({ preventScroll: true }); }, 250);
 })();

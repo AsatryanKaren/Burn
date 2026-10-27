@@ -14,8 +14,8 @@
   <div class="flow-wrap">
     <form class="flow" id="flow" novalidate>
       <div class="flow-meta">
-        <span id="stepLabel">{{ t('burn.step', n=1, total=3) }}</span>
-        <span class="progress" aria-hidden="true"><i class="on"></i><i></i><i></i></span>
+        <span id="stepLabel">{{ t('burn.step', n=1, total=2) }}</span>
+        <span class="progress" aria-hidden="true"><i class="on"></i><i></i></span>
       </div>
 
       <!-- step 1: the paper -->
@@ -33,39 +33,8 @@
         <div class="actions"><button type="button" class="btn btn-fire" data-next>{{ t('burn.next') }}</button></div>
       </section>
 
-      <!-- step 2: the option -->
-      <section class="flow-step" data-step="2" aria-labelledby="s2Title" hidden>
-        <h2 id="s2Title">{{ t('burn.s2') }}</h2>
-        <fieldset class="choices" style="border:0;margin:0;padding:0">
-          <legend class="sr-only">{{ t('burn.s2') }}</legend>
-          {% for p in cfg.products %}
-          <label class="choice">
-            <input type="radio" name="product" value="{{ p.code }}" {% if loop.first %}checked{% endif %}>
-            <span><span class="c-title">{{ t('options.' ~ p.code ~ '_t') }}{% if p.featured %}<span class="c-badge">{{ t('options.popular') }}</span>{% endif %}</span><span class="c-desc">{{ t('options.' ~ p.code ~ '_d') }}</span></span>
-            <span class="c-price">{{ price(p.price) }}</span>
-          </label>
-          {% endfor %}
-        </fieldset>
-        <div class="field" id="wishField" hidden>
-          <label for="wish">{{ t('burn.wish_label') }}</label>
-          <div class="paper paper-gold">
-            <span class="paper-year">{{ cfg.next_year }}</span>
-            <textarea id="wish" maxlength="200" rows="3" autocomplete="off" placeholder="{{ t('burn.wish_ph') }}"></textarea>
-            <span class="count" id="wishCount">0/200</span>
-          </div>
-          <p class="hint">{{ t('burn.wish_hint') }}</p>
-        </div>
-        <div class="field" id="recipientField" hidden>
-          <label for="recipient">{{ t('burn.recipient_label') }}</label>
-          <input class="input" id="recipient" maxlength="40" autocomplete="off" placeholder="{{ t('burn.recipient_ph') }}">
-          <p class="hint">{{ t('burn.recipient_hint') }}</p>
-        </div>
-        <p class="error" id="err2" role="alert"></p>
-        <div class="actions"><button type="button" class="btn btn-ghost" data-back>{{ t('burn.back') }}</button><button type="button" class="btn btn-fire" data-next>{{ t('burn.next') }}</button></div>
-      </section>
-
-      <!-- step 3: email, consent, pay -->
-      <section class="flow-step" data-step="3" aria-labelledby="s3Title" hidden>
+      <!-- step 2: email, consent, pay -->
+      <section class="flow-step" data-step="2" aria-labelledby="s3Title" hidden>
         <h2 id="s3Title">{{ t('burn.s3') }}</h2>
         {% if not cfg.payments_open %}
         <div class="notice"><b>{{ t('burn.soon_t') }}</b><p>{{ t('burn.soon_d') }}</p></div>
@@ -77,7 +46,6 @@
         </div>
         <div class="summary" id="summary" aria-live="polite">
           <div class="line"><span>{{ t('paper.your_text') }}</span><b id="sumText"></b></div>
-          <div class="line"><span>{{ t('burn.s2') }}</span><b id="sumProduct"></b></div>
           <div class="total"><span>{{ t('burn.total') }}</span><span id="sumTotal"></span></div>
           <div class="gift" id="sumGift"></div>
         </div>

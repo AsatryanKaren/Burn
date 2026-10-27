@@ -12,14 +12,7 @@ You get a full refund of the amount paid if:
 - **you were charged twice** for the same order (duplicate payment);
 - **a technical error** occurred: for example, money was taken from your card but the order was not marked as paid, or you were charged a wrong amount;
 - **we refused your text after payment** because it was illegal, so the paper did not burn;
-- **your paper has not burned yet** and you want to cancel (see below);
 - **with Light up Armenia:** your light did not appear on the map, or someone else took your plot at the same moment and you chose a refund instead of the nearest free plot (see below).
-
-## Cancelling before your paper burns
-
-If your paper has not burned yet, you can cancel the order and get a full refund. This applies, for example, to a **Midnight fire** order, which burns only in the final minutes of 31 December 2026.
-
-To cancel, write to us **before 12:00 noon Yerevan time on 31 December 2026**. After that time, or once your paper has burned, the order can no longer be cancelled.
 
 ## When there is no refund
 
@@ -30,12 +23,6 @@ Also not grounds for a refund:
 - your text was **hidden** by moderation (for example, because it contained a name, phone number or link). A hidden paper still burns and the service counts as delivered;
 - your paper appeared later in the YouTube stream than you expected, while it burned on the website on time;
 - your card issuer charged a currency conversion fee. This fee is set by your bank, not by us.
-
-## The 2027 wish
-
-- Before your paper burns, the whole order, including the wish, can be cancelled as described above.
-- After your paper has burned, you can ask us to delete your wish at any time, but this does not give a refund.
-- If we are unable to keep your wish and open it on 31 December 2027, we will refund the wish part of the price: **1,400 AMD** (the difference between "Burn + 2027 wish" and "Burn"). If the refund to your original card is no longer technically possible by then, we will agree another way with you.
 
 ## Light up Armenia
 

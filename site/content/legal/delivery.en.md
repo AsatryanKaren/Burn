@@ -6,41 +6,34 @@
 
 ## What you buy
 
-You write something you want to leave behind in the old year (up to 120 characters). After payment your paper burns in a shared digital fire. The fire is a computer animation; no real paper is burned.
+There are two things you can buy, and both cost the same: 500 AMD.
 
-| Option | Price | Includes |
+| What you buy | Price | Includes |
 |---|---|---|
-| Burn | 500 AMD | Your paper burns in the fire. Personal page with your paper's number and a replay, plus a story image to share. |
-| Burn + 2027 wish | 1,900 AMD | Everything in "Burn", plus a wish for next year (up to 200 characters), kept privately and opened on a live stream on 31 December 2027. Email reminder if you left an email. |
-| For a friend | 900 AMD | A paper burned on behalf of someone else, with their first name. You get a link to send them. |
-| Midnight fire | 2,900 AMD | Everything in "Burn + 2027 wish"; your paper burns in the final minutes of 31 December 2026 during a special midnight stream. |
+| Burn a paper | 500 AMD | You write something you want to leave behind in 2026 (up to 120 characters) and your paper burns in a shared digital fire, on the website and on the YouTube live stream. Personal page with your paper's number and a replay, plus a story image to share. |
+| Light a light on the map | 500 AMD | A light on the free plot you choose on the [Light up Armenia](/en/lights/) map, with an icon, a colour, your message (up to 60 characters) and, optionally, a signature (up to 30 characters). Personal page with a link to your light, plus a story image to share. |
+
+The fire and the lights are computer animations; no real paper is burned. From every 500 AMD payment, 100 AMD (20%) goes to New Year gifts for children in orphanages in Armenia.
 
 Prices are final, shown in Armenian drams (AMD). There are no subscriptions and no hidden charges: you pay once per order.
 
-## How and when it is delivered
+## Your paper: how and when it is delivered
 
 1. **Right after payment** you are taken to your personal page. It shows your order, your paper's number and, once your paper has burned, its replay and your story image. If you left an email, we also send you the link.
 2. **Within minutes** your paper appears in the fire on the website.
 3. **From 20 to 31 December 2026** the fire is broadcast live on YouTube. Papers appear on the stream in the order they were paid. Papers paid before 20 December burn on the website right away and join the stream queue when it starts.
-4. **Midnight fire** papers burn in the final minutes of 31 December 2026, in the special midnight stream.
-5. **2027 wishes** are opened on a live stream on 31 December 2027. Each author sees their own wish on their personal page.
 
 **What counts as delivered:** your paper has burned in the fire on the website and your personal page is available. The YouTube stream is an extra way to watch: if very many papers are paid in the last hours of 31 December, or if YouTube is interrupted, we cannot guarantee that every paper is shown on the stream, but every paid paper burns on the website and in its replay.
 
-**How long your page is available:** at least until 31 January 2027; for orders with a 2027 wish, until 30 days after the wish is opened on 31 December 2027.
+**How long your page is available:** at least until 31 January 2027.
 
 **If your text is hidden by moderation** (for example, it contains a real person's name, a phone number or a link), your paper still burns, but its text is not shown publicly. You still see it on your personal page.
 
 ## Light up Armenia
 
-[Light up Armenia](/en/lights/) is a digital night map of Armenia with 7,048 plots of 2×2 km each. You choose a free plot and place your light on it, with an icon (tree, glowing home, candle, star, gift or pomegranate), a colour, your message (up to 60 characters) and, optionally, a signature (up to 30 characters).
+[Light up Armenia](/en/lights/) is a digital night map of Armenia with 7,048 plots of 2×2 km each. For 500 AMD you choose a free plot and place your light on it, with an icon (tree, glowing home, candle, star, gift or pomegranate), a colour, your message (up to 60 characters) and, optionally, a signature (up to 30 characters).
 
-| Option | Price | Includes |
-|---|---|---|
-| Light | 1,500 AMD | A light on the plot you chose. Personal page with a link to your light, plus a story image to share. |
-| Big light | 4,900 AMD | Everything in "Light", but the light is larger and brighter and always visible on the map. |
-
-This is a symbolic digital marker: you do not acquire any land, property or right to a real place. The borders on the map are approximate and illustrative only (see section 9 of the [Terms of Service](/en/terms/)).
+This is a symbolic digital marker: you do not acquire any land, property or right to a real place. The borders on the map are approximate and illustrative only (see section 7 of the [Terms of Service](/en/terms/)).
 
 How it is delivered:
 
@@ -69,7 +62,7 @@ You can save a light the same way. The plot is not reserved then: if it is taken
 
 ## How payment works
 
-1. You choose an option and press "Pay" (for a light, "Light it").
+1. You press "Pay" (for a light, "Light it").
 2. You are taken to the **bank's own secure payment page**. You enter your card details there, not on our site. We never see or store your card number or CVV.
 3. Your bank may ask you to confirm the payment with a one-time code (3-D Secure).
 4. After the bank confirms the payment to us directly, you are returned to your personal page.

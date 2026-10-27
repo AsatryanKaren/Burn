@@ -5,7 +5,7 @@
 {% block main %}
 {% set lp = cfg.light_products %}
 <header class="lt-head wrap">
-  <p class="kicker">{{ fmt(cfg.map.total_plots) }} · 2×2 km</p>
+  <p class="kicker">{{ fmt(cfg.map.total_plots) }} · 2×2 km · {{ price(lp[0].price) }}</p>
   <h1>{{ t('lights.title') }}</h1>
   <p class="lead">{{ t('lights.lead') }}</p>
   <div class="lt-progress" aria-live="polite">
@@ -92,14 +92,6 @@
         <label for="lSig">{{ t('lights.signature') }}</label>
         <input class="input" id="lSig" maxlength="30" autocomplete="off" placeholder="{{ t('lights.signature_ph') }}">
       </div>
-
-      <fieldset class="lt-fs">
-        <legend>{{ t('lights.size') }}</legend>
-        <div class="choices">
-          <label class="choice"><input type="radio" name="size" value="light" checked><span><span class="c-title">{{ t('lights.size_light') }}</span></span><span class="c-price">{{ price(lp[0].price) }}</span></label>
-          <label class="choice"><input type="radio" name="size" value="light_big"><span><span class="c-title">{{ t('lights.size_big') }}</span><span class="c-desc">{{ t('lights.size_big_d') }}</span></span><span class="c-price">{{ price(lp[1].price) }}</span></label>
-        </div>
-      </fieldset>
 
       <div class="field">
         <label for="lEmail">{{ t('burn.email_label') }}</label>

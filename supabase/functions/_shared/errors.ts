@@ -38,6 +38,14 @@ export const ErrorCode = {
   PAYMENT_MISCONFIGURED: "PAYMENT_MISCONFIGURED",
   ALREADY_PAID: "ALREADY_PAID",
   ORDER_NOT_PAYABLE: "ORDER_NOT_PAYABLE",
+  // join-bloggers
+  NAME_REQUIRED: "NAME_REQUIRED",
+  LINK_REQUIRED: "LINK_REQUIRED",
+  LINK_INVALID: "LINK_INVALID",
+  PLATFORM_INVALID: "PLATFORM_INVALID",
+  PHONE_INVALID: "PHONE_INVALID",
+  /** A field is longer than allowed; the error carries `field`. */
+  TOO_LONG: "TOO_LONG",
 } as const;
 
 export type ErrorCodeName = (typeof ErrorCode)[keyof typeof ErrorCode];
@@ -45,15 +53,23 @@ export type ErrorCodeName = (typeof ErrorCode)[keyof typeof ErrorCode];
 export class ApiError extends Error {
   readonly status: number;
   readonly code: string;
+  /** Optional: the request field the error is about (e.g. TOO_LONG). */
+  readonly field: string | undefined;
 
-  constructor(status: number, code: string, message: string) {
+  constructor(status: number, code: string, message: string, field?: string) {
     super(message);
     this.name = "ApiError";
     this.status = status;
     this.code = code;
+    this.field = field;
   }
 }
 
-export function errorBody(code: string, message: string): { error: { code: string; message: string } } {
-  return { error: { code, message } };
+/** `{ error: { code, message } }`, plus `field` when the error names one. */
+export function errorBody(
+  code: string,
+  message: string,
+  field?: string,
+): { error: { code: string; message: string; field?: string } } {
+  return field ? { error: { code, message, field } } : { error: { code, message } };
 }

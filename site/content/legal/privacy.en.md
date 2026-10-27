@@ -15,11 +15,9 @@ We process personal data in line with the Law of the Republic of Armenia on Prot
 | Data | Why | Required? |
 |---|---|---|
 | Your paper text (up to 120 characters) | To burn it in the fire and, if you allowed it and it passed moderation, show it publicly | Yes |
-| Your 2027 wish (up to 200 characters) | To keep it privately and show it to you on 31 December 2027 | Only for options with a wish |
-| Your friend's first name | To show it on the paper and page you send them | Only for "For a friend" |
 | Your light: plot, icon, colour and message (up to 60 characters) | To place your light on the map and show it to visitors (the message only after it passes moderation) | Only for Light up Armenia |
 | Your light's signature (up to 30 characters) | To show it publicly with your light (after it passes moderation) | No (optional) |
-| Email address | To send you the link to your page or light and receipt, the 2027 wish reminder, a payment link for a saved paper or light, and the launch notification if you asked for it | No (optional) |
+| Email address | To send you the link to your page or light and receipt, a payment link for a saved paper or light, and the launch notification if you asked for it | No (optional) |
 | Language you chose | To show pages and emails in your language | Yes |
 | Order and payment status | To deliver the service, handle refunds and keep accounting records | Yes |
 | A salted hash of your IP address | To protect the service from abuse (for example, limiting how many orders can be made in a short time) | Yes |
@@ -32,7 +30,7 @@ We process personal data in line with the Law of the Republic of Armenia on Prot
 
 ## Your personal page link
 
-Your personal page has a long random address that cannot be guessed. Anyone who has this link can see your paper and, if you have one, your wish. Keep the link private unless you want to share it.
+Your personal page has a long random address that cannot be guessed. Anyone who has this link can see your paper or light. Keep the link private unless you want to share it.
 
 ## Lights on the map
 
@@ -40,12 +38,29 @@ With Light up Armenia your light is public: any visitor can tap it and see its i
 
 A plot is an illustrative cell of the map; it does not stand for your or anyone's real address.
 
+## Blogger applications
+
+If you are a blogger and apply through the form on the [20% for gifts](/en/gifts/) page to take part in the gift delivery on 31 December (to come along, film and tell your audience about it), we receive:
+
+- your name;
+- the link to your profile and the platform (for example Instagram, TikTok or YouTube);
+- the size of your audience;
+- your email address;
+- optionally, your phone number and a message;
+- the language you chose.
+
+**Why:** only to contact you about the gift delivery and agree on your participation. We do not use this data for advertising or newsletters.
+
+**Not public:** your application is not shown on the website. Only our team sees it, and we do not share it with anyone except the technical providers listed below.
+
+**How long:** we delete the application within 6 months after the campaign ends, unless we work together. If we do, we keep it for as long as that collaboration needs. You can ask us to delete it sooner at any time.
+
 ## Why we may use your data (legal bases)
 
-- **To provide the service you ordered** (paper, wish, light, page, email with the link).
+- **To provide the service you ordered** (paper, light, page, email with the link).
 - **To meet legal obligations**, such as accounting and tax records of payments.
 - **Our legitimate interest** in keeping the service safe from abuse and spam (IP hash, moderation).
-- **Your consent**, for the launch notification. You can withdraw it at any time.
+- **Your consent**, for the launch notification and for handling a blogger application. You can withdraw it at any time.
 
 ## Who else processes the data
 
@@ -66,7 +81,7 @@ We never sell or rent your data and never share it for advertising.
 - **Order and payment records:** as long as Armenian accounting and tax law requires.
 - **Paper texts:** you can ask us to delete your text at any time. We will delete it, but keep the record of the payment itself (amount, date, status) as the law requires.
 - **Light data** (plot, icon, colour, message, signature, email and language): kept under the same rules as other orders. You can ask us to delete your light's message or signature at any time; we will delete it, but keep the record of the payment itself as the law requires.
-- **2027 wishes:** deleted 30 days after they are opened on 31 December 2027.
+- **Blogger applications:** deleted within 6 months after the campaign ends, unless we work together.
 - **Email addresses:** kept while needed for the purposes above. An email given only for the launch notification is deleted after the 2026 season ends, or earlier if you ask.
 - **IP hashes:** kept only as long as needed for abuse protection.
 

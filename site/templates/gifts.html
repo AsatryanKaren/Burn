@@ -38,31 +38,38 @@
   </div>
 </section>
 
-<section class="section bg-deep" aria-labelledby="tlTitle">
-  <div class="wrap wrap-narrow">
-    <h2 class="h-section" id="tlTitle" data-reveal style="margin-bottom:40px">{{ t('gifts_page.timeline_t') }}</h2>
-    <ol class="timeline" data-reveal>
-      <li><h3>{{ t('gifts_page.t1_t') }}</h3><p>{{ t('gifts_page.t1_d') }}</p></li>
-      <li><h3>{{ t('gifts_page.t2_t') }}</h3><p>{{ t('gifts_page.t2_d') }}</p></li>
-      <li><h3>{{ t('gifts_page.t3_t') }}</h3><p>{{ t('gifts_page.t3_d') }}</p></li>
-      <li><h3>{{ t('gifts_page.t4_t') }}</h3><p>{{ t('gifts_page.t4_d') }}</p></li>
-    </ol>
+<section class="section bg-deep" aria-labelledby="d31Title">
+  <div class="wrap wrap-narrow d31" data-reveal>
+    <p class="d31-date" aria-hidden="true">31.12</p>
+    <h2 class="h-section" id="d31Title">{{ t('gifts_page.dec31_t') }}</h2>
+    <p class="lead" style="max-width:52ch">{{ t('gifts_page.dec31_d') }}</p>
   </div>
 </section>
 
-<section class="section bg-deep rule-top">
-  <div class="wrap" style="display:grid;gap:20px;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr))">
-    <div class="card" data-reveal>
-      <h2 class="h-sub" style="margin-bottom:10px">{{ t('gifts_page.partner_t') }}</h2>
-      <p class="muted" style="margin:0">{% if cfg.gifts.partner_announced and cfg.gifts.partner_name %}{{ cfg.gifts.partner_name }}{% else %}{{ t('gifts_page.partner_soon') }}{% endif %}</p>
+<section class="section bg-deep rule-top" id="bloggers" aria-labelledby="blTitle">
+  <div class="wrap bl-grid">
+    <div data-reveal>
+      <h2 class="h-section" id="blTitle">{{ t('gifts.blogger_t') }}</h2>
+      <p class="lead" style="margin-top:14px;max-width:44ch">{{ t('gifts_page.bl_lead') }}</p>
     </div>
-    <div class="card" data-reveal>
-      <h2 class="h-sub" style="margin-bottom:10px">{{ t('gifts_page.reports_t') }}</h2>
-      {% if cfg.gifts.reports %}
-      <ul>{% for r in cfg.gifts.reports %}<li><a href="{{ r.url }}">{{ r.title }}</a></li>{% endfor %}</ul>
-      {% else %}
-      <p class="muted" style="margin:0">{{ t('gifts_page.reports_empty') }}</p>
-      {% endif %}
+    <form class="card bl-form" id="blForm" novalidate data-reveal>
+      <div class="field"><label for="blName">{{ t('gifts_page.bl_name') }}</label><input class="input" id="blName" maxlength="80" autocomplete="name"></div>
+      <div class="field"><label for="blLink">{{ t('gifts_page.bl_link') }}</label><input class="input" id="blLink" type="url" inputmode="url" maxlength="300" placeholder="https://instagram.com/…" autocomplete="url"></div>
+      <div class="bl-row">
+        <div class="field"><label for="blPlatform">{{ t('gifts_page.bl_platform') }}</label>
+          <select class="input" id="blPlatform"><option value="instagram">Instagram</option><option value="tiktok">TikTok</option><option value="youtube">YouTube</option><option value="facebook">Facebook</option><option value="telegram">Telegram</option><option value="other">{{ t('gifts_page.bl_other') }}</option></select></div>
+        <div class="field"><label for="blAudience">{{ t('gifts_page.bl_audience') }}</label><input class="input" id="blAudience" maxlength="40" placeholder="25k"></div>
+      </div>
+      <div class="field"><label for="blEmail">{{ t('burn.email_label') }}</label><input class="input" id="blEmail" type="email" inputmode="email" autocomplete="email" placeholder="{{ t('burn.email_ph') }}"></div>
+      <div class="field"><label for="blPhone">{{ t('gifts_page.bl_phone') }}</label><input class="input" id="blPhone" type="tel" inputmode="tel" maxlength="30" autocomplete="tel"></div>
+      <div class="field"><label for="blMsg">{{ t('gifts_page.bl_message') }}</label><textarea class="input" id="blMsg" rows="3" maxlength="500"></textarea></div>
+      <label class="check"><input type="checkbox" id="blConsent"><span>{{ t('gifts_page.bl_consent', privacy=url('privacy')) }}</span></label>
+      <p class="error" id="blErr" role="alert"></p>
+      <button type="submit" class="btn btn-fire btn-block" id="blSubmit">{{ t('gifts_page.bl_submit') }}</button>
+    </form>
+    <div class="card bl-done" id="blDone" hidden aria-live="polite">
+      <h3 class="h-sub" style="margin:0 0 8px">{{ t('gifts_page.bl_done_t') }}</h3>
+      <p class="muted" style="margin:0">{{ t('gifts_page.bl_done_d') }}</p>
     </div>
   </div>
 </section>
@@ -70,7 +77,10 @@
 <section class="section final">
   <div class="wrap">
     <h2 data-reveal>{{ t('final.title') }}</h2>
-    <a class="btn btn-fire" href="{{ url('burn') }}" data-reveal>{{ t('final.cta') }}<span class="price-tag">{{ price(p0) }}</span></a>
+    <div class="final-actions" data-reveal>
+      <a class="btn btn-fire" href="{{ url('burn') }}">{{ t('hero.c1_cta') }}<span class="price-tag">{{ price(p0) }}</span></a>
+      <a class="btn btn-paper" href="{{ url('lights') }}">{{ t('hero.c2_cta') }}<span class="price-tag">{{ price(p0) }}</span></a>
+    </div>
   </div>
 </section>
 {% endblock %}

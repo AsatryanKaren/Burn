@@ -12,6 +12,7 @@ export const ADMIN_ACTIONS = [
   "mark_refunded",
   "waitlist_csv",
   "awaiting_launch_csv",
+  "bloggers_csv",
 ] as const;
 export type AdminAction = (typeof ADMIN_ACTIONS)[number];
 
@@ -105,5 +106,41 @@ export function awaitingLaunchCsv(
   return toCsv(
     ["email", "lang", "code", "product", "amount_amd", "link", "created_at"],
     rows.map((r) => [r.email, r.lang, r.code, r.product, r.amount_amd, orderPageUrl(siteUrl, r.lang, r.code), r.created_at]),
+  );
+}
+
+export interface BloggerExportRow {
+  id: number;
+  created_at: string;
+  status: string;
+  name: string;
+  link: string;
+  platform: string | null;
+  audience: string | null;
+  email: string;
+  phone: string | null;
+  message: string | null;
+  lang: string;
+}
+
+export const BLOGGERS_CSV_HEADER = [
+  "id",
+  "created_at",
+  "status",
+  "name",
+  "link",
+  "platform",
+  "audience",
+  "email",
+  "phone",
+  "message",
+  "lang",
+];
+
+/** Blogger applications, oldest first (admin_export 'bloggers', 0009). */
+export function bloggersCsv(rows: BloggerExportRow[]): string {
+  return toCsv(
+    BLOGGERS_CSV_HEADER,
+    rows.map((r) => [r.id, r.created_at, r.status, r.name, r.link, r.platform, r.audience, r.email, r.phone, r.message, r.lang]),
   );
 }

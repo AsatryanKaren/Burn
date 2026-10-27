@@ -86,7 +86,7 @@
   }
   function clean(s) { return (s || "").replace(/\s+/g, " ").trim(); }
   function sync() {
-    var product = val("size"), p = prices[product] || 0;
+    var product = "light", p = prices[product] || 0;
     $("lMsgCount").textContent = $("lMsg").value.length + "/60";
     $("lGift").textContent = t("burn.of_which", { amount: A.price(A.giftShare(p)) });
     $("lSubmit").textContent = D.paymentsOpen ? t("lights.pay", { price: A.price(p) }) : t("lights.save");
@@ -136,7 +136,7 @@
     if (bad) { $("lErr").textContent = errText(bad[0]); bad[1].focus(); return; }
     $("lErr").textContent = "";
     var body = {
-      product: val("size"), cell_id: state.id, text: clean($("lMsg").value),
+      product: "light", cell_id: state.id, text: clean($("lMsg").value),
       light_icon: val("icon"), light_color: val("color"), light_signature: clean($("lSig").value) || null,
       email: clean($("lEmail").value) || null, lang: lang, consent: true
     };

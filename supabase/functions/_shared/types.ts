@@ -39,7 +39,7 @@ export type PaymentInstruction =
 /** Result type used by pure validators. */
 export type Result<T> =
   | { ok: true; value: T }
-  | { ok: false; code: string; message: string };
+  | { ok: false; code: string; message: string; field?: string };
 
 export interface AmeriaCredentials {
   clientId: string;

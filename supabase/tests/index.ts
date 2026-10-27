@@ -3,6 +3,7 @@
 // Each *.test.ts file can also be run on its own.
 import "./admin.test.ts";
 import "./ameria.test.ts";
+import "./bloggers.test.ts";
 import "./callbacks.test.ts";
 import "./cors-config.test.ts";
 import "./iphash-sanitize.test.ts";

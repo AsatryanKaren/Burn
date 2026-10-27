@@ -8,14 +8,17 @@
 // in create-order. 404 unknown code, 409 ALREADY_PAID / ORDER_NOT_PAYABLE.
 // Lights: the plot is (re-)held for 30 minutes before payment starts; if
 // another order has it -> 409 CELL_TAKEN.
+// A saved order whose product is no longer sold (products.active = false,
+// e.g. burn_wish / gift / midnight / light_big since 0008) -> 400
+// PRODUCT_UNAVAILABLE, same code as create-order; nothing changes.
 
 import { getConfig } from "../_shared/env.ts";
 import { browserEndpoint, jsonResponse, readJson } from "../_shared/http.ts";
 import { ApiError, ErrorCode } from "../_shared/errors.ts";
 import { normalizeOrderCode } from "../_shared/codes.ts";
-import { isLightProduct, parseLang } from "../_shared/validation.ts";
+import { checkProductAvailable, isLightProduct, parseLang } from "../_shared/validation.ts";
 import { providerReady } from "../_shared/config.ts";
-import { beginPaymentAttempt, findOrderByCode, holdCell, PAYABLE_STATUSES } from "../_shared/db.ts";
+import { beginPaymentAttempt, findOrderByCode, getProduct, holdCell, PAYABLE_STATUSES } from "../_shared/db.ts";
 import { enforceRateLimit, requestIpHash } from "../_shared/ratelimit.ts";
 import { paymentInstruction, paymentMisconfiguredError } from "../_shared/payments.ts";
 
@@ -47,6 +50,10 @@ Deno.serve(browserEndpoint(["POST"], cfg.cors, async (req) => {
   if (!order) throw notFound();
   if (order.status === "paid") throw alreadyPaid();
   if (!PAYABLE_STATUSES.includes(order.status)) throw notPayable();
+
+  // Only products that are still sold can be paid.
+  const available = checkProductAvailable(await getProduct(order.product));
+  if (!available.ok) throw new ApiError(400, available.code, available.message);
 
   if (cfg.provider === "disabled") {
     return jsonResponse({ code: order.code, status: order.status, payment: { mode: "disabled" } });

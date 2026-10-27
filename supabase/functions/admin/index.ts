@@ -8,7 +8,7 @@
 // right token gives its count back (release_rate_limit, migration 0006).
 //
 // Body: { "action": "stats" | "list_orders" | "moderate" | "mark_refunded"
-//                  | "waitlist_csv" | "awaiting_launch_csv", ...params }
+//                  | "waitlist_csv" | "awaiting_launch_csv" | "bloggers_csv", ...params }
 
 import { getConfig } from "../_shared/env.ts";
 import { browserEndpoint, jsonResponse, readJson } from "../_shared/http.ts";
@@ -19,6 +19,8 @@ import {
   type AdminAction,
   adminTokenMatches,
   awaitingLaunchCsv,
+  type BloggerExportRow,
+  bloggersCsv,
   parseListOrders,
   parseModerate,
   waitlistCsv,
@@ -115,6 +117,11 @@ Deno.serve(browserEndpoint(["POST"], cfg.cors, async (req) => {
     case "awaiting_launch_csv": {
       const rows = await rpc<Parameters<typeof awaitingLaunchCsv>[1]>("admin_export", { p_kind: "awaiting_launch" });
       return jsonResponse({ csv: awaitingLaunchCsv(cfg.siteUrl, rows ?? []) });
+    }
+
+    case "bloggers_csv": {
+      const rows = await rpc<BloggerExportRow[]>("admin_export", { p_kind: "bloggers" });
+      return jsonResponse({ csv: bloggersCsv(rows ?? []) });
     }
   }
 }));

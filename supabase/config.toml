@@ -17,6 +17,9 @@ verify_jwt = false
 [functions.join-waitlist]
 verify_jwt = false
 
+[functions.join-bloggers]
+verify_jwt = false
+
 [functions.pay-return-ameria]
 verify_jwt = false
 

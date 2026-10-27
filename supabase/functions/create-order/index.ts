@@ -4,7 +4,13 @@
 import { getConfig } from "../_shared/env.ts";
 import { browserEndpoint, jsonResponse, readJson } from "../_shared/http.ts";
 import { ApiError, ErrorCode } from "../_shared/errors.ts";
-import { isLightProduct, type LightOrderInput, type OrderInput, validateOrderInput } from "../_shared/validation.ts";
+import {
+  checkProductAvailable,
+  isLightProduct,
+  type LightOrderInput,
+  type OrderInput,
+  validateOrderInput,
+} from "../_shared/validation.ts";
 import { initialModeration, moderate } from "../_shared/moderation.ts";
 import { generateOrderCode } from "../_shared/codes.ts";
 import { providerReady } from "../_shared/config.ts";
@@ -47,11 +53,11 @@ Deno.serve(browserEndpoint(["POST"], cfg.cors, async (req) => {
     throw new ApiError(400, ErrorCode.TEXT_REJECTED, "This text can't be accepted. Please rephrase it.");
   }
 
-  // Price comes from the database, never from the browser.
-  const product = await getProduct(input.product);
-  if (!product || !product.active) {
-    throw new ApiError(400, ErrorCode.PRODUCT_UNAVAILABLE, "This option is not available right now.");
-  }
+  // Price comes from the database, never from the browser. Inactive products
+  // (no longer sold, rows kept for old orders) -> 400 PRODUCT_UNAVAILABLE.
+  const available = checkProductAvailable(await getProduct(input.product));
+  if (!available.ok) throw new ApiError(400, available.code, available.message);
+  const product = available.value;
 
   if (light) {
     const cell = await getCell(light.cell_id);

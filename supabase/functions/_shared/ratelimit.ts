@@ -8,6 +8,7 @@ export const LIMITS = {
   order: { limit: 8, windowSeconds: 600 },
   startPayment: { limit: 8, windowSeconds: 600 },
   waitlist: { limit: 5, windowSeconds: 600 },
+  bloggers: { limit: 5, windowSeconds: 3600 },
   orderStatus: { limit: 120, windowSeconds: 600 },
   // Bank-facing endpoints (per caller IP hash).
   ameriaReturn: { limit: 60, windowSeconds: 600 },

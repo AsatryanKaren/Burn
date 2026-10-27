@@ -18,31 +18,7 @@
   "products": [
     {
       "code": "burn",
-      "price": 500,
-      "featured": false,
-      "needs_wish": false,
-      "needs_recipient": false
-    },
-    {
-      "code": "burn_wish",
-      "price": 1900,
-      "featured": true,
-      "needs_wish": true,
-      "needs_recipient": false
-    },
-    {
-      "code": "gift",
-      "price": 900,
-      "featured": false,
-      "needs_wish": false,
-      "needs_recipient": true
-    },
-    {
-      "code": "midnight",
-      "price": 2900,
-      "featured": false,
-      "needs_wish": true,
-      "needs_recipient": false
+      "price": 500
     }
   ],
   "stream": {
@@ -83,11 +59,7 @@
   "light_products": [
     {
       "code": "light",
-      "price": 1500
-    },
-    {
-      "code": "light_big",
-      "price": 4900
+      "price": 500
     }
   ],
   "map": {
