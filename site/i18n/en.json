@@ -4,7 +4,6 @@
   "locale": "en-US",
   "nav": {
     "how": "How it works",
-    "options": "Options",
     "gifts": "20% for gifts",
     "live": "Live",
     "faq": "FAQ",
@@ -75,26 +74,6 @@
       "The sorrys I never said",
       "Late minibuses"
     ]
-  },
-  "options": {
-    "title": "Choose your fire",
-    "sub": "With every option your paper burns in the shared fire and you get your own number.",
-    "pick": "Choose",
-    "popular": "Most chosen",
-    "burn_t": "Burn",
-    "burn_d": "Your paper burns in the fire. Your own page and number, plus a story image.",
-    "burn_wish_t": "Burn + a wish for {next}",
-    "burn_wish_d": "The old burns, and we keep your wish on gold paper. We'll open it live on 31 December {next}.",
-    "gift_t": "For a friend",
-    "gift_d": "Burn a paper on someone's behalf, with their name. You get a link to send them.",
-    "midnight_t": "Midnight fire",
-    "midnight_d": "Your paper and wish burn in the final minutes of 31 December, in the special midnight stream.",
-    "includes_gift": "{amount} of it goes to gifts"
-  },
-  "wish": {
-    "title": "Gold paper for {next}",
-    "body": "Once the old is gone, one thing is left: what you want from the year ahead. Write your wish on gold paper. It doesn't burn. We keep it sealed all year and open it live on 31 December {next}. If you leave your email, we'll remind you so you can see whether it came true.",
-    "cta": "Burn and keep my wish"
   },
   "gifts": {
     "kicker": "20%",
@@ -316,10 +295,6 @@
     "message_hint": "Up to 60 characters. Everyone sees it when they tap your light.",
     "signature": "Signature (optional)",
     "signature_ph": "For example, the Petrosyan family",
-    "size": "Size",
-    "size_light": "Light",
-    "size_big": "Big light",
-    "size_big_d": "Larger and brighter, always visible on the map, even fully zoomed out",
     "pay": "Light it for {price}",
     "save": "Save my light",
     "saved_t": "Your light is saved",

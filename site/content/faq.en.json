@@ -1,55 +1,39 @@
 [
   {
     "q": "What is this?",
-    "a": "A New Year ritual for Armenians wherever they live. You write what you want to leave behind in the old year, in up to 120 characters, and your paper burns in a shared fire together with thousands of others. You get a personal page with your paper's number, a replay of it burning and an image to share."
+    "a": "A New Year ritual for Armenians wherever they live. You write what you want to leave behind in 2026, in up to 120 characters, and your paper burns in a shared fire together with thousands of others. The fire is digital: a computer animation on our website and on our YouTube live stream, and no real paper is burned. What is real is the moment: you, and many others, letting something go together. You get a personal page with your paper's number, a replay of it burning and an image to share."
   },
   {
-    "q": "Is it real fire?",
-    "a": "No, the fire is digital: a computer animation on our website and on our YouTube live stream. No real paper is burned and nothing is sent to you by post. What is real is the moment: you, and many others, letting something go together."
+    "q": "How much does it cost?",
+    "a": "500 AMD, whether you burn a paper or light a light on the map. There are no other options and no hidden charges. From every payment, 100 AMD (20%) goes to New Year gifts for children in orphanages."
   },
   {
     "q": "How fast will my paper burn?",
-    "a": "Within minutes of payment your paper appears in the fire on the website, and your personal page opens right away. From 20 to 31 December papers also appear on the live stream in the order they were paid. Midnight fire papers wait for the final minutes of 31 December."
+    "a": "Within minutes of payment your paper appears in the fire on the website, and your personal page opens right away. From 20 to 31 December papers also appear on the YouTube live stream in the order they were paid."
   },
   {
     "q": "Will people see my text?",
-    "a": "Only if you allow it and it passes our check. You can choose to keep your text private: your paper still burns, only its number is shown. Your text is always visible to you on your personal page."
-  },
-  {
-    "q": "Why can't I write names?",
-    "a": "The fire is public, and the people you name never agreed to appear on a live stream. So we don't show names of real people, phone numbers, links or insults. If your text contains them, your paper still burns, but the text is hidden from public view."
+    "a": "Only if you allow it and it passes our check. You can choose to keep your text private: your paper still burns, only its number is shown. The fire is public, so we don't show names of real people, phone numbers, links or insults; if your text contains them, your paper still burns, but the text is hidden from public view. Your text is always visible to you on your personal page."
   },
   {
     "q": "How does payment work? Is it safe?",
     "a": "You pay on the bank's own secure payment page, not on our site, and your bank may ask for a confirmation code. We never see or store your card number. Your order is marked as paid only after the bank confirms the payment to us directly."
   },
   {
-    "q": "Which cards can I use?",
-    "a": "Visa, Mastercard and ArCa cards accepted by our partner bank; the exact list is shown on the bank's payment page. Idram may be added later. Prices are final and shown in AMD."
+    "q": "Which cards can I use, including from abroad?",
+    "a": "Visa, Mastercard and ArCa cards accepted by our partner bank; the exact list is shown on the bank's payment page. Most foreign cards work: you are charged in AMD and your bank converts the amount, sometimes with a small fee. Cards issued in Russia generally don't work with Armenian banks; in that case a relative or friend in Armenia can pay for you using the link to your order. Idram may be added later."
   },
   {
-    "q": "Can I pay from abroad or from Russia?",
-    "a": "Yes, most foreign cards work: you are charged in AMD and your bank converts the amount, sometimes with a small fee. Cards issued in Russia generally don't work with Armenian banks. In that case a relative or friend in Armenia can pay for you using the link to your order."
+    "q": "Where does the 20% go? Are you a charity?",
+    "a": "From every payment we set aside 20% for gifts, and on 31 December we bring New Year gifts to children in orphanages in Armenia. Afterwards we will publish on the site what was bought and where it went. To be honest: we are not a charity but a for-profit company, and you are paying for a digital service. Giving 20% to gifts is our own choice, so it is not a donation from you and it is not tax-deductible."
   },
   {
-    "q": "Where does the 20% go, and why?",
-    "a": "From every payment we set aside 20% for New Year gifts for children in Armenian orphanages. We will name the orphanage(s) before 15 December 2026, buy and deliver the gifts between 6 and 13 January 2027, and publish the receipts and a report on the site. We do it because a New Year ritual that thinks only of itself felt wrong to us."
-  },
-  {
-    "q": "Are you a charity?",
-    "a": "No, and we want to be honest about it. We are a for-profit company, and you are paying for a digital service. Giving 20% to children's gifts is our own choice, so it is not a donation from you and it is not tax-deductible."
-  },
-  {
-    "q": "What is the 2027 wish?",
-    "a": "With \"Burn + 2027 wish\" and \"Midnight fire\" you also write a wish for next year, up to 200 characters. We keep it privately for a year, and on 31 December 2027 we open the wishes on a live stream; you see your own wish on your personal page. If you leave an email, we will remind you."
-  },
-  {
-    "q": "How does \"For a friend\" work?",
-    "a": "You write a paper on behalf of someone close to you and add just their first name. You get a link to send them, so they can watch their paper burn and keep the image. Please share the link only with that person."
+    "q": "I'm a blogger. Can I join?",
+    "a": "Yes. Fill in the form on the \"20% for gifts\" page if you would like to come with us on 31 December to deliver the gifts, film it and tell your audience. We'll contact you."
   },
   {
     "q": "What is Light up Armenia?",
-    "a": "A New Year night map of Armenia divided into 7,048 plots of 2×2 km each. You choose a free plot and place your light on it: a tree, a glowing home, a candle, a star, a gift or a pomegranate. You pick a colour, write your message (up to 60 characters) and, if you like, sign it. A Light costs 1,500 AMD and a Big light 4,900 AMD; the Big light is larger, brighter and always visible on the map. Just like with papers, 20% of the payment goes to New Year gifts for children in orphanages."
+    "a": "A New Year night map of Armenia divided into 7,048 plots of 2×2 km each. You choose a free plot and place your light on it: a tree, a glowing home, a candle, a star, a gift or a pomegranate. You pick a colour, write your message (up to 60 characters) and, if you like, sign it (up to 30 characters). A light costs 500 AMD, and just like with papers, 20% of the payment goes to New Year gifts for children in orphanages."
   },
   {
     "q": "Am I buying real land?",
@@ -69,14 +53,14 @@
   },
   {
     "q": "Can I get a refund?",
-    "a": "Yes, in full, if your paper didn't burn, you didn't get your page, you were charged twice or something broke technically. If your paper hasn't burned yet (for example, Midnight fire), you can cancel until 12:00 on 31 December 2026. Write to {{company.email}} within 14 days; the money returns to the same card, usually in 5–10 business days."
+    "a": "Yes, in full, if your paper didn't burn or your light didn't appear on the map, you didn't get your page, you were charged twice or something broke technically. Write to {{company.email}} within 14 days; the money returns to the same card, usually in 5–10 business days."
   },
   {
     "q": "When is the live stream?",
-    "a": "The fire is broadcast live on YouTube from 20 to 31 December 2026, ending with a special midnight stream in the final minutes of the year. The fire on our website burns every day. The 2027 wishes are opened on a live stream on 31 December 2027."
+    "a": "The fire is broadcast live on YouTube from 20 to 31 December 2026. The fire on our website burns every day."
   },
   {
     "q": "What happens to my data?",
-    "a": "We keep only what we need: your text, your wish if you wrote one, your email if you left it, and the payment status. We never see your card number, store only a one-way hash of your IP address, don't sell data and don't use ad trackers. You can ask us to delete your text at any time by writing to {{company.email}}."
+    "a": "We keep only what we need: your text or your light's message, your email if you left it, and the payment status. We never see your card number, store only a one-way hash of your IP address, don't sell data and don't use ad trackers. You can ask us to delete your text at any time by writing to {{company.email}}."
   }
 ]

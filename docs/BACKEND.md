@@ -14,12 +14,29 @@ supabase/
     0005_lights.sql           lights: products, orders columns, cell_holds, hold_cell, get_map, get_cell, …
     0006_needs_refund.sql     admin_stats.needs_refund, release_rate_limit (admin login limiter)
     0007_revoke_pg_net.sql    pg_net functions out of reach of anon/authenticated
+    0008_single_price.sql     one price: burn + light at 500 AMD; burn_wish/gift/midnight/light_big inactive
+    0009_bloggers.sql         blogger_applications table, admin_export('bloggers'), admin_stats.bloggers_count
   functions/
     _shared/                  shared code (see "Code layout")
-    create-order/  order-status/  start-payment/  join-waitlist/
+    create-order/  order-status/  start-payment/  join-waitlist/  join-bloggers/
     pay-return-ameria/  pay-callback-idram/  pay-mock/  admin/
   tests/                      unit tests for the pure modules (node:test)
 ```
+
+## Products and prices
+
+One price since `0008_single_price`: **500 AMD**, 20% (100 AMD) to the gift fund.
+
+| code | price | active | notes |
+|---|---|---|---|
+| `burn` | 500 | yes | a paper burned in the fire |
+| `light` | 500 | yes | a light on the map |
+| `burn_wish` | 1900 | **no** | not sold; row kept for old orders |
+| `gift` | 900 | **no** | not sold; row kept for old orders |
+| `midnight` | 2900 | **no** | not sold; row kept for old orders |
+| `light_big` | 4900 | **no** | not sold; row kept; code path (`big`) kept but unreachable |
+
+The `products` table is the source of truth for charging; `site/config/site.json` is only what the frontend shows and must match. `create-order` and `start-payment` refuse an inactive product with `400 PRODUCT_UNAVAILABLE` (start-payment: a saved `awaiting_launch` order of a retired product can no longer be paid; nothing changes). 0008 also re-prices unpaid saved lights (`awaiting_launch`/`failed`) to 500; `pending` ones keep their amount because a bank payment may be open. To sell a product again: `update products set active = true, price_amd = … where code = …;`.
 
 ## Current state (2026-10-27)
 
@@ -28,7 +45,8 @@ supabase/
 | `0001_init`, `0002_payment_attempts` | applied |
 | `0003_admin` | **not applied** — the apply was cancelled at the confirmation prompt (it contains a `delete` inside `admin_mark_refunded`). Apply it (below) or the `admin` function answers 500. |
 | `0003a_map_cells`, `0004_cells_seed`, `0005_lights`, `0006_needs_refund`, `0007_revoke_pg_net` | **not applied** — written 2026-10-27, waiting for the owner's confirmation. Verified on a local PostgreSQL 16 (all 8 files in order, then scenario tests; see "Light up Armenia"). |
-| Code changed since the last deploy | `create-order`, `start-payment`, `order-status`, `pay-return-ameria`, `pay-callback-idram`, `pay-mock`, `admin` (and `_shared/`): **not deployed**. Deploy only after the migrations (see "Deploy order"). |
+| `0008_single_price`, `0009_bloggers` | **not applied** — written 2026-10-27. Verified on a local PostgreSQL 16 (all 10 files in order; prices/active flags, blogger CHECKs, privileges, `admin_export('bloggers')`, `admin_stats.bloggers_count`, gift share 100 on a 500 order). |
+| Code changed since the last deploy | `create-order`, `start-payment`, `order-status`, `pay-return-ameria`, `pay-callback-idram`, `pay-mock`, `admin` (and `_shared/`): **not deployed**. New function `join-bloggers`: **not deployed**. Deploy only after the migrations (see "Deploy order"). |
 | `pg_net` extension | enabled (schema `extensions`) to smoke-test the deployed functions from SQL. Harmless; drop it if you don't want it: `drop extension pg_net;` |
 | Edge functions | all 8 deployed, `verify_jwt = false` |
 | Function secrets | **none set yet** — the code runs on safe defaults (see "Secrets") |
@@ -48,20 +66,20 @@ Or paste a migration file into the dashboard SQL editor. Migrations are plain SQ
 ### Apply order
 
 ```
-0001_init → 0002_payment_attempts → 0003_admin → 0003a_map_cells → 0004_cells_seed → 0005_lights → 0006_needs_refund → 0007_revoke_pg_net
+0001_init → 0002_payment_attempts → 0003_admin → 0003a_map_cells → 0004_cells_seed → 0005_lights → 0006_needs_refund → 0007_revoke_pg_net → 0008_single_price → 0009_bloggers
 ```
 
-0001 and 0002 are live. Apply the rest **in this order**, each file as one transaction (SQL editor, or MCP `apply_migration` with the file's name). 0004 inserts into `map_cells` (created by 0003a), 0005 needs both 0003 (it replaces `admin_stats`, `admin_list_orders`, `admin_mark_refunded`) and the plots, 0006 replaces `admin_stats` again.
+0001 and 0002 are live. Apply the rest **in this order**, each file as one transaction (SQL editor, or MCP `apply_migration` with the file's name). 0004 inserts into `map_cells` (created by 0003a), 0005 needs both 0003 (it replaces `admin_stats`, `admin_list_orders`, `admin_mark_refunded`) and the plots, 0006 replaces `admin_stats` again. 0008 needs 0005 (the `light`/`light_big` rows). 0009 replaces `admin_export` (0003) and `admin_stats` (0006) with `create or replace`, keeping everything they returned.
 
 **Supabase CLI caveat:** `supabase db push` only picks up files named `<digits>_name.sql`, so it **skips `0003a_map_cells.sql`** and 0004 then fails (`relation "public.map_cells" does not exist`). Apply these files by hand in the order above (SQL editor or MCP `apply_migration`).
 
-Safe to re-run? 0004 (`on conflict do nothing`), 0007 (`revoke`) yes; the others are apply-once (`create table`/`add column`/`create function`).
+Safe to re-run? 0004 (`on conflict do nothing`), 0007 (`revoke`), 0008 (plain `update`s) yes; the others are apply-once (`create table`/`add column`/`create function`).
 
 Security model, enforced by 0001:
 - RLS is enabled on every table with **no** policies, and `anon`/`authenticated` have no table or sequence privileges at all.
 - Default privileges for objects created by `postgres` in `public` no longer grant anything to `anon`/`authenticated`/`PUBLIC`: any future browser RPC needs an explicit `grant execute`.
 - Browser-callable: `get_public_stats()`, `get_fire_feed(after_number, max_rows)`, `get_map()`, `get_cell(p_cell_id)` (SECURITY DEFINER, `search_path = public`).
-- `service_role` only: `confirm_payment`, `check_rate_limit`, `begin_payment_attempt`, `hold_cell`, `peek_rate_limit`, `release_rate_limit`, `admin_*`.
+- `service_role` only: `confirm_payment`, `check_rate_limit`, `begin_payment_attempt`, `hold_cell`, `peek_rate_limit`, `release_rate_limit`, `admin_*`. Table `blogger_applications` (0009) follows the `waitlist` model: RLS on, no policies, no `anon`/`authenticated` privileges, `service_role` only.
 - An order becomes `paid` only in `confirm_payment`, which locks the order row, checks provider, amount and payment id, is idempotent (same payment → `already: true`; a second, different payment for a paid order → `ORDER_PAID_BY_OTHER_PAYMENT`, needs a manual refund; one payment id can never pay two orders), assigns `burn_number` from `burn_number_seq`, writes the floor(20%) `gift_ledger` row and sets `paid_at`.
 
 Security advisor: the remaining notices are intentional — `rls_enabled_no_policy` (INFO, by design) and `anon/authenticated_security_definer_function_executable` (WARN) for exactly the four public RPCs the contract requires (`get_public_stats`, `get_fire_feed`, `get_map`, `get_cell`).
@@ -78,14 +96,18 @@ Functions import shared code as `../_shared/*.ts` and `npm:@supabase/supabase-js
 ### Deploy order for the 2026-10-27 changes
 
 1. **Secrets first** (the CORS default changed, see "Secrets"): set `SITE_URL` to the real site, or `ALLOWED_ORIGINS=…`, and/or `ALLOW_VERCEL_PREVIEWS=1` while the site lives on `*.vercel.app` (plus `ALLOW_LOCALHOST=1` for local frontend work). With none of these set, redeployed functions refuse every browser origin (403 `ORIGIN_NOT_ALLOWED`). Also decide `AUTO_APPROVE` (default is now `0`).
-2. Apply migrations 0003 → 0007 (above).
-3. Deploy the changed functions:
+2. Apply migrations 0003 → 0009 (above).
+3. Deploy the changed functions and the new `join-bloggers`:
 
 ```sh
-for f in create-order start-payment order-status pay-return-ameria pay-callback-idram pay-mock admin; do
+for f in create-order start-payment order-status pay-return-ameria pay-callback-idram pay-mock admin join-waitlist join-bloggers; do
   supabase functions deploy "$f" --no-verify-jwt --project-ref maqcaowpfhmqcavboszy
 done
+# or only the new one:
+supabase functions deploy join-bloggers --no-verify-jwt --project-ref maqcaowpfhmqcavboszy
 ```
+
+`join-bloggers` needs 0009 (else it answers 500). `admin` `bloggers_csv` needs 0009 (unknown export kind → empty CSV until then); `stats` works either way, `bloggers_count` appears after 0009.
 
 Must-redeploy: `create-order`, `start-payment`, `order-status` (lights), `pay-return-ameria`, `pay-callback-idram` (hardening), `admin` (login limiter — needs 0006, else every admin call answers 500). `pay-mock` only adds the `needs_refund` log. `join-waitlist` code is unchanged, but it bundles `_shared/config.ts`/`cors.ts`, so a redeploy is what gives it the new CORS and AUTO_APPROVE defaults; deploying all eight is the simplest.
 
@@ -122,7 +144,7 @@ If `PAYMENT_PROVIDER` names a provider whose secrets are missing, `create-order`
 ## Switching the payment provider
 
 1. Set the provider's secrets, then `PAYMENT_PROVIDER=ameria` (or `idram`). Secrets apply to new function instances within seconds; no redeploy needed.
-2. Saved papers (`awaiting_launch`) are paid through `POST start-payment { code, lang }` — export them with admin `awaiting_launch_csv` and email each buyer their link.
+2. Saved papers (`awaiting_launch`) are paid through `POST start-payment { code, lang }` — export them with admin `awaiting_launch_csv` and email each buyer their link. The export also lists saved orders of retired products (`burn_wish`, `gift`, `midnight`, `light_big`; see the `product` column): their links answer `PRODUCT_UNAVAILABLE`, so contact those buyers separately (e.g. invite them to burn a new paper).
 3. To test end-to-end without a bank: `PAYMENT_PROVIDER=mock`. `create-order` returns `payment.mode = "mock"` with a `pay-mock?code=…` URL that marks the order paid and redirects. **Never leave `mock` on in production** — anyone could mark their own order paid.
 
 ### `payment` shapes (create-order and start-payment)
@@ -148,14 +170,15 @@ All JSON errors are `{ "error": { "code", "message" } }`. Browser endpoints also
 |---|---|
 | `create-order` | 400 `INVALID_JSON`, `CONSENT_REQUIRED`, `INVALID_PRODUCT`, `TEXT_REQUIRED`, `TEXT_TOO_LONG` (>120 papers, >60 lights), `WISH_REQUIRED`, `WISH_TOO_LONG`, `WISH_NOT_ALLOWED`, `RECIPIENT_REQUIRED`, `RECIPIENT_TOO_LONG`, `RECIPIENT_NOT_ALLOWED`, `EMAIL_REQUIRED` (only while payments are disabled), `EMAIL_INVALID`, `TEXT_REJECTED`, `PRODUCT_UNAVAILABLE`; lights also 400 `CELL_INVALID`, `ICON_INVALID`, `COLOR_INVALID`, `SIGNATURE_TOO_LONG`, `SIGNATURE_REJECTED`, 409 `CELL_TAKEN`; 429 `RATE_LIMITED`; 502 `PAYMENT_UNAVAILABLE` (bank did not answer InitPayment; order marked failed); 503 `PAYMENT_MISCONFIGURED` |
 | `order-status` | 404 `NOT_FOUND` (also for malformed codes); 429 `RATE_LIMITED` (120 / 10 min) |
-| `start-payment` | 400 `INVALID_JSON`; 404 `NOT_FOUND`; 409 `ALREADY_PAID`, `ORDER_NOT_PAYABLE` (cancelled/refunded), `CELL_TAKEN` (lights); 429 `RATE_LIMITED`; 502 `PAYMENT_UNAVAILABLE`; 503 `PAYMENT_MISCONFIGURED` |
+| `start-payment` | 400 `INVALID_JSON`, `PRODUCT_UNAVAILABLE` (product no longer sold); 404 `NOT_FOUND`; 409 `ALREADY_PAID`, `ORDER_NOT_PAYABLE` (cancelled/refunded), `CELL_TAKEN` (lights); 429 `RATE_LIMITED`; 502 `PAYMENT_UNAVAILABLE`; 503 `PAYMENT_MISCONFIGURED` |
 | `join-waitlist` | 400 `INVALID_JSON`, `EMAIL_REQUIRED`, `EMAIL_INVALID`; 429 `RATE_LIMITED`. Same `{ok:true}` for new and known emails |
+| `join-bloggers` | 400 `INVALID_JSON`, `CONSENT_REQUIRED`, `NAME_REQUIRED`, `LINK_REQUIRED`, `LINK_INVALID`, `PLATFORM_INVALID`, `EMAIL_REQUIRED`, `EMAIL_INVALID`, `PHONE_INVALID`, `TOO_LONG` (+ `field`: `name`/`link`/`audience`/`email`/`phone`/`message`); 429 `RATE_LIMITED` (5 / hour). Same `{ok:true}` for new and known emails. Contract: `docs/ARCHITECTURE.md` "POST join-bloggers" |
 | `admin` | 401 `UNAUTHORIZED`; 429 `RATE_LIMITED` (failed attempts); 400 `INVALID_JSON`, `INVALID_REQUEST`; 404 `NOT_FOUND`; 409 `ORDER_NOT_PAID` (refund of an unpaid order) |
 | `pay-mock` | 404 `NOT_FOUND` (provider not `mock`, or unknown code), 405; success = 302 |
 | `pay-return-ameria` | 302 (order page, or `${SITE_URL}/` when the order can't be identified); 413 (query or body > 8 KB); 429 (rate limit) |
 | `pay-callback-idram` | text/plain `OK` (accepted) or `FAIL` (refused; also with 413 for a body > 8 KB and 429 for the rate limit); `ERROR` with 500 on internal errors |
 
-Rate limits (per salted IP hash, fixed 10-minute windows): create-order 8, start-payment 8, join-waitlist 5, order-status 120, admin failed logins 10, pay-return-ameria 60, pay-callback-idram 60.
+Rate limits (per salted IP hash, fixed 10-minute windows unless noted): create-order 8, start-payment 8, join-waitlist 5, join-bloggers 5 per **hour**, order-status 120, admin failed logins 10, pay-return-ameria 60, pay-callback-idram 60.
 
 Admin login limiter: every admin request first counts against `admin_fail:<ip_hash>` with `check_rate_limit` (atomic, so parallel guesses can't exceed 10), then the token is compared in constant time; a correct token gives its count back with `release_rate_limit` (0006).
 
@@ -184,21 +207,21 @@ A confirmed payment for an order already paid by a different payment (`ORDER_PAI
 node --experimental-strip-types --test supabase/tests/
 ```
 
-Node 22, no packages. `supabase/tests/package.json` points the directory at `index.ts`, which imports every `*.test.ts`. Pure modules under test import nothing from npm/jsr and use no Deno globals: `validation`, `moderation(+data)`, `codes`, `money`, `md5`, `idram`, `ameria`, `cors`, `config`, `iphash`, `sanitize`, `strings`, `admin`, `callbacks`. Lights: `tests/lights.test.ts`.
+Node 22, no packages. `supabase/tests/package.json` points the directory at `index.ts`, which imports every `*.test.ts`. Pure modules under test import nothing from npm/jsr and use no Deno globals: `validation`, `moderation(+data)`, `codes`, `money`, `md5`, `idram`, `ameria`, `cors`, `config`, `iphash`, `sanitize`, `strings`, `admin`, `callbacks`. Lights: `tests/lights.test.ts`. Bloggers (validation, `field` in errors, `bloggers_csv`) and the active-product check: `tests/bloggers.test.ts`.
 
 ## Code layout (`functions/_shared`)
 
 | Module | Pure? | Purpose |
 |---|---|---|
 | `types.ts`, `errors.ts` | yes | domain types, error codes, `ApiError` |
-| `validation.ts` | yes | text normalization, order/waitlist validation |
+| `validation.ts` | yes | text normalization, order/waitlist/blogger validation, `checkProductAvailable` |
 | `moderation.ts`, `moderation-data.ts` | yes | auto-moderation and its word lists |
 | `codes.ts` | yes | 16-char Crockford base32 order codes |
 | `money.ts` | yes | floor(20%) gift share, provider amount parsing |
 | `md5.ts`, `idram.ts` | yes | Idram form, request classification, checksum |
 | `ameria.ts` | yes | Ameria request building and response evaluation |
 | `cors.ts`, `config.ts`, `http.ts` | yes | origin policy, env parsing + URLs, responses/handler wrapper |
-| `iphash.ts`, `strings.ts`, `sanitize.ts`, `admin.ts` | yes | IP hashing, constant-time compare, log sanitizing, admin parsing/CSV |
+| `iphash.ts`, `strings.ts`, `sanitize.ts`, `admin.ts` | yes | IP hashing, constant-time compare, log sanitizing, admin parsing/CSV (waitlist, awaiting launch, bloggers) |
 | `callbacks.ts` | yes | bank endpoints: 8 KB body cap, log whitelist |
 | `env.ts`, `db.ts`, `ratelimit.ts`, `payments.ts` | no | Deno env, service-role DB access, rate limits, provider HTTP calls |
 
@@ -206,7 +229,7 @@ Node 22, no packages. `supabase/tests/package.json` points the directory at `ind
 
 Contract: `docs/ARCHITECTURE.md` "Light up Armenia". What the backend does:
 
-- **Data.** `map_cells` (0003a + 0004, 7,048 plots). `orders` gains `cell_id`, `light_icon`, `light_color`, `light_signature`; CHECKs: all four null for papers; cell/icon/colour required for `light`/`light_big`; icon/colour from the fixed lists; signature 1–30; `text` 1–60 for lights and 1–120 (unchanged) for papers; lights never have a `burn_number` (`orders_paid_complete` no longer requires one for them). `cell_holds(cell_id pk, order_id unique, expires_at)`; deleting an order deletes its hold.
+- **Data.** `map_cells` (0003a + 0004, 7,048 plots). `orders` gains `cell_id`, `light_icon`, `light_color`, `light_signature`; CHECKs: all four null for papers; cell/icon/colour required for `light`/`light_big` (`light_big` is no longer sold since 0008; the CHECKs keep covering it for old rows); icon/colour from the fixed lists; signature 1–30; `text` 1–60 for lights and 1–120 (unchanged) for papers; lights never have a `burn_number` (`orders_paid_complete` no longer requires one for them). `cell_holds(cell_id pk, order_id unique, expires_at)`; deleting an order deletes its hold.
 - **Holding a plot.** `hold_cell(order_id, cell_id, minutes=30)` (service_role) locks the order, checks it is a payable light order for that plot, then `insert … on conflict (cell_id) do update … where expires_at < now() or (same order and not infinity)`; returns whether this order now holds the plot. Two orders racing for one plot: exactly one gets `true` (tested with two sessions).
 - **create-order** (light): validate → rate limit → moderation (`SIGNATURE_REJECTED` when only the signature is bad) → price from `products` → `get_cell` (`null` → `CELL_INVALID`, not `free` → `CELL_TAKEN`) → insert. Payments open: `hold_cell`; if it lost a race the order is set `cancelled` and the answer is `409 CELL_TAKEN`. Payments disabled: no hold (`awaiting_launch`, design + email saved). `show_on_stream` is stored `false`.
 - **start-payment** (light): after the status checks and before `begin_payment_attempt`, `hold_cell` re-takes the plot (free, expired, or already this order's) or answers `409 CELL_TAKEN`. With payments disabled nothing changes (as for papers).
@@ -214,7 +237,7 @@ Contract: `docs/ARCHITECTURE.md` "Light up Armenia". What the backend does:
 - **Refund** (`admin_mark_refunded`) deletes the order's hold: the plot is free again.
 - **Public.** `get_map()` — one SQL statement, `lit` = `[cell_id, icon_index, color_index, big]` arrays sorted by id, `held` = unexpired unpaid holds, `total` = rows in `map_cells`, `by_province` = lit counts for all 11 provinces (zeros included). Locally with 7,001 lit plots: ~20 ms, 133 KB JSON. `get_cell(p_cell_id)` → `null` for a non-plot; `big` is a boolean; `icon/color/lit_at` only when lit; `message/signature` only when lit and approved. `get_public_stats` gains `lights_lit`; `papers_burned` and `get_fire_feed` cover papers only.
 - **order-status** adds `cell_id`, `light_icon`, `light_color`, `light_signature`, `province`, `town_index` for light orders (`text` is the message, `burn_number` null).
-- **admin**: `stats` gains `lights_lit`, `lights_held`, `lights_cell_conflict` (and `needs_refund`, 0006); `papers_burned` is papers only. `list_orders` rows include the light fields; `q` also searches signatures.
+- **admin**: `stats` gains `lights_lit`, `lights_held`, `lights_cell_conflict` (and `needs_refund`, 0006; `bloggers_count`, 0009); `papers_burned` is papers only. `list_orders` rows include the light fields; `q` also searches signatures.
 
 Operations:
 
@@ -262,6 +285,10 @@ update orders set streamed_at = now() where burn_number = …;
 
 -- Gift fund check
 select sum(amount_amd) from gift_ledger;
+
+-- Blogger applications (or admin bloggers_csv)
+select id, created_at, status, name, link, platform, audience, email, phone from blogger_applications order by id desc;
+update blogger_applications set status = 'contacted' where id = …;   -- new | contacted | accepted | declined
 ```
 
 ## Cleanup of the setup test data

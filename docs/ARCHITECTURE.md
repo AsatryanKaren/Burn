@@ -20,7 +20,15 @@ Languages: Armenian (`hy`, default, at `/`), English (`/en/`), Russian (`/ru/`).
 ## Money rules
 
 - Every price is an integer in AMD. Prices live in `site/config/site.json` (frontend display) **and** in the `products` table (source of truth for charging). The server never trusts a price from the browser.
-- **20% of every paid amount** goes to the New Year gift fund for children in Armenian orphanages. It is recorded per payment in `gift_ledger` at the moment the payment is confirmed, rounded down to whole AMD.
+- **One price (since migration 0008): everything costs 500 AMD.** Only two products are sold:
+
+  | code | price | what |
+  |---|---|---|
+  | `burn` | 500 | A paper burned in the fire |
+  | `light` | 500 | A light on the map ("Light up Armenia") |
+
+  `burn_wish`, `gift`, `midnight` and `light_big` are **no longer sold**: their rows stay in `products` with `active = false` (old orders reference them). `create-order` and `start-payment` answer `400 PRODUCT_UNAVAILABLE` for an inactive product. Their code paths (wish, recipient, big light) still exist but are unreachable while the rows are inactive.
+- **20% of every paid amount** goes to the New Year gift fund for children in Armenian orphanages (100 AMD per 500 AMD order). It is recorded per payment in `gift_ledger` at the moment the payment is confirmed, rounded down to whole AMD.
 - We are a for-profit company and say so. The 20% is a choice we made, not the business model.
 
 ## Security rules (non-negotiable)
@@ -30,12 +38,12 @@ Languages: Armenian (`hy`, default, at `/`), English (`/en/`), Russian (`/ru/`).
 3. All tables have RLS enabled with **no** policies for `anon`/`authenticated`. The browser reads data only through `SECURITY DEFINER` RPCs that return safe, public fields, or through Edge Functions.
 4. Order codes are random, unguessable (16 chars, base32 lowercase without ambiguous letters). The code is the capability to view one's own order.
 5. Papers are moderated before they can appear publicly. Text is shown on the public fire only if the buyer allowed it **and** moderation status is `approved`.
-6. Rate limits per IP hash (salted SHA-256, never the raw IP) for order creation and waitlist.
+6. Rate limits per IP hash (salted SHA-256, never the raw IP) for order creation, waitlist and blogger applications.
 7. Secrets only in Supabase function secrets / Vercel env, never in the repo.
 
 ## Database (schema `public`)
 
-- `products(code text pk, price_amd int, active bool, sort int)` — codes: `burn`, `burn_wish`, `gift`, `midnight`.
+- `products(code text pk, price_amd int, active bool, sort int)` — codes: `burn` (500, active), `light` (500, active); inactive (not sold, kept for old orders): `burn_wish`, `gift`, `midnight`, `light_big`.
 - `orders`:
   `id bigint identity pk`, `code text unique`, `product text fk`, `amount_amd int`, `status text` (`awaiting_launch` | `pending` | `paid` | `failed` | `cancelled` | `refunded`),
   `lang text`, `email text null`, `text text` (≤120), `wish_text text null` (≤200), `recipient_name text null` (≤40),
@@ -44,6 +52,7 @@ Languages: Armenian (`hy`, default, at `/`), English (`/en/`), Russian (`/ru/`).
   `provider_order_num bigint unique` (numeric id some banks require), `ip_hash text`, `created_at`, `paid_at`, `streamed_at`, `updated_at`.
 - `gift_ledger(id, order_id fk unique, amount_amd int, created_at)` — 20% per paid order.
 - `waitlist(id, email unique (citext or lower-unique), lang, created_at, ip_hash)`.
+- `blogger_applications(id bigserial, name 1–80, link 1–300 (http(s) URL), platform null (instagram|tiktok|youtube|facebook|telegram|other), audience null ≤40, email (lower-case), phone null ≤30, message null ≤500, lang, ip_hash, created_at, status 'new'|'contacted'|'accepted'|'declined' default 'new')` — bloggers who want to join the December 31 gift delivery (0009). Service role only.
 - `rate_limits(key text, window_start timestamptz, count int, pk(key, window_start))`.
 - `payment_events(id, provider, kind, order_code, payload jsonb, created_at)` — raw audit of every callback.
 - `burn_number_seq` sequence.
@@ -70,7 +79,7 @@ Request:
 { "product": "burn", "text": "...", "wish_text": null, "recipient_name": null,
   "email": "optional@x.am", "lang": "hy", "show_on_stream": true, "consent": true }
 ```
-Rules: `consent` must be true; `text` 1–120 chars after trim and whitespace collapse; `wish_text` required for `burn_wish` and `midnight` (1–200), forbidden otherwise; `recipient_name` required for `gift` (1–40); email optional but must be valid if present (required when payments are disabled, so we can send the link at launch).
+Rules: `consent` must be true; `product` must be an active product (`burn` or `light`; others → `400 PRODUCT_UNAVAILABLE`); `text` 1–120 chars after trim and whitespace collapse; `wish_text` and `recipient_name` must be empty for `burn` (they belonged to the retired `burn_wish`/`midnight` and `gift`); email optional but must be valid if present (required when payments are disabled, so we can send the link at launch).
 Moderation: blocklist hit → `400 TEXT_REJECTED`; likely personal names/phone numbers/links → order allowed but `moderation='hidden'` (never shown publicly); otherwise `pending`.
 Rate limit: 8 orders per IP hash per 10 minutes → `429 RATE_LIMITED`.
 
@@ -88,7 +97,7 @@ Returns the buyer's own order: `{ code, status, product, amount_amd, burn_number
 
 ### `POST start-payment`
 
-`{ "code": "...", "lang": "hy" }` starts (or restarts) payment for an existing order in `awaiting_launch`, `pending` or `failed` (launch emails; someone else paying from the order link). Disabled provider: `{ code, status, payment: { mode: "disabled" } }`, nothing changes. Otherwise the order becomes `pending` and the response is `{ code, status, payment }` with the same `payment` shapes as create-order. 404 `NOT_FOUND`, 409 `ALREADY_PAID` / `ORDER_NOT_PAYABLE`. Rate limit 8 per IP hash per 10 minutes.
+`{ "code": "...", "lang": "hy" }` starts (or restarts) payment for an existing order in `awaiting_launch`, `pending` or `failed` (launch emails; someone else paying from the order link). Disabled provider: `{ code, status, payment: { mode: "disabled" } }`, nothing changes. Otherwise the order becomes `pending` and the response is `{ code, status, payment }` with the same `payment` shapes as create-order. 404 `NOT_FOUND`, 409 `ALREADY_PAID` / `ORDER_NOT_PAYABLE`, 400 `PRODUCT_UNAVAILABLE` (the order's product is no longer sold, e.g. a saved `burn_wish`; nothing changes). Rate limit 8 per IP hash per 10 minutes.
 
 ### Payment provider endpoints
 
@@ -100,14 +109,40 @@ Returns the buyer's own order: `{ code, status, product, amount_amd, burn_number
 
 `{ "email": "...", "lang": "hy" }` → `{ "ok": true }`. Rate limit 5 per IP hash per 10 minutes.
 
+### `POST join-bloggers`
+
+A blogger/influencer applies to come along on the December 31 gift delivery (film it, tell their audience).
+
+Request:
+```json
+{ "name": "Anna", "link": "https://instagram.com/anna", "platform": "instagram", "audience": "25k",
+  "email": "anna@x.am", "phone": "+374 91 123456", "message": "…", "lang": "hy", "consent": true }
+```
+Response: `{ "ok": true }` — the same for new and already-known emails (no enumeration; a repeated email adds another row).
+
+Rules (text fields: NFC, invisible characters dropped, newlines/tabs and repeated whitespace collapsed to one space, trimmed; lengths in characters after that):
+- `consent` must be exactly `true` → else `CONSENT_REQUIRED`.
+- `name` required, ≤ 80 → `NAME_REQUIRED`.
+- `link` required, ≤ 300 → `LINK_REQUIRED`; must be an `http://` or `https://` URL with a dotted host and no `user:password@` → `LINK_INVALID`. A link without a scheme (`instagram.com/anna`) gets `https://` prepended; other schemes (`javascript:`, `mailto:`, …) and bare handles (`@anna`) are `LINK_INVALID`.
+- `platform` optional: `instagram` | `tiktok` | `youtube` | `facebook` | `telegram` | `other` (case-insensitive) → else `PLATFORM_INVALID`.
+- `audience` optional free text ≤ 40 (e.g. `"25k"`; a number is accepted and stored as text).
+- `email` required → `EMAIL_REQUIRED`, valid → `EMAIL_INVALID` (stored lower-case).
+- `phone` optional, ≤ 30, digits with optional leading `+`, spaces, `()-.`, at least 5 digits → `PHONE_INVALID`.
+- `message` optional, ≤ 500.
+- `lang` `hy` | `en` | `ru`, default `hy`.
+- Any length over its limit → `TOO_LONG` with `field` naming it: `{ "error": { "code": "TOO_LONG", "message": "...", "field": "name" | "link" | "audience" | "email" | "phone" | "message" } }`.
+
+Checks run in this order, the first failure is returned: body (`INVALID_JSON`), consent, name, link, platform, audience, email, phone, message. All validation errors are 400. Rate limit 5 per IP hash per hour → `429 RATE_LIMITED` (invalid requests are not counted).
+
 ### `POST admin` (for `/admin/`)
 
 Header `x-admin-token` must equal secret `ADMIN_TOKEN` (≥ 32 chars, else always 401). 10 failed attempts per IP hash per 10 minutes → 429. Body `{ "action": ... }`:
-`stats` → `{ orders_by_status, revenue_amd, gift_fund_amd, waitlist_count, papers_burned, pending_moderation }`;
+`stats` → `{ orders_by_status, revenue_amd, gift_fund_amd, waitlist_count, papers_burned, pending_moderation, lights_lit, lights_held, lights_cell_conflict, needs_refund, bloggers_count }`;
 `list_orders` `{ status?, moderation?, q?, limit ≤ 200, before_id? }` → `{ orders: [...] }` (newest first);
 `moderate` `{ code, moderation: approved|hidden|rejected, reason? }`;
 `mark_refunded` `{ code }` (paid → refunded, removes its gift_ledger row, audit row in payment_events);
-`waitlist_csv` → `{ csv }`; `awaiting_launch_csv` → `{ csv }` with email, lang, code, product, amount_amd, link, created_at.
+`waitlist_csv` → `{ csv }`; `awaiting_launch_csv` → `{ csv }` with email, lang, code, product, amount_amd, link, created_at;
+`bloggers_csv` → `{ csv }` with id, created_at, status, name, link, platform, audience, email, phone, message, lang (oldest first).
 
 ## Function secrets
 
@@ -140,8 +175,8 @@ A second product: a night map of Armenia split into **7,048 plots** of 2×2 km (
 
 | code | price | what |
 |---|---|---|
-| `light` | 1500 | One plot with a light |
-| `light_big` | 4900 | Same plot, a large glowing light that is always labelled and listed among featured lights |
+| `light` | 500 | One plot with a light |
+| `light_big` | — | **Not sold** (inactive since 0008). Was: same plot, a large glowing light. The code path (`big` in `get_map`/`get_cell`) stays and is always `0`/`false` for new lights. |
 
 ### Data
 
@@ -167,6 +202,6 @@ A second product: a night map of Armenia split into **7,048 plots** of 2×2 km (
 
 ### Edge Functions
 
-- `create-order` accepts `product: "light" | "light_big"` with body fields `cell_id`, `text` (message), `light_icon`, `light_color`, `light_signature` (optional), `email`, `lang`, `consent`. Errors: `CELL_INVALID` (not a map cell), `CELL_TAKEN`, `ICON_INVALID`, `COLOR_INVALID`, `SIGNATURE_TOO_LONG`, `SIGNATURE_REJECTED`, `TEXT_TOO_LONG` (for >60). `show_on_stream` is ignored for lights.
+- `create-order` accepts `product: "light"` (`light_big` → `400 PRODUCT_UNAVAILABLE`) with body fields `cell_id`, `text` (message), `light_icon`, `light_color`, `light_signature` (optional), `email`, `lang`, `consent`. Errors: `CELL_INVALID` (not a map cell), `CELL_TAKEN`, `ICON_INVALID`, `COLOR_INVALID`, `SIGNATURE_TOO_LONG`, `SIGNATURE_REJECTED`, `TEXT_TOO_LONG` (for >60). `show_on_stream` is ignored for lights.
 - `order-status` also returns `cell_id`, `light_icon`, `light_color`, `light_signature`, `province`, `town_index` for light orders.
 - Payment return for lights goes to the same paper page (`/p/?c=CODE`); the page shows the light instead of a paper.

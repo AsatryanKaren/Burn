@@ -146,7 +146,7 @@ def js_payload(lang: str, page: str) -> str:
         "lightProducts": CONFIG["light_products"],
         "supabase": CONFIG["supabase"],
         "urls": {k: page_url(k, lang) for k in PAGES},
-        "t": {k: s[k] for k in ("hero", "burn", "paper", "story", "live", "feed", "gifts", "gifts_page", "nav", "options", "common", "lights")},
+        "t": {k: s[k] for k in ("hero", "burn", "paper", "story", "live", "feed", "gifts", "gifts_page", "nav", "common", "lights")},
     }
     # Escape so the JSON can't break out of the <script> element.
     return json.dumps(payload, ensure_ascii=False).replace("</", "<\\/")
