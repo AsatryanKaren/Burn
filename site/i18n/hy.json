@@ -237,7 +237,9 @@
       "NAME_REQUIRED": "Գրիր անունդ",
       "LINK_REQUIRED": "Ավելացրու քո էջի հղումը",
       "LINK_INVALID": "Ստուգիր հղումը. այն պետք է սկսվի https://-ով",
-      "TOO_LONG": "Տեքստը շատ երկար է"
+      "TOO_LONG": "Տեքստը շատ երկար է",
+      "PLATFORM_INVALID": "Ընտրիր հարթակը",
+      "PHONE_INVALID": "Ստուգիր հեռախոսահամարը"
     }
   },
   "notfound": {

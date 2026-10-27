@@ -237,7 +237,9 @@
       "NAME_REQUIRED": "Enter your name",
       "LINK_REQUIRED": "Add the link to your profile",
       "LINK_INVALID": "Check the link: it should start with https://",
-      "TOO_LONG": "That's too long"
+      "TOO_LONG": "That's too long",
+      "PLATFORM_INVALID": "Choose a platform",
+      "PHONE_INVALID": "Check the phone number"
     }
   },
   "notfound": {

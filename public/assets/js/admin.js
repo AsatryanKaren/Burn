@@ -78,7 +78,8 @@
       ["Failed", fmt(by.failed)],
       ["Refunded", fmt(by.refunded)],
       ["Waitlist", fmt(s.waitlist_count)],
-      ["Need a bank refund", fmt(s.needs_refund)]
+      ["Need a bank refund", fmt(s.needs_refund)],
+      ["Blogger applications", fmt(s.bloggers_count)]
     ];
     $("statsGrid").innerHTML = cards.map(function (c) { return '<div class="adm-card adm-stat"><span class="v">' + esc(c[1]) + '</span><span class="k">' + esc(c[0]) + "</span></div>"; }).join("");
   }
