@@ -19,6 +19,18 @@
       <span><b data-stat="gift_fund_amd" data-format="price">—</b>{{ t('gifts.fund') }}</span>
     </div>
   </div>
+  <aside class="live-side" id="liveSide" data-map="{{ asset('data/map.js') }}" data-three="{{ asset('vendor/three-r128.min.js') }}" data-room="{{ asset('js/room.js') }}" aria-label="{{ t('lights.title') }}">
+    <div class="ls-card">
+      <div class="ls-head"><span class="live-pill"><span class="dot" aria-hidden="true"></span>{{ t('lights.title') }}</span><span class="ls-count"><b id="lsLit">—</b> / {{ fmt(cfg.map.total_plots) }}</span></div>
+      <div class="ls-stage">
+        <canvas id="liveMap" aria-hidden="true"></canvas>
+        <div class="ls-room" id="lsRoom" hidden><canvas id="liveRoom" aria-hidden="true"></canvas></div>
+        <div class="ls-cap" id="lsCap" hidden><p class="kicker" id="lsCapK"></p><b id="lsCapT"></b><p id="lsCapM"></p></div>
+      </div>
+      <p class="ls-ticker" id="lsTicker"></p>
+    </div>
+    <div class="ls-cta"><span>{{ t('live.cta_line') }}</span><b>{{ cfg.domain }}</b></div>
+  </aside>
   <div class="now-burning" id="now" aria-live="polite">
     <div class="label" id="nowLabel">{{ t('live.waiting') }}</div>
     <div class="num" id="nowNum"></div>
@@ -47,5 +59,7 @@
 <script src="{{ asset('vendor/gsap-3.12.5.min.js') }}" defer></script>
 <script src="{{ asset('js/scene.js') }}" defer></script>
 <script src="{{ asset('js/site.js') }}" defer></script>
+<script src="{{ asset('js/mapcore.js') }}" defer></script>
 <script src="{{ asset('js/live.js') }}" defer></script>
+<script src="{{ asset('js/livemap.js') }}" defer></script>
 {% endblock %}

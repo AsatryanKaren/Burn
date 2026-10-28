@@ -102,7 +102,10 @@
     "stream_soon": "The YouTube live stream starts on {start} December.",
     "stream_watch": "Watch on YouTube",
     "number": "No. {n}",
-    "burned_label": "papers burned"
+    "burned_label": "papers burned",
+    "cta_line": "Light yours at",
+    "room_tour": "Visiting a room",
+    "new_light": "New light"
   },
   "faq": {
     "title": "Questions",

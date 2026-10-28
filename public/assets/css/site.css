@@ -785,3 +785,29 @@ body.is-app .lt-hint { display: none; }
 .ld-paper { position: absolute; left: 50%; top: 32%; transform: translateX(-50%) rotate(-6deg); background: var(--paper); color: var(--ink-soft); font-family: var(--serif); font-size: 13px; padding: 26px 40px 10px 46px; border-radius: 2px; box-shadow: 0 10px 30px -10px rgba(0,0,0,.8); animation: paperRise 4s ease-in-out infinite; }
 @keyframes paperRise { 0%, 100% { transform: translateX(-50%) translateY(6px) rotate(-6deg); } 50% { transform: translateX(-50%) translateY(-8px) rotate(-3deg); } }
 @media (max-width: 979px) { .app-status { top: auto; left: auto; right: 12px; bottom: calc(env(safe-area-inset-bottom, 0px) + 84px); } }
+
+/* ===================== Live: the map next to the fire ===================== */
+.live-side { position: absolute; z-index: 3; right: var(--gutter); top: calc(env(safe-area-inset-top, 0px) + 84px); bottom: 24px; width: min(36vw, 620px); display: flex; flex-direction: column; gap: 12px; pointer-events: auto; }
+.live-side[hidden] { display: none; }
+.stream-mode .live-side { top: 40px; bottom: 40px; right: 40px; width: 36vw; }
+.ls-card { flex: 1; min-height: 0; display: flex; flex-direction: column; border-radius: 22px; overflow: hidden; border: 1px solid var(--line-2); background: rgba(5,8,18,.78); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 30px 70px -30px rgba(0,0,0,.9); }
+.ls-head { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; }
+.ls-head .live-pill { align-self: center; }
+.ls-count { font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.ls-count b { color: var(--flame); font-size: 20px; font-family: var(--serif); }
+.ls-stage { position: relative; flex: 1; min-height: 0; }
+.ls-stage > canvas, .ls-room, .ls-room canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.ls-room { opacity: 0; transition: opacity .7s; background: radial-gradient(110% 80% at 50% 35%, #18234d 0%, #070a16 70%); }
+.ls-room.on { opacity: 1; }
+.ls-cap { position: absolute; left: 14px; right: 14px; bottom: 14px; z-index: 2; padding: 12px 16px; border-radius: 14px; background: rgba(10,15,30,.88); border: 1px solid rgba(255,196,107,.35); }
+.ls-cap .kicker { margin: 0 0 2px; font-size: 13px; }
+.ls-cap b { font-family: var(--serif); font-size: 1.25rem; display: block; }
+.ls-cap p:last-child { margin: 4px 0 0; color: var(--paper); font-size: 15px; }
+.ls-ticker { margin: 0; padding: 10px 16px 14px; min-height: 42px; font-size: 15px; color: var(--paper); opacity: 0; transform: translateY(6px); transition: opacity .4s, transform .4s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ls-ticker.on { opacity: 1; transform: none; }
+.ls-cta { display: flex; align-items: baseline; gap: 10px; justify-content: center; padding: 14px 18px; border-radius: 18px; color: #1c0e05; background: linear-gradient(180deg, #ffd27a, #ff8a3d); font-size: 17px; box-shadow: 0 18px 40px -16px rgba(255,120,40,.8); }
+.ls-cta b { font-family: var(--serif); font-size: 1.5rem; }
+.stream-mode .ls-cta { font-size: 22px; } .stream-mode .ls-cta b { font-size: 2rem; }
+/* the fire moves left to make room for the map */
+@media (min-width: 1100px) { .page-live .scene-fixed { right: 30vw; } .stream-mode .scene-fixed { right: 36vw; } }
+@media (min-width: 1100px) { .page-live .now-burning { left: 35vw; } .stream-mode .now-burning { left: 32vw; top: 38%; } .stream-mode .now-burning .label { font-size: 16px; } }

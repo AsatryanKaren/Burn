@@ -618,7 +618,7 @@
       // fit the whole room: about 6 units each side of centre horizontally, 4.8 vertically
       var asp = w / h; camera.fov = asp < 0.8 ? 40 : 30;
       var tv = Math.tan(camera.fov * Math.PI / 360);
-      orbit.base = Math.max(4.9 / tv, 6.1 / (tv * asp));
+      orbit.base = Math.max(5.1 / tv, 6.6 / (tv * asp));
       if (!orbit.userZoom) orbit.dist = orbit.base;
       camera.updateProjectionMatrix(); aim();
     }

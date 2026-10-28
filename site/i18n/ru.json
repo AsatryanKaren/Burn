@@ -102,7 +102,10 @@
     "stream_soon": "Прямой эфир на YouTube начнётся {start} декабря.",
     "stream_watch": "Смотреть на YouTube",
     "number": "№ {n}",
-    "burned_label": "записок сожжено"
+    "burned_label": "записок сожжено",
+    "cta_line": "Зажгите свой огонёк на",
+    "room_tour": "Заглядываем в гости",
+    "new_light": "Новый огонёк"
   },
   "faq": {
     "title": "Вопросы",
