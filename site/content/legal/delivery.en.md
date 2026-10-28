@@ -11,7 +11,7 @@ There are two things you can buy, and both cost the same: 500 AMD.
 | What you buy | Price | Includes |
 |---|---|---|
 | Burn a paper | 500 AMD | You write something you want to leave behind in 2026 (up to 120 characters) and your paper burns in a shared digital fire, on the website and on the YouTube live stream. Personal page with your paper's number and a replay, plus a story image to share. |
-| Light a light on the map | 500 AMD | A light on the free plot you choose on the [Light up Armenia](/en/lights/) map, with an icon, a colour, your message (up to 60 characters) and, optionally, a signature (up to 30 characters). Personal page with a link to your light, plus a story image to share. |
+| Light a light on the map | 500 AMD | A light on the free plot you choose on the [Light up Armenia](/en/map/) map, with an icon, a colour, your message (up to 60 characters) and, optionally, a signature (up to 30 characters). Personal page with a link to your light, plus a story image to share. |
 
 The fire and the lights are computer animations; no real paper is burned. From every 500 AMD payment, 100 AMD (20%) goes to New Year gifts for children in orphanages in Armenia.
 
@@ -31,7 +31,7 @@ Prices are final, shown in Armenian drams (AMD). There are no subscriptions and 
 
 ## Light up Armenia
 
-[Light up Armenia](/en/lights/) is a digital night map of Armenia with 7,048 plots of 2×2 km each. For 500 AMD you choose a free plot and place your light on it, with an icon (tree, glowing home, candle, star, gift or pomegranate), a colour, your message (up to 60 characters) and, optionally, a signature (up to 30 characters).
+[Light up Armenia](/en/map/) is a digital night map of Armenia with 111,111 plots of 500×500 m each. For 500 AMD you choose a free plot and place your light on it, with an icon (tree, glowing home, candle, star, gift or pomegranate), a colour, your message (up to 60 characters) and, optionally, a signature (up to 30 characters).
 
 This is a symbolic digital marker: you do not acquire any land, property or right to a real place. The borders on the map are approximate and illustrative only (see section 7 of the [Terms of Service](/en/terms/)).
 

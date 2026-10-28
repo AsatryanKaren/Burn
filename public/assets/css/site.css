@@ -811,3 +811,7 @@ body.is-app .lt-hint { display: none; }
 /* the fire moves left to make room for the map */
 @media (min-width: 1100px) { .page-live .scene-fixed { right: 30vw; } .stream-mode .scene-fixed { right: 36vw; } }
 @media (min-width: 1100px) { .page-live .now-burning { left: 35vw; } .stream-mode .now-burning { left: 32vw; top: 38%; } .stream-mode .now-burning .label { font-size: 16px; } }
+
+/* scarcity line: the map has a fixed number of places this year */
+.ld-scarce, .lt-scarce { margin: .6rem 0 0; font-size: .92rem; color: var(--gold, #e9c77b); max-width: 34rem; }
+.lt-scarce { padding: .55rem .75rem; border: 1px solid rgba(233,199,123,.3); border-radius: 12px; background: rgba(233,199,123,.06); }

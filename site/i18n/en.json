@@ -273,8 +273,8 @@
   },
   "lights": {
     "title": "Light up Armenia",
-    "meta_desc": "A New Year night map: 7,048 plots across Armenia. Light yours in your town, your village or your grandmother's village.",
-    "lead": "Armenia is divided into 7,048 plots of 2×2 km. Light yours with a tree, a glowing window, a candle or a pomegranate, and let the whole country light up by midnight.",
+    "meta_desc": "A New Year night map: 111,111 plots across Armenia. Light yours in your town, your village or your grandmother's village.",
+    "lead": "Armenia is divided into 111,111 plots of 500×500 m. Light yours with a tree, a glowing window, a candle or a pomegranate, and let the whole country light up by midnight.",
     "progress": "<b>{n}</b> of {total} lit",
     "goal": "The goal: light up all of Armenia by New Year",
     "find": "Find your town",
@@ -333,9 +333,9 @@
       "EMPTY": "Write a few words"
     },
     "home_t": "Light up Armenia",
-    "home_d": "Beyond the fire, a New Year map: 7,048 plots across the country, one light on each. Light yours in your town or your ancestors' village and watch the country light up.",
+    "home_d": "Beyond the fire, a New Year map: 111,111 plots across the country, one light on each. Light yours in your town or your ancestors' village and watch the country light up.",
     "home_cta": "Open the map",
-    "home_yer": "Yerevan has room for only 52 lights",
+    "home_yer": "Yerevan has room for only 862 lights",
     "paper_t": "Your light is on",
     "paper_line": "Your light now shines on the map of Armenia.",
     "paper_see": "See it on the map",
@@ -357,12 +357,13 @@
     "nolight": "The light is on; its words are still being reviewed",
     "your_light": "Your light",
     "gift_share": "{amount} from this light went to gifts for children in orphanages.",
-    "lead2": "Armenia is split into 7,048 plots, and every plot is a little room. Pick yours, decorate it with a tree and a fireplace, light it up, and drop in on everyone else's.",
+    "lead2": "Armenia is split into 111,111 plots, and every plot is a little room. Pick yours, decorate it with a tree and a fireplace, light it up, and drop in on everyone else's.",
     "h1_t": "Pick your spot",
     "h2_t": "Decorate your room",
     "h3_t": "Light it for {price}",
     "also": "And to say goodbye to 2026",
-    "final_t": "Let all of Armenia light up"
+    "final_t": "Let all of Armenia light up",
+    "scarce": "Only 111,111 places this year. When they're gone, the map won't grow. Find yours while you can."
   },
   "room": {
     "decorate": "Decorate your room",

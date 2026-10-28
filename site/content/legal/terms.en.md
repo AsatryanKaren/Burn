@@ -21,7 +21,7 @@ We are a for-profit company registered in the Republic of Armenia. In these term
 On {{brand.name}} you can buy two digital services:
 
 - **Burn a paper.** You write something you want to leave behind in 2026 (up to 120 characters), pay for it, and your paper burns in a shared digital fire on the website and on our YouTube live stream, which runs from 20 to 31 December 2026. After payment you get a personal page with your paper's number and a replay of it burning, plus a story image you can download and share.
-- **Light a light on the map.** On the [Light up Armenia](/en/lights/) New Year map you place your own light on one free plot of a digital map of Armenia (see section 7).
+- **Light a light on the map.** On the [Light up Armenia](/en/map/) New Year map you place your own light on one free plot of a digital map of Armenia (see section 7).
 
 The fire and the lights are computer animations. No physical paper is burned and nothing physical is sent to you.
 
@@ -74,7 +74,7 @@ You are responsible for what you write. Do not write anything you would not want
 
 ## 7. Light up Armenia
 
-[Light up Armenia](/en/lights/) is a digital night map of Armenia divided into 7,048 plots of 2×2 km each (Lake Sevan is not divided into plots). For 500 AMD you choose one free plot and place your light on it, choosing:
+[Light up Armenia](/en/map/) is a digital night map of Armenia divided into 111,111 plots of 500×500 m each (Lake Sevan is not divided into plots). For 500 AMD you choose one free plot and place your light on it, choosing:
 
 - an icon: tree, glowing home, candle, star, gift or pomegranate;
 - the colour of the light;

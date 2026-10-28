@@ -31,14 +31,21 @@
   function index(m) {
     var n = m.cols * m.rows;
     m.prov = new Int8Array(n).fill(-1);
-    m.town = new Int8Array(n).fill(-1);
+    m.town = new Int8Array(n).fill(-2); // -2 = not computed yet, -1 = no town nearby
     m.ids = [];
     m.provCount = new Array(m.provinces.length).fill(0);
     var sx = new Array(m.provinces.length).fill(0), sy = new Array(m.provinces.length).fill(0);
-    for (var i = 0; i < m.cells.length; i += 3) {
-      var id = m.cells[i], p = m.cells[i + 1];
-      m.prov[id] = p; m.town[id] = m.cells[i + 2]; m.ids.push(id); m.provCount[p]++;
-      sx[p] += (id % m.cols + 0.5) * m.cell_km; sy[p] += (Math.floor(id / m.cols) + 0.5) * m.cell_km;
+    // Run-length grid: "<value base36><length base36>," per run; value 0 = not a plot, else province index + 1.
+    var pos = 0, runs = m.grid.split(",");
+    for (var i = 0; i < runs.length; i++) {
+      var run = runs[i]; if (!run) continue;
+      var v = parseInt(run[0], 36), len = parseInt(run.slice(1), 36);
+      if (v > 0) for (var k = 0; k < len; k++) {
+        var id = pos + k, p = v - 1;
+        m.prov[id] = p; m.ids.push(id); m.provCount[p]++;
+        sx[p] += (id % m.cols + 0.5) * m.cell_km; sy[p] += (Math.floor(id / m.cols) + 0.5) * m.cell_km;
+      }
+      pos += len;
     }
     m.provCenter = m.provinces.map(function (_, p) { return [sx[p] / Math.max(1, m.provCount[p]), sy[p] / Math.max(1, m.provCount[p])]; });
     m.total = m.ids.length;
@@ -54,7 +61,30 @@
   }
   function isCell(m, id) { return id >= 0 && id < m.prov.length && m.prov[id] >= 0; }
   function cellCenter(m, id) { return [(id % m.cols + 0.5) * m.cell_km, (Math.floor(id / m.cols) + 0.5) * m.cell_km]; }
-  function townName(m, id, lang) { var ti = m.town[id]; return ti >= 0 ? m.towns[ti][lang] : null; }
+  function townIndex(m, id) {
+    if (m.town[id] !== -2) return m.town[id];
+    var c = cellCenter(m, id), best = -1, bd = 14;
+    for (var i = 0; i < m.towns.length; i++) { var d = Math.hypot(m.towns[i].x - c[0], m.towns[i].y - c[1]); if (d <= bd) { bd = d; best = i; } }
+    m.town[id] = best; return best;
+  }
+  function townName(m, id, lang) { var ti = townIndex(m, id); return ti >= 0 ? m.towns[ti][lang] : null; }
+  // get_map sends lights packed (4 bytes each, base64); older responses send arrays.
+  function unpack(r) {
+    r = r || {};
+    var lit = r.lit || [], held = r.held || [];
+    if (typeof r.lit_packed === "string") {
+      var b = atob(r.lit_packed); lit = [];
+      for (var i = 0; i + 3 < b.length; i += 4) {
+        var id = (b.charCodeAt(i) << 16) | (b.charCodeAt(i + 1) << 8) | b.charCodeAt(i + 2), x = b.charCodeAt(i + 3);
+        lit.push([id, x >> 4, (x >> 1) & 7, x & 1]);
+      }
+    }
+    if (typeof r.held_packed === "string") {
+      var h = atob(r.held_packed); held = [];
+      for (var j = 0; j + 2 < h.length; j += 3) held.push((h.charCodeAt(j) << 16) | (h.charCodeAt(j + 1) << 8) | h.charCodeAt(j + 2));
+    }
+    return { lit: lit, held: held };
+  }
   function provName(m, id, lang) { var p = m.prov[id]; return p >= 0 ? m.provinces[p][lang] : ""; }
   function placeName(m, id, lang) { return townName(m, id, lang) || provName(m, id, lang); }
   function hash(id) { var x = Math.sin(id * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
@@ -198,7 +228,7 @@
     var id = row * m.cols + col;
     return isCell(m, id) ? id : -1;
   };
-  P.maxS = function () { return 70; };
+  P.maxS = function () { return 150; };
   P.minS = function () { return this.fitS * 0.85; };
   P.target = function (wx, wy, s) {
     s = Math.max(this.minS(), Math.min(this.maxS(), s));
@@ -242,11 +272,11 @@
     this.anim = null; this.clamp(); this.dirty = true; this.start();
   };
   P.setLights = function (lit, held, animateNew) {
-    var now = performance.now(), next = new Map(), fresh = [], self = this, initial = this.lights.size === 0 && !this.loadedOnce;
+    var now = performance.now(), next = new Map(), fresh = [], self = this, initial = this.lights.size === 0 && !this.loadedOnce, many = (lit || []).length > 2500;
     (lit || []).forEach(function (r) {
       var id = r[0]; if (!isCell(self.m, id)) return;
       var old = self.lights.get(id);
-      var born = old ? old.born : (initial ? now + hash(id) * 1400 : now);
+      var born = old ? old.born : (initial ? (many ? now - 1000 : now + hash(id) * 1400) : now);
       next.set(id, { i: r[1] | 0, c: r[2] | 0, b: r[3] ? 1 : 0, born: born });
       if (!old && !initial) fresh.push(id);
     });
@@ -256,7 +286,7 @@
     var ids = Array.from(next.keys()), sp = [];
     for (var k = 0; k < Math.min(160, ids.length); k++) sp.push(ids[Math.floor(hash(k * 13.7 + ids.length) * ids.length)]);
     this.sparks = sp;
-    this.lightsDirty = true; this.loadedOnce = true; this.start();
+    this.lightsDirty = true; this.bulkDirty = true; this.loadedOnce = true; this.start();
     return fresh;
   };
   P.select = function (id) { this.sel = id; this.start(); };
@@ -342,19 +372,31 @@
     ctx.drawImage(this.static, 0, 0);
     ctx.setTransform(d, 0, 0, d, 0, 0);
     ctx.textBaseline = "middle";
-    var labelAll = cpx >= 9, fontPx = Math.max(11, Math.min(14, cpx * 0.7));
+    var labelAll = v.s >= 4.5, fontPx = Math.max(11, Math.min(14, v.s * 1.4));
     ctx.globalCompositeOperation = "lighter";
     var x0 = -40, y0 = -40, x1 = this.W + 40, y1 = this.H + 40, showIcons = cpx >= 15;
+    // Far out, every light is drawn once into a world-space bitmap and that bitmap is scaled per frame:
+    // with up to 111 111 plots, one sprite per light on every pan would be far too slow.
+    var bulk = cpx < 5;
+    if (bulk) {
+      if (this.bulkDirty || !this.bulk) this.buildBulk();
+      var B = this.bulk, bs = v.s / B.ppk;
+      ctx.globalAlpha = Math.min(1, 0.55 + cpx * 0.12);
+      ctx.imageSmoothingEnabled = true;
+      ctx.drawImage(B.c, v.x, v.y, B.c.width * bs, B.c.height * bs);
+      ctx.globalAlpha = 1;
+    }
+    var dim = Math.min(1, 0.35 + cpx * 0.11);
     this.lights.forEach(function (L, id) {
       var cx = (id % m.cols + 0.5) * m.cell_km * v.s + v.x, cy = (Math.floor(id / m.cols) + 0.5) * m.cell_km * v.s + v.y;
       if (cx < x0 || cy < y0 || cx > x1 || cy > y1) return;
       var age = (now - L.born) / 600;
       if (age < 1) popping = true;
-      if (age < 0) return;
+      if (age < 0 || (bulk && age >= 1 && !L.b)) return;
       var pop = age < 1 ? 1 + Math.sin(age * Math.PI) * 0.8 : 1, al = Math.min(1, age);
       var col = COLORS[L.c] || "amber";
       var R = Math.max(L.b ? 7 : 3.2, cpx * (L.b ? 1.6 : 0.85)) * pop;
-      ctx.globalAlpha = al * 0.88;
+      ctx.globalAlpha = al * 0.88 * (L.b ? 1 : dim);
       ctx.drawImage(glowSprite(col), cx - R, cy - R, R * 2, R * 2);
       if (showIcons || (L.b && cpx >= 7)) {
         ctx.globalCompositeOperation = "source-over"; ctx.globalAlpha = al;
@@ -373,7 +415,7 @@
     ctx.globalCompositeOperation = "source-over";
     // labels
     if (this.o.labels !== false) {
-      if (cpx < 9) {
+      if (v.s < 4.5) {
         ctx.textAlign = "center"; ctx.fillStyle = "rgba(243,236,224,.34)";
         ctx.font = "600 " + Math.max(10, Math.min(13, v.s * 4.2)) + "px " + sans();
         m.provinces.forEach(function (p, i) {
@@ -393,6 +435,22 @@
     }
     this.lightsDirty = popping;
     this.composedAt = now;
+  };
+
+  P.buildBulk = function () {
+    var m = this.m, ppk = 4, c = this.bulk ? this.bulk.c : document.createElement("canvas");
+    var W = Math.ceil(m.width_km * ppk), H = Math.ceil(m.height_km * ppk);
+    if (c.width !== W || c.height !== H) { c.width = W; c.height = H; }
+    var ctx = c.getContext("2d"), R = m.cell_km * ppk * 1.6;
+    ctx.clearRect(0, 0, W, H);
+    ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.8;
+    this.lights.forEach(function (L, id) {
+      if (L.b) return;
+      var x = (id % m.cols + 0.5) * m.cell_km * ppk, y = (Math.floor(id / m.cols) + 0.5) * m.cell_km * ppk;
+      ctx.drawImage(glowSprite(COLORS[L.c] || "amber"), x - R, y - R, R * 2, R * 2);
+    });
+    ctx.globalCompositeOperation = "source-over"; ctx.globalAlpha = 1;
+    this.bulk = { c: c, ppk: ppk }; this.bulkDirty = false;
   };
 
   P.frame = function (now) {
@@ -555,7 +613,7 @@
     ctx.restore();
     ctx.globalCompositeOperation = "lighter";
     lightsList.forEach(function (L) {
-      var p = cellCenter(m, L[0]), R = L[3] ? 16 : 9;
+      var p = cellCenter(m, L[0]), R = L[3] ? 9 : 4.5;
       ctx.drawImage(glowSprite(COLORS[L[2]] || "amber"), ox + p[0] * s - R, oy + p[1] * s - R, R * 2, R * 2);
     });
     ctx.globalCompositeOperation = "source-over";
@@ -580,7 +638,7 @@
 
   window.MapCore = {
     ICONS: ICONS, COLORS: COLORS, HEX: HEX, loadMap: loadMap, isCell: isCell, cellCenter: cellCenter,
-    townName: townName, provName: provName, placeName: placeName, iconCanvas: iconCanvas,
+    townName: townName, unpack: unpack, provName: provName, placeName: placeName, iconCanvas: iconCanvas,
     MapView: MapView, storyCard: storyCard, hash: hash
   };
 })();

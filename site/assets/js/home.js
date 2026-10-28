@@ -76,7 +76,7 @@
       io.disconnect();
       window.MapCore.loadMap(lt.getAttribute("data-map")).then(function (m) {
         var v = new window.MapCore.MapView(lt.querySelector("canvas"), m, { lang: D.lang, labels: false, pad: 14 });
-        A.api.rpc("get_map").then(function (r) { v.setLights((r && r.lit) || [], (r && r.held) || []); }).catch(function () {});
+        A.api.rpc("get_map").then(function (r) { var u = window.MapCore.unpack(r); v.setLights(u.lit, u.held); }).catch(function () {});
       }).catch(function () {});
     }, { rootMargin: "300px" });
     io.observe(lt);

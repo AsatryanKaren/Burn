@@ -130,7 +130,7 @@
       document.getElementById("lCopy").addEventListener("click", function () { A.copy(shareUrl); });
       document.getElementById("lShare").addEventListener("click", function () {
         A.api.rpc("get_map").catch(function () { return null; }).then(function (r) {
-          var card = MC.storyCard(m, (r && r.lit) || [], { id: id, icon: icon, color: color }, {
+          var card = MC.storyCard(m, MC.unpack(r).lit, { id: id, icon: icon, color: color }, {
             title: t("lights.story_t"), place: town || place, sub: town ? place : "", cta: t("lights.story_sub"), brand: D.brand
           });
           A.shareCanvas(card, "light-" + id + ".png", shareUrl);

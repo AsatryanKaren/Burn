@@ -13,7 +13,7 @@
       var el = document.getElementById("ldCount");
       if (el) el.innerHTML = A.t("lights.progress", { n: A.fmt(n), total: A.fmt(m.total) });
     };
-    A.api.rpc("get_map").then(function (r) { var lit = (r && r.lit) || []; v.setLights(lit, (r && r.held) || []); paint(lit.length); })
+    A.api.rpc("get_map").then(function (r) { var u = MC.unpack(r), lit = u.lit; v.setLights(lit, u.held); paint(lit.length); })
       .catch(function () { paint(0); });
     window.addEventListener("resize", function () { v.fit(true); });
   });

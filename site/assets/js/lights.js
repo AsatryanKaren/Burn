@@ -344,7 +344,7 @@
   function refresh() {
     return A.api.rpc("get_map").then(function (r) {
       state.lastMap = r || {};
-      litRows = (r && r.lit) || []; heldRows = (r && r.held) || [];
+      var u = MC.unpack(r); litRows = u.lit; heldRows = u.held;
       var fresh = view.setLights(litRows, heldRows);
       fresh.slice(0, 5).forEach(function (id) { tickQ.push(MC.placeName(m, id, lang)); }); tick();
       paintProgress();
@@ -374,7 +374,7 @@
     sel.addEventListener("change", function () {
       if (sel.value === "") return;
       var tw = m.towns[+sel.value];
-      view.flyTo(view.target(tw.x, tw.y, 16 / m.cell_km), 1100);
+      view.flyTo(view.target(tw.x, tw.y, 12), 1100);
     });
     $("zIn").addEventListener("click", function () { view.zoomAt(1.6, view.W / 2, view.H / 2); });
     $("zOut").addEventListener("click", function () { view.zoomAt(1 / 1.6, view.W / 2, view.H / 2); });

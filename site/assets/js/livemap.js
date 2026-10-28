@@ -31,8 +31,8 @@
   }
   function refresh() {
     return A.api.rpc("get_map").then(function (r) {
-      lit = (r && r.lit) || [];
-      var fresh = view.setLights(lit, (r && r.held) || []);
+      var u = MC.unpack(r); lit = u.lit;
+      var fresh = view.setLights(lit, u.held);
       $("lsLit").textContent = A.fmt(lit.length);
       fresh.slice(0, 6).forEach(function (id) { queue.push(MC.placeName(m, id, lang)); });
       tick();
