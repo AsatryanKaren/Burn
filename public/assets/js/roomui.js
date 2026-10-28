@@ -1,5 +1,5 @@
 /* The room overlay: decorate your plot's room, or step into someone else's.
-   RoomUI.open({ mode: "edit"|"view", layout, title, kicker, message, signature, onDone(layout, imageUrl) })
+   RoomUI.open({ mode: "edit"|"view", layout, cellId, title, kicker, message, signature, warmth, visits, onDone(layout, imageUrl), onNext() })
    three.js and room.js are loaded only when a room is first opened. */
 (function () {
   "use strict";
@@ -7,7 +7,8 @@
   var $ = function (id) { return document.getElementById(id); };
   var ov = $("roomOverlay");
   if (!ov) return;
-  var room = null, cur = null, loading = null, lastFocus = null;
+  var room = null, cur = null, loading = null, lastFocus = null, muted = false;
+  try { muted = localStorage.getItem("roomMuted") === "1"; } catch (e) {}
 
   function loadScript(src) {
     return new Promise(function (res, rej) { var s = document.createElement("script"); s.src = src; s.onload = res; s.onerror = rej; document.head.appendChild(s); });
@@ -22,6 +23,7 @@
     return loading;
   }
 
+  /* ---------- editor dock ---------- */
   var built = false;
   function buildDock() {
     if (built) return; built = true;
@@ -33,12 +35,14 @@
     $("rmItems").addEventListener("click", function (e) {
       var b = e.target.closest("[data-add]"); if (!b || !room) return;
       if (!room.add(b.getAttribute("data-add"))) A.toast(t("room.full"));
+      syncStyles();
     });
+    ov.querySelectorAll("[data-tpl]").forEach(function (b) { b.addEventListener("click", function () { if (room) { room.useTemplate(b.getAttribute("data-tpl")); syncStyles(); } }); });
     ov.querySelectorAll("[data-wall]").forEach(function (b) { b.addEventListener("click", function () { room && room.setStyle("wall", b.getAttribute("data-wall")); syncStyles(); }); });
     ov.querySelectorAll("[data-floor]").forEach(function (b) { b.addEventListener("click", function () { room && room.setStyle("floor", b.getAttribute("data-floor")); syncStyles(); }); });
     $("rmGlow").addEventListener("change", function () { room && room.setStyle("glow", $("rmGlow").checked); });
     $("rmRotate").addEventListener("click", function () { room && room.rotate(); });
-    $("rmRemove").addEventListener("click", function () { room && room.remove(); });
+    $("rmRemove").addEventListener("click", function () { room && room.remove(); syncStyles(); });
   }
   function syncStyles() {
     if (!room) return;
@@ -46,23 +50,74 @@
     ov.querySelectorAll("[data-wall]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-wall") === l.wall)); });
     ov.querySelectorAll("[data-floor]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-floor") === l.floor)); });
     $("rmGlow").checked = !!l.glow;
+    $("rmCount").textContent = l.items.length + "/40";
   }
   function onSelect(type) {
     $("rmSel").hidden = !type;
     if (type) $("rmSelName").textContent = t("room.items." + type);
   }
 
+  /* ---------- visiting: warmth, visits, next room ---------- */
+  function warmedKey(id) { return "warmed:" + id; }
+  function hasWarmed(id) { try { return localStorage.getItem(warmedKey(id)) === "1"; } catch (e) { return false; } }
+  function paintVisit(o) {
+    $("rmWarmN").textContent = o.warmth ? A.fmt(o.warmth) : "";
+    var done = hasWarmed(o.cellId);
+    $("rmWarm").classList.toggle("is-on", done);
+    $("rmWarmT").textContent = t(done ? "room.warmed" : "room.warm");
+    $("rmVisits").textContent = o.visits ? t("room.visits", { n: A.fmt(o.visits) }) : "";
+  }
+  function hearts(btn) {
+    if (A.reduceMotion) return;
+    var r = btn.getBoundingClientRect();
+    for (var i = 0; i < 9; i++) {
+      var h = document.createElement("span"); h.className = "rm-heart"; h.textContent = "❤";
+      h.style.left = (r.left + r.width * (0.2 + Math.random() * 0.6)) + "px"; h.style.top = (r.top) + "px";
+      h.style.setProperty("--dx", ((Math.random() - 0.5) * 120).toFixed(0) + "px"); h.style.animationDelay = (i * 60) + "ms";
+      document.body.appendChild(h); setTimeout(function (n) { n.remove(); }.bind(null, h), 1600);
+    }
+  }
+  $("rmWarm").addEventListener("click", function () {
+    var o = cur; if (!o || o.mode !== "view" || o.cellId == null) return;
+    hearts($("rmWarm"));
+    if (hasWarmed(o.cellId)) return;
+    try { localStorage.setItem(warmedKey(o.cellId), "1"); } catch (e) {}
+    o.warmth = (o.warmth || 0) + 1; paintVisit(o);
+    A.api.fn("room-warmth", { cell_id: o.cellId, action: "warm" }).then(function (r) {
+      if (r && typeof r.warmth === "number" && cur === o) { o.warmth = r.warmth; paintVisit(o); }
+    }).catch(function () {});
+  });
+  $("rmNext").addEventListener("click", function () { if (cur && cur.onNext) cur.onNext(); });
+
+  /* ---------- open / close ---------- */
+  function paintMute() { $("rmMute").textContent = muted ? "🔇" : "🔊"; $("rmMute").setAttribute("aria-pressed", String(muted)); }
+  $("rmMute").addEventListener("click", function () {
+    muted = !muted; try { localStorage.setItem("roomMuted", muted ? "1" : "0"); } catch (e) {}
+    if (room) room.mute(muted); paintMute();
+  });
+
   function open(o) {
-    cur = o; lastFocus = document.activeElement;
+    var wasOpen = !ov.hidden;
+    cur = o; if (!wasOpen) lastFocus = document.activeElement;
     var edit = o.mode === "edit";
     ov.hidden = false; ov.classList.toggle("is-edit", edit); ov.classList.toggle("is-view", !edit);
     document.body.style.overflow = "hidden";
     $("rmKicker").textContent = o.kicker || t(edit ? "room.kicker_edit" : "room.kicker_visit");
     $("rmTitle").textContent = o.title || "";
     $("rmDone").hidden = !edit; $("rmDock").hidden = !edit; $("rmSel").hidden = true;
+    $("rmVisit").hidden = edit; $("rmNext").hidden = !o.onNext;
     var hasMsg = !edit && (o.message || o.signature);
     $("rmMsg").hidden = !hasMsg;
     if (hasMsg) { $("rmMsgText").textContent = o.message || ""; $("rmMsgSig").textContent = o.signature ? t("lights.lit_by", { name: o.signature }) : ""; }
+    if (!edit) {
+      paintVisit(o);
+      if (o.cellId != null) A.api.fn("room-warmth", { cell_id: o.cellId, action: "visit" }).then(function (r) {
+        if (r && typeof r.visits === "number" && cur === o) { o.visits = r.visits; paintVisit(o); }
+      }).catch(function () {});
+    }
+    $("rmTap").classList.remove("gone"); clearTimeout(open.tapT);
+    open.tapT = setTimeout(function () { $("rmTap").classList.add("gone"); }, 4500);
+    paintMute();
     $("rmLoading").hidden = false;
     if (edit && window.Room) buildDock();
     ov.style.setProperty("--dock-h", (edit ? $("rmDock").offsetHeight : 0) + "px");
@@ -71,11 +126,15 @@
       $("rmLoading").hidden = true;
       if (room) { room.dispose(); room = null; }
       var c = $("roomCanvas"), fresh = c.cloneNode(false); c.parentNode.replaceChild(fresh, c);
-      room = window.Room.create(fresh, { editable: edit, layout: o.layout, onSelect: onSelect, onChange: syncStyles });
+      room = window.Room.create(fresh, {
+        editable: edit, layout: o.layout, seed: o.cellId, onSelect: onSelect, onChange: syncStyles,
+        onInteract: function () { $("rmTap").classList.add("gone"); }
+      });
       if (!room) { close(); A.toast(t("lights.map_err")); return; }
+      room.mute(muted);
       if (edit) { buildDock(); syncStyles(); }
       ov.style.setProperty("--dock-h", (edit ? $("rmDock").offsetHeight : 0) + "px");
-      (edit ? $("rmDone") : $("rmClose")).focus();
+      if (!wasOpen) (edit ? $("rmDone") : $("rmClose")).focus();
     }).catch(function () { close(); A.toast(t("burn.errors.NETWORK")); });
   }
   function close(save) {

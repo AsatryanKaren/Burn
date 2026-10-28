@@ -201,10 +201,19 @@
   <div class="rm-loading" id="rmLoading"><span class="spinner" style="border-color:rgba(255,255,255,.2);border-top-color:#ffc46b"></span></div>
   <header class="rm-top">
     <div class="rm-head"><p class="kicker" id="rmKicker"></p><h2 id="rmTitle"></h2></div>
+    <button type="button" class="icon-btn rm-mute" id="rmMute" aria-pressed="false" aria-label="{{ t('room.sound') }}">🔊</button>
     <button type="button" class="btn btn-fire btn-sm" id="rmDone">{{ t('room.done') }}</button>
     <button type="button" class="icon-btn rm-x" id="rmClose" aria-label="{{ t('room.close') }}">×</button>
   </header>
-  <div class="rm-msg" id="rmMsg" hidden><p id="rmMsgText"></p><span id="rmMsgSig"></span></div>
+  <p class="rm-tap" id="rmTap">✦ {{ t('room.tap_hint') }}</p>
+  <div class="rm-visit" id="rmVisit" hidden>
+    <div class="rm-msg" id="rmMsg" hidden><p id="rmMsgText"></p><span id="rmMsgSig"></span></div>
+    <div class="rm-acts">
+      <button type="button" class="btn btn-paper rm-warm" id="rmWarm"><span aria-hidden="true">❤</span> <span id="rmWarmT">{{ t('room.warm') }}</span> <b id="rmWarmN"></b></button>
+      <button type="button" class="btn btn-ghost" id="rmNext">{{ t('room.next') }} →</button>
+    </div>
+    <p class="rm-visits" id="rmVisits"></p>
+  </div>
   <div class="rm-zoom"><button type="button" class="icon-btn" data-zoom="0.85" aria-label="+">+</button><button type="button" class="icon-btn" data-zoom="1.18" aria-label="−">−</button></div>
   <div class="rm-sel" id="rmSel" hidden>
     <span id="rmSelName"></span>
@@ -212,6 +221,9 @@
     <button type="button" class="btn btn-ghost btn-sm" id="rmRemove">{{ t('room.remove') }}</button>
   </div>
   <div class="rm-dock" id="rmDock">
+    <div class="rm-tpls" role="group" aria-label="{{ t('room.start') }}"><span>{{ t('room.start') }}</span>
+      {% for k in ['empty','cozy','party','classic'] %}<button type="button" class="rm-tpl" data-tpl="{{ k }}">{{ t('room.tpl.' ~ k) }}</button>{% endfor %}
+      <span class="rm-count" id="rmCount"></span></div>
     <div class="rm-styles">
       <div class="rm-sw" role="group" aria-label="{{ t('room.wall') }}"><span>{{ t('room.wall') }}</span>
         {% for w in ['cream','sage','night','berry'] %}<button type="button" class="sw-btn wall-{{ w }}" data-wall="{{ w }}" title="{{ t('room.walls.' ~ w) }}" aria-label="{{ t('room.walls.' ~ w) }}"></button>{% endfor %}</div>

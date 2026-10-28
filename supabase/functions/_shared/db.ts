@@ -180,6 +180,24 @@ export async function updateOrderRoom(
   return Array.isArray(data) && data.length > 0;
 }
 
+/**
+ * One warmth per IP hash for a lit plot's room (room_add_warmth, 0011).
+ * Returns the raw RPC answer: { ok: true, warmth, already } or
+ * { ok: false, error: "NOT_LIT" | "INVALID_ARGS" } (see _shared/warmth.ts).
+ */
+export async function addRoomWarmth(cellId: number, ipHash: string): Promise<unknown> {
+  const { data, error } = await db().rpc("room_add_warmth", { p_cell_id: cellId, p_ip_hash: ipHash });
+  if (error) throw dbError("room_add_warmth", error);
+  return data;
+}
+
+/** Counts a visit of a lit plot's room (room_add_visit, 0011): { ok: true, visits } or { ok: false, error: "NOT_LIT" }. */
+export async function addRoomVisit(cellId: number): Promise<unknown> {
+  const { data, error } = await db().rpc("room_add_visit", { p_cell_id: cellId });
+  if (error) throw dbError("room_add_visit", error);
+  return data;
+}
+
 export async function getMapCell(cellId: number): Promise<{ province: string; town_index: number } | null> {
   const { data, error } = await db().from("map_cells").select("province, town_index").eq("id", cellId).maybeSingle();
   if (error) throw dbError("getMapCell", error);

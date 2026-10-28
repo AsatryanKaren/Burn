@@ -17,9 +17,10 @@ supabase/
     0008_single_price.sql     one price: burn + light at 500 AMD; burn_wish/gift/midnight/light_big inactive
     0009_bloggers.sql         blogger_applications table, admin_export('bloggers'), admin_stats.bloggers_count
     0010_rooms.sql            orders.room (a light's 3D room layout) + CHECKs; get_cell gains `room`
+    0011_room_warmth.sql      room_stats + room_warmth_log, room_add_warmth/room_add_visit; get_cell gains `warmth`/`visits`, get_map gains `warm`
   functions/
     _shared/                  shared code (see "Code layout")
-    create-order/  order-status/  start-payment/  update-room/  join-waitlist/  join-bloggers/
+    create-order/  order-status/  start-payment/  update-room/  room-warmth/  join-waitlist/  join-bloggers/
     pay-return-ameria/  pay-callback-idram/  pay-mock/  admin/
   tests/                      unit tests for the pure modules (node:test)
 ```
@@ -48,7 +49,8 @@ The `products` table is the source of truth for charging; `site/config/site.json
 | `0003a_map_cells`, `0004_cells_seed`, `0005_lights`, `0006_needs_refund`, `0007_revoke_pg_net` | **not applied** — written 2026-10-27, waiting for the owner's confirmation. Verified on a local PostgreSQL 16 (all 8 files in order, then scenario tests; see "Light up Armenia"). |
 | `0008_single_price`, `0009_bloggers` | **not applied** — written 2026-10-27. Verified on a local PostgreSQL 16 (all 10 files in order; prices/active flags, blogger CHECKs, privileges, `admin_export('bloggers')`, `admin_stats.bloggers_count`, gift share 100 on a 500 order). |
 | `0010_rooms` | **not applied** — written 2026-10-28. Verified on a local PostgreSQL 16 (all 11 files in order; room CHECKs reject papers with a room, non-objects, `v ≠ 1`, oversize; a 40-item room fits; `get_cell` returns `room` only when lit, callable as `anon`, grants unchanged). |
-| Code changed since the last deploy | `create-order`, `start-payment`, `order-status`, `pay-return-ameria`, `pay-callback-idram`, `pay-mock`, `admin` (and `_shared/`): **not deployed**. New functions `join-bloggers`, `update-room`: **not deployed**. Since 2026-10-28 `create-order`, `order-status` and `update-room` select `orders.room`: they answer 500 until `0010_rooms` is applied. Deploy only after the migrations (see "Deploy order"). |
+| `0011_room_warmth` | **not applied** — written 2026-10-28. Verified on a local PostgreSQL 16 (all 12 files in order; free/held plots → `NOT_LIT`; one warmth per IP hash, repeat → `already: true`; visits count; `get_map.warm` ordered warmest first, lit only; refund + new owner → counters start at 0 and the old warmth log is cleared; `room_*` functions/tables refused for `anon`/`authenticated`, allowed for `service_role`; `get_cell`/`get_map` still callable by `anon`). |
+| Code changed since the last deploy | `create-order`, `start-payment`, `order-status`, `pay-return-ameria`, `pay-callback-idram`, `pay-mock`, `admin` (and `_shared/`): **not deployed**. New functions `join-bloggers`, `update-room`, `room-warmth`: **not deployed** (`room-warmth` needs `0011_room_warmth`, else every call answers 500). Since 2026-10-28 `create-order`, `order-status` and `update-room` select `orders.room`: they answer 500 until `0010_rooms` is applied. Deploy only after the migrations (see "Deploy order"). |
 | `pg_net` extension | enabled (schema `extensions`) to smoke-test the deployed functions from SQL. Harmless; drop it if you don't want it: `drop extension pg_net;` |
 | Edge functions | all 8 deployed, `verify_jwt = false` |
 | Function secrets | **none set yet** — the code runs on safe defaults (see "Secrets") |
@@ -68,10 +70,10 @@ Or paste a migration file into the dashboard SQL editor. Migrations are plain SQ
 ### Apply order
 
 ```
-0001_init → 0002_payment_attempts → 0003_admin → 0003a_map_cells → 0004_cells_seed → 0005_lights → 0006_needs_refund → 0007_revoke_pg_net → 0008_single_price → 0009_bloggers → 0010_rooms
+0001_init → 0002_payment_attempts → 0003_admin → 0003a_map_cells → 0004_cells_seed → 0005_lights → 0006_needs_refund → 0007_revoke_pg_net → 0008_single_price → 0009_bloggers → 0010_rooms → 0011_room_warmth
 ```
 
-0001 and 0002 are live. Apply the rest **in this order**, each file as one transaction (SQL editor, or MCP `apply_migration` with the file's name). 0004 inserts into `map_cells` (created by 0003a), 0005 needs both 0003 (it replaces `admin_stats`, `admin_list_orders`, `admin_mark_refunded`) and the plots, 0006 replaces `admin_stats` again. 0008 needs 0005 (the `light`/`light_big` rows). 0009 replaces `admin_export` (0003) and `admin_stats` (0006) with `create or replace`, keeping everything they returned. 0010 (after 0009) adds `orders.room` and replaces `get_cell` (0005) with `create or replace`, keeping everything it returned and its grants.
+0001 and 0002 are live. Apply the rest **in this order**, each file as one transaction (SQL editor, or MCP `apply_migration` with the file's name). 0004 inserts into `map_cells` (created by 0003a), 0005 needs both 0003 (it replaces `admin_stats`, `admin_list_orders`, `admin_mark_refunded`) and the plots, 0006 replaces `admin_stats` again. 0008 needs 0005 (the `light`/`light_big` rows). 0009 replaces `admin_export` (0003) and `admin_stats` (0006) with `create or replace`, keeping everything they returned. 0010 (after 0009) adds `orders.room` and replaces `get_cell` (0005) with `create or replace`, keeping everything it returned and its grants. 0011 (after 0010) adds `room_stats`/`room_warmth_log` and the two service-role RPCs, and replaces `get_cell` (0010) and `get_map` (0005) with `create or replace`, keeping everything they returned and their grants.
 
 **Supabase CLI caveat:** `supabase db push` only picks up files named `<digits>_name.sql`, so it **skips `0003a_map_cells.sql`** and 0004 then fails (`relation "public.map_cells" does not exist`). Apply these files by hand in the order above (SQL editor or MCP `apply_migration`).
 
@@ -81,7 +83,7 @@ Security model, enforced by 0001:
 - RLS is enabled on every table with **no** policies, and `anon`/`authenticated` have no table or sequence privileges at all.
 - Default privileges for objects created by `postgres` in `public` no longer grant anything to `anon`/`authenticated`/`PUBLIC`: any future browser RPC needs an explicit `grant execute`.
 - Browser-callable: `get_public_stats()`, `get_fire_feed(after_number, max_rows)`, `get_map()`, `get_cell(p_cell_id)` (SECURITY DEFINER, `search_path = public`).
-- `service_role` only: `confirm_payment`, `check_rate_limit`, `begin_payment_attempt`, `hold_cell`, `peek_rate_limit`, `release_rate_limit`, `admin_*`. Table `blogger_applications` (0009) follows the `waitlist` model: RLS on, no policies, no `anon`/`authenticated` privileges, `service_role` only.
+- `service_role` only: `confirm_payment`, `check_rate_limit`, `begin_payment_attempt`, `hold_cell`, `peek_rate_limit`, `release_rate_limit`, `admin_*`, `room_add_warmth`, `room_add_visit`, `room_stats_prepare` (0011). Tables `room_stats` and `room_warmth_log` (0011): RLS on, no policies, `service_role` only. Table `blogger_applications` (0009) follows the `waitlist` model: RLS on, no policies, no `anon`/`authenticated` privileges, `service_role` only.
 - An order becomes `paid` only in `confirm_payment`, which locks the order row, checks provider, amount and payment id, is idempotent (same payment → `already: true`; a second, different payment for a paid order → `ORDER_PAID_BY_OTHER_PAYMENT`, needs a manual refund; one payment id can never pay two orders), assigns `burn_number` from `burn_number_seq`, writes the floor(20%) `gift_ledger` row and sets `paid_at`.
 
 Security advisor: the remaining notices are intentional — `rls_enabled_no_policy` (INFO, by design) and `anon/authenticated_security_definer_function_executable` (WARN) for exactly the four public RPCs the contract requires (`get_public_stats`, `get_fire_feed`, `get_map`, `get_cell`).
@@ -109,7 +111,11 @@ done
 for f in create-order order-status update-room; do
   supabase functions deploy "$f" --no-verify-jwt --project-ref maqcaowpfhmqcavboszy
 done
+# room warmth/visits (after 0011_room_warmth):
+supabase functions deploy room-warmth --no-verify-jwt --project-ref maqcaowpfhmqcavboszy
 ```
+
+**Warmth (0011) must be applied before** `room-warmth` is deployed (it calls `room_add_warmth`/`room_add_visit`; without them every call answers 500). Applying 0011 alone is safe for the deployed code: `get_cell`/`get_map` only gain keys. No other function changed (`_shared/db.ts`, `errors.ts`, `ratelimit.ts` only gained exports), so nothing else needs a redeploy for this feature.
 
 **Rooms (0010) must be applied before** `create-order`, `order-status` or `update-room` with the room code is deployed: they read `orders.room`, and without the column every call answers 500. `start-payment` and the payment endpoints also bundle `_shared/db.ts` (which now selects `room`), so redeploy them only after 0010 as well. The old deployed code keeps working after 0010 (the column is nullable).
 
@@ -177,6 +183,7 @@ All JSON errors are `{ "error": { "code", "message" } }`. Browser endpoints also
 | `create-order` | 400 `INVALID_JSON`, `CONSENT_REQUIRED`, `INVALID_PRODUCT`, `TEXT_REQUIRED`, `TEXT_TOO_LONG` (>120 papers, >60 lights), `WISH_REQUIRED`, `WISH_TOO_LONG`, `WISH_NOT_ALLOWED`, `RECIPIENT_REQUIRED`, `RECIPIENT_TOO_LONG`, `RECIPIENT_NOT_ALLOWED`, `EMAIL_REQUIRED` (only while payments are disabled), `EMAIL_INVALID`, `TEXT_REJECTED`, `PRODUCT_UNAVAILABLE`, `ROOM_NOT_ALLOWED` (a paper with a `room`); lights also 400 `CELL_INVALID`, `ICON_INVALID`, `COLOR_INVALID`, `SIGNATURE_TOO_LONG`, `SIGNATURE_REJECTED`, `ROOM_INVALID`, 409 `CELL_TAKEN`; 429 `RATE_LIMITED`; 502 `PAYMENT_UNAVAILABLE` (bank did not answer InitPayment; order marked failed); 503 `PAYMENT_MISCONFIGURED` |
 | `order-status` | 404 `NOT_FOUND` (also for malformed codes); 429 `RATE_LIMITED` (120 / 10 min) |
 | `update-room` | 400 `INVALID_JSON`, `ROOM_INVALID`; 404 `NOT_FOUND` (unknown or malformed code); 409 `ORDER_NOT_EDITABLE` (not a light, or status not `awaiting_launch`/`pending`/`paid`); 429 `RATE_LIMITED` (60 / hour). Contract: `docs/ARCHITECTURE.md` "The room" |
+| `room-warmth` | 400 `INVALID_JSON`, `CELL_INVALID`, `ACTION_INVALID`; 404 `NOT_LIT` (no such plot or not lit); 429 `RATE_LIMITED` (`warm` only, 30 / hour; `visit` over 300 / hour answers `200 {ok:true}` with no counts). Contract: `docs/ARCHITECTURE.md` "Warmth and visits" |
 | `start-payment` | 400 `INVALID_JSON`, `PRODUCT_UNAVAILABLE` (product no longer sold); 404 `NOT_FOUND`; 409 `ALREADY_PAID`, `ORDER_NOT_PAYABLE` (cancelled/refunded), `CELL_TAKEN` (lights); 429 `RATE_LIMITED`; 502 `PAYMENT_UNAVAILABLE`; 503 `PAYMENT_MISCONFIGURED` |
 | `join-waitlist` | 400 `INVALID_JSON`, `EMAIL_REQUIRED`, `EMAIL_INVALID`; 429 `RATE_LIMITED`. Same `{ok:true}` for new and known emails |
 | `join-bloggers` | 400 `INVALID_JSON`, `CONSENT_REQUIRED`, `NAME_REQUIRED`, `LINK_REQUIRED`, `LINK_INVALID`, `PLATFORM_INVALID`, `EMAIL_REQUIRED`, `EMAIL_INVALID`, `PHONE_INVALID`, `TOO_LONG` (+ `field`: `name`/`link`/`audience`/`email`/`phone`/`message`); 429 `RATE_LIMITED` (5 / hour). Same `{ok:true}` for new and known emails. Contract: `docs/ARCHITECTURE.md` "POST join-bloggers" |
@@ -185,7 +192,7 @@ All JSON errors are `{ "error": { "code", "message" } }`. Browser endpoints also
 | `pay-return-ameria` | 302 (order page, or `${SITE_URL}/` when the order can't be identified); 413 (query or body > 8 KB); 429 (rate limit) |
 | `pay-callback-idram` | text/plain `OK` (accepted) or `FAIL` (refused; also with 413 for a body > 8 KB and 429 for the rate limit); `ERROR` with 500 on internal errors |
 
-Rate limits (per salted IP hash, fixed 10-minute windows unless noted): create-order 8, start-payment 8, join-waitlist 5, join-bloggers 5 per **hour**, update-room 60 per **hour**, order-status 120, admin failed logins 10, pay-return-ameria 60, pay-callback-idram 60.
+Rate limits (per salted IP hash, fixed 10-minute windows unless noted): create-order 8, start-payment 8, join-waitlist 5, join-bloggers 5 per **hour**, update-room 60 per **hour**, room-warmth `warm` 30 / `visit` 300 per **hour** (separate counters), order-status 120, admin failed logins 10, pay-return-ameria 60, pay-callback-idram 60.
 
 Admin login limiter: every admin request first counts against `admin_fail:<ip_hash>` with `check_rate_limit` (atomic, so parallel guesses can't exceed 10), then the token is compared in constant time; a correct token gives its count back with `release_rate_limit` (0006).
 
@@ -214,7 +221,7 @@ A confirmed payment for an order already paid by a different payment (`ORDER_PAI
 node --experimental-strip-types --test supabase/tests/
 ```
 
-Node 22, no packages. `supabase/tests/package.json` points the directory at `index.ts`, which imports every `*.test.ts`. Pure modules under test import nothing from npm/jsr and use no Deno globals: `validation`, `moderation(+data)`, `codes`, `money`, `md5`, `idram`, `ameria`, `cors`, `config`, `iphash`, `sanitize`, `strings`, `admin`, `callbacks`. Lights: `tests/lights.test.ts`. Bloggers (validation, `field` in errors, `bloggers_csv`) and the active-product check: `tests/bloggers.test.ts`. Rooms (`validateRoom`, the create-order `room` field, the update-room decision `checkRoomEditable`): `tests/rooms.test.ts`.
+Node 22, no packages. `supabase/tests/package.json` points the directory at `index.ts`, which imports every `*.test.ts`. Pure modules under test import nothing from npm/jsr and use no Deno globals: `validation`, `moderation(+data)`, `codes`, `money`, `md5`, `idram`, `ameria`, `cors`, `config`, `iphash`, `sanitize`, `strings`, `admin`, `callbacks`, `warmth`. Lights: `tests/lights.test.ts`. Bloggers (validation, `field` in errors, `bloggers_csv`) and the active-product check: `tests/bloggers.test.ts`. Rooms (`validateRoom`, the create-order `room` field, the update-room decision `checkRoomEditable`): `tests/rooms.test.ts`. Warmth (`validateWarmthInput`, rate-limit and RPC-answer decisions, config.toml entry, 0011 grants): `tests/warmth.test.ts`.
 
 ## Code layout (`functions/_shared`)
 
@@ -230,6 +237,7 @@ Node 22, no packages. `supabase/tests/package.json` points the directory at `ind
 | `cors.ts`, `config.ts`, `http.ts` | yes | origin policy, env parsing + URLs, responses/handler wrapper |
 | `iphash.ts`, `strings.ts`, `sanitize.ts`, `admin.ts` | yes | IP hashing, constant-time compare, log sanitizing, admin parsing/CSV (waitlist, awaiting launch, bloggers) |
 | `callbacks.ts` | yes | bank endpoints: 8 KB body cap, log whitelist |
+| `warmth.ts` | yes | room-warmth: input validation, rate-limit and RPC-answer decisions |
 | `env.ts`, `db.ts`, `ratelimit.ts`, `payments.ts` | no | Deno env, service-role DB access, rate limits, provider HTTP calls |
 
 ## Light up Armenia (the map)
@@ -245,6 +253,7 @@ Contract: `docs/ARCHITECTURE.md` "Light up Armenia". What the backend does:
 - **Public.** `get_map()` — one SQL statement, `lit` = `[cell_id, icon_index, color_index, big]` arrays sorted by id, `held` = unexpired unpaid holds, `total` = rows in `map_cells`, `by_province` = lit counts for all 11 provinces (zeros included). Locally with 7,001 lit plots: ~20 ms, 133 KB JSON. `get_cell(p_cell_id)` → `null` for a non-plot; `big` is a boolean; `icon/color/lit_at` only when lit; `message/signature` only when lit and approved. `get_public_stats` gains `lights_lit`; `papers_burned` and `get_fire_feed` cover papers only.
 - **order-status** adds `cell_id`, `light_icon`, `light_color`, `light_signature`, `province`, `town_index`, `room` for light orders (`text` is the message, `burn_number` null).
 - **Rooms (0010).** `orders.room jsonb null`: the light's 3D room layout (contract: ARCHITECTURE.md "The room"). CHECKs `orders_room_light_only` (null for papers) and `orders_room_shape` (object, `v = 1`, `items` array ≤ 40, text form and stored size ≤ 8192 bytes — a backstop; the strict 4096-byte / lists / ranges check is `validateRoom`). `create-order` stores an optional room for lights; `update-room` `{code, room}` replaces it while the order is `awaiting_launch`/`pending`/`paid` (conditional `update … where status in (…)`, so a refund racing with it wins → 409). `get_cell` returns `room` for lit plots. No moderation (no free text). Inspect: `select code, status, room from orders where room is not null order by id desc limit 20;`
+- **Warmth and visits (0011).** `room_stats(cell_id pk, order_id, warmth, visits, updated_at)` and `room_warmth_log(cell_id, ip_hash, created_at, pk(cell_id, ip_hash))` (contract: ARCHITECTURE.md "Warmth and visits"). `room_stats_prepare` finds the plot's paid light, upserts and locks its `room_stats` row (`for update`, so concurrent calls for one room serialize) and, when the row belongs to an earlier light of that plot, resets it to 0 and deletes the plot's warmth log. `room_add_warmth` inserts into the log `on conflict do nothing` and adds 1 only when a row was inserted. `get_cell`/`get_map` join `room_stats` on the current light's `order_id`, so a previous owner's counts never show. Inspect: `select s.*, o.code from room_stats s left join orders o on o.id = s.order_id order by warmth desc limit 20;`
 - **admin**: `stats` gains `lights_lit`, `lights_held`, `lights_cell_conflict` (and `needs_refund`, 0006; `bloggers_count`, 0009); `papers_burned` is papers only. `list_orders` rows include the light fields; `q` also searches signatures.
 
 Operations:

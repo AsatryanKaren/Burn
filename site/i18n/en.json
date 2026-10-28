@@ -411,6 +411,19 @@
       "radio": "Radio",
       "clock": "Clock"
     },
-    "every": "Every plot is a room"
+    "every": "Every plot is a room",
+    "tap_hint": "Tap anything in the room",
+    "warm": "Send warmth",
+    "warmed": "Your warmth arrived",
+    "next": "Next room",
+    "visits": "{n} visitors",
+    "start": "Start from:",
+    "sound": "Sound",
+    "tpl": {
+      "empty": "Empty",
+      "cozy": "Cozy",
+      "party": "Party",
+      "classic": "Classic"
+    }
   }
 }

@@ -675,3 +675,26 @@ h1, h2, h3 { font-family: var(--serif); font-weight: 600; line-height: 1.12; mar
 .lt-room-img img.lt-room-ph { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .85; }
 .lt-room-img #dRoomImg:not([hidden]) ~ .lt-room-ph { display: none; }
 .lt-how-img { width: 100%; height: auto; margin-top: 16px; border-radius: 12px; border: 1px solid var(--line); display: block; }
+/* room: visiting + templates */
+.rm-visit { position: absolute; left: 50%; bottom: calc(env(safe-area-inset-bottom, 0px) + 18px); transform: translateX(-50%); z-index: 3; display: flex; flex-direction: column; align-items: center; gap: 12px; width: min(560px, calc(100% - 32px)); }
+.rm-visit[hidden] { display: none; }
+.rm-visit .rm-msg { position: static; transform: rotate(-1deg); max-width: 100%; }
+.rm-acts { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.rm-warm { gap: 8px; }
+.rm-warm span[aria-hidden] { color: #c8283c; transition: transform .2s; }
+.rm-warm.is-on { background: #ffe1e4; }
+.rm-warm:active span[aria-hidden] { transform: scale(1.4); }
+.rm-warm b { font-variant-numeric: tabular-nums; }
+.rm-visits { margin: 0; font-size: 12.5px; color: var(--muted); }
+.rm-visits:empty { display: none; }
+.rm-heart { position: fixed; z-index: 120; pointer-events: none; color: #ff5a6e; font-size: 22px; animation: heartUp 1.5s var(--ease) forwards; text-shadow: 0 0 12px rgba(255,90,110,.7); }
+@keyframes heartUp { from { transform: translate(0, 0) scale(.6); opacity: 1; } to { transform: translate(var(--dx), -180px) scale(1.3); opacity: 0; } }
+.rm-tap { position: absolute; left: 50%; top: calc(env(safe-area-inset-top, 0px) + 86px); transform: translateX(-50%); z-index: 2; margin: 0; padding: 7px 14px; border-radius: 99px; background: rgba(10,15,30,.78); border: 1px solid rgba(255,196,107,.4); color: var(--paper); font-size: 13.5px; white-space: nowrap; transition: opacity .6s; pointer-events: none; animation: tapPulse 1.6s ease-in-out infinite; }
+.rm-tap.gone { opacity: 0; }
+@keyframes tapPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(255,196,107,.3); } 50% { box-shadow: 0 0 0 8px rgba(255,196,107,0); } }
+.rm-mute { width: 42px; height: 42px; background: rgba(6,10,22,.6); font-size: 17px; }
+.rm-tpls { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding: 0 var(--gutter) 10px; font-size: 13px; color: var(--muted); }
+.rm-tpls > span:first-child { margin-right: 4px; }
+.rm-tpl { padding: 6px 12px; border-radius: 99px; border: 1px solid var(--line-2); background: rgba(255,255,255,.04); color: var(--text); font-size: 13px; cursor: pointer; }
+.rm-tpl:hover { border-color: rgba(255,196,107,.6); }
+.rm-count { margin-left: auto; font-variant-numeric: tabular-nums; color: var(--dim); }

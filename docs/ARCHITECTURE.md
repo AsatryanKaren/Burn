@@ -38,7 +38,7 @@ Languages: Armenian (`hy`, default, at `/`), English (`/en/`), Russian (`/ru/`).
 3. All tables have RLS enabled with **no** policies for `anon`/`authenticated`. The browser reads data only through `SECURITY DEFINER` RPCs that return safe, public fields, or through Edge Functions.
 4. Order codes are random, unguessable (16 chars, base32 lowercase without ambiguous letters). The code is the capability to view one's own order.
 5. Papers are moderated before they can appear publicly. Text is shown on the public fire only if the buyer allowed it **and** moderation status is `approved`.
-6. Rate limits per IP hash (salted SHA-256, never the raw IP) for order creation, waitlist and blogger applications.
+6. Rate limits per IP hash (salted SHA-256, never the raw IP) for order creation, waitlist, blogger applications, room edits and room warmth/visits.
 7. Secrets only in Supabase function secrets / Vercel env, never in the repo.
 
 ## Database (schema `public`)
@@ -196,8 +196,8 @@ A second product: a night map of Armenia split into **7,048 plots** of 2×2 km (
 
 ### RPCs for the browser (anon, SECURITY DEFINER)
 
-- `get_map()` → `{ "lit": [[cell_id, icon_index, color_index, big(0|1)], ...], "held": [cell_id, ...], "total": 7048, "lit_count": n, "by_province": {"yer": n, ...}, "updated_at": ... }`. `icon_index` / `color_index` are positions in the lists above. `held` = plots currently reserved in an unexpired payment.
-- `get_cell(p_cell_id int)` → `{ cell_id, province, town_index, status: "free"|"held"|"lit", icon, color, big, message, signature, lit_at, room }` where message/signature are null unless approved, and `room` is the plot's room layout (see "The room") when lit, else null (0010).
+- `get_map()` → `{ "lit": [[cell_id, icon_index, color_index, big(0|1)], ...], "held": [cell_id, ...], "total": 7048, "lit_count": n, "by_province": {"yer": n, ...}, "warm": [[cell_id, warmth], ...], "updated_at": ... }`. `icon_index` / `color_index` are positions in the lists above. `held` = plots currently reserved in an unexpired payment. `warm` (0011) = the 50 warmest lit rooms (see "Warmth and visits").
+- `get_cell(p_cell_id int)` → `{ cell_id, province, town_index, status: "free"|"held"|"lit", icon, color, big, message, signature, lit_at, room, warmth, visits }` where message/signature are null unless approved, `room` is the plot's room layout (see "The room") when lit, else null (0010), and `warmth` / `visits` are the room's counters (integers, 0 when not lit or none yet; 0011).
 - `get_public_stats()` gains `lights_lit`.
 
 ### Edge Functions
@@ -205,6 +205,7 @@ A second product: a night map of Armenia split into **7,048 plots** of 2×2 km (
 - `create-order` accepts `product: "light"` (`light_big` → `400 PRODUCT_UNAVAILABLE`) with body fields `cell_id`, `text` (message), `light_icon`, `light_color`, `light_signature` (optional), `room` (optional, see "The room"; absent or `null` = no room yet), `email`, `lang`, `consent`. Errors: `CELL_INVALID` (not a map cell), `CELL_TAKEN`, `ICON_INVALID`, `COLOR_INVALID`, `SIGNATURE_TOO_LONG`, `SIGNATURE_REJECTED`, `TEXT_TOO_LONG` (for >60), `ROOM_INVALID`. For papers `room` must be absent or `null`, else `400 ROOM_NOT_ALLOWED`. `show_on_stream` is ignored for lights.
 - `order-status` also returns `cell_id`, `light_icon`, `light_color`, `light_signature`, `province`, `town_index`, `room` (layout or `null`) for light orders.
 - `update-room` (below) changes a light's room.
+- `room-warmth` (below) sends warmth to a lit room or counts a visit.
 - Payment return for lights goes to the same paper page (`/p/?c=CODE`); the page shows the light instead of a paper.
 
 ### The room (3D room of a light, migration 0010)
@@ -242,3 +243,38 @@ Response: `{ "ok": true }`.
 Errors (checked in this order): `400 INVALID_JSON` (body not a JSON object), `404 NOT_FOUND` (malformed code), `400 ROOM_INVALID`, `429 RATE_LIMITED` (60 per IP hash per hour; invalid requests are not counted), `404 NOT_FOUND` (unknown code), `409 ORDER_NOT_EDITABLE` (not a light order, or status is not `awaiting_launch`, `pending` or `paid` — i.e. `failed`, `cancelled`, `refunded` can't be changed). Plus the browser-endpoint codes (`403 ORIGIN_NOT_ALLOWED`, `405`, `413 PAYLOAD_TOO_LARGE` > 8 KB, `500 INTERNAL`).
 
 Paid lights stay editable: the change shows up in `get_cell` immediately.
+
+### Warmth and visits (migration 0011)
+
+Visitors of a lit plot's room can **send warmth** (a heart) to its owner, once per visitor, and the page counts **visits**. Both numbers are public: `get_cell` returns `warmth` and `visits`, `get_map` returns `warm`, the 50 warmest rooms, for a "warmest rooms" list.
+
+- Only **lit** plots count (a `cell_holds` row with `expires_at = 'infinity'` whose order is `paid`, the same test as `get_map`/`get_cell`). Free and held plots → `404 NOT_LIT`.
+- One warmth per salted IP hash per room (`room_warmth_log` primary key `(cell_id, ip_hash)`). A second try changes nothing and answers the current count with `already: true`.
+- Visits are best-effort: every call counts one visit (no de-duplication), up to the rate limit.
+- The counters belong to the light, not the plot: if a plot is refunded and later lit by someone else, the new owner starts at 0 (old counts are hidden at once and reset on the next write).
+- `get_map().warm`: `[[cell_id, warmth], ...]`, at most 50, lit plots with `warmth > 0` only, warmest first, ties by lower `cell_id`.
+
+Data: `room_stats(cell_id pk → map_cells, order_id → orders (the light the counters belong to), warmth int ≥ 0, visits int ≥ 0, updated_at)`, `room_warmth_log(cell_id → map_cells, ip_hash (64 hex), created_at, pk(cell_id, ip_hash))`. RLS on, no policies, service role only. Service-role RPCs: `room_add_warmth(p_cell_id int, p_ip_hash text)` → `{ ok: true, warmth, already } | { ok: false, error: "NOT_LIT" | "INVALID_ARGS" }`; `room_add_visit(p_cell_id int)` → `{ ok: true, visits } | { ok: false, error: "NOT_LIT" }` (plus the internal helper `room_stats_prepare`).
+
+#### `POST room-warmth` (verify_jwt false)
+
+Request: `{ "cell_id": 4321, "action": "warm" }` or `{ "cell_id": 4321, "action": "visit" }`.
+
+Responses (200):
+
+```json
+{ "ok": true, "warmth": 12, "already": false }   // warm, counted
+{ "ok": true, "warmth": 12, "already": true }    // warm, this visitor already warmed this room (nothing changed)
+{ "ok": true, "visits": 340 }                    // visit, counted
+{ "ok": true }                                    // visit over the rate limit: nothing counted, no numbers
+```
+
+Rules and errors (checked in this order):
+- `400 INVALID_JSON` — body is not a JSON object.
+- `400 CELL_INVALID` — `cell_id` is not an integer 0–999999 (a string of digits is accepted, as in `create-order`).
+- `400 ACTION_INVALID` — `action` is not exactly `"warm"` or `"visit"`.
+- Rate limit per IP hash (invalid requests above are not counted): `warm` 30 per hour → `429 RATE_LIMITED` (`Retry-After: 600`); `visit` 300 per hour → over it the answer is `200 { "ok": true }` (never 429).
+- `404 NOT_LIT` — no such plot, or the plot is not lit.
+- Plus the browser-endpoint codes (`403 ORIGIN_NOT_ALLOWED`, `405`, `413 PAYLOAD_TOO_LARGE` > 8 KB, `500 INTERNAL`).
+
+Frontend: call `visit` once when a room opens; show `warmth`/`visits` from `get_cell` and update them from the `room-warmth` answer. After `warm`, show the heart as sent whether `already` is `true` or `false` (the visitor may have warmed this room before).

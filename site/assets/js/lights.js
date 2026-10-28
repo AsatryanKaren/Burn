@@ -63,16 +63,35 @@
       if (c.message) { $("litMsg").textContent = (lang === "en" ? "“" : "«") + c.message + (lang === "en" ? "”" : "»"); $("litMsg").hidden = false; }
       else { $("litMsg").textContent = t("lights.nolight"); $("litMsg").hidden = false; $("litMsg").classList.add("muted"); }
       if (c.signature) $("litSig").textContent = t("lights.lit_by", { name: c.signature });
-      state.visit = { id: id, room: c.room || null, message: c.message || "", signature: c.signature || "" };
+      state.visit = { id: id, raw: c };
       if (c.lit_at) $("litDate").textContent = t("lights.lit_on", { date: new Date(c.lit_at).toLocaleDateString(D.locale || lang, { day: "numeric", month: "long" }) });
     }).catch(function () {});
   }
   $("litShare").addEventListener("click", function () { shareLight(state.id); });
+  // Step into a lit plot's room. "Next room" hops to another random lit plot.
+  function visit(id, data) {
+    var go = function (c) {
+      c = c || {};
+      window.RoomUI.open({
+        mode: "view", cellId: id, layout: c.room || null, title: placeTitle(id), message: c.message || "", signature: c.signature || "",
+        warmth: c.warmth || 0, visits: c.visits || 0, onNext: nextRoom
+      });
+    };
+    if (data) go(data);
+    else A.api.rpc("get_cell", { p_cell_id: id }).then(go, function () { go(null); });
+  }
+  function nextRoom() {
+    var ids = Array.from(view.lights.keys()).filter(function (x) { return x !== state.id; });
+    if (!ids.length) return;
+    var id = ids[Math.floor(Math.random() * ids.length)];
+    state.id = id; view.select(id); setUrl(id);
+    var L = view.lights.get(id); if (L) showLit(id, L);
+    visit(id);
+  }
   $("litVisit").addEventListener("click", function () {
-    var v = state.visit && state.visit.id === state.id ? state.visit : { room: null };
-    window.RoomUI.open({ mode: "view", layout: v.room, title: placeTitle(state.id), message: v.message, signature: v.signature });
+    var v = state.visit && state.visit.id === state.id ? state.visit : null;
+    visit(state.id, v && v.raw);
   });
-  $("litCopy").addEventListener("click", function () { A.copy(cellUrl(state.id)); });
   function shareLight(id) {
     var L = view.lights.get(id) || { i: 0, c: 0, b: 0 };
     var card = MC.storyCard(m, litRows, { id: id, icon: MC.ICONS[L.i] || "star", color: MC.COLORS[L.c] || "amber" }, {
@@ -96,7 +115,7 @@
   }
   $("dRoom").addEventListener("click", function () {
     var id = state.id;
-    window.RoomUI.open({ mode: "edit", layout: loadRoom(id), title: placeTitle(id), onDone: function (layout, img) {
+    window.RoomUI.open({ mode: "edit", cellId: id, layout: loadRoom(id), title: placeTitle(id), onDone: function (layout, img) {
       saveRoom(id, layout); if (img) roomImgs[id] = img; if (state.id === id) paintRoomButton(id);
     } });
   });
