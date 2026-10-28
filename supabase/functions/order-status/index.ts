@@ -37,6 +37,7 @@ Deno.serve(browserEndpoint(["GET"], cfg.cors, async (req) => {
       light_signature: order.light_signature,
       province: cell?.province ?? null,
       town_index: cell?.town_index ?? null,
+      room: order.room ?? null,
     }
     : {};
 

@@ -19,7 +19,7 @@
   }
   var code = codeFromUrl() || savedCode();
   var privateUrl = location.origin + D.urls.paper + "?c=" + encodeURIComponent(code || "");
-  function publicUrl(n) { return location.origin + D.urls.home + (n ? "?n=" + n : ""); }
+  function publicUrl(n) { return location.origin + D.urls.fire + (n ? "?n=" + n : ""); }
   var pollTimer = null, polls = 0, errors = 0, lastStatus = null;
 
   function msg(key, fallbackKey) {

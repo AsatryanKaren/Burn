@@ -19,7 +19,7 @@
     if (name !== "hint" && !wide()) panel.scrollTop = 0;
   }
   $("panelClose").addEventListener("click", function () { deselect(); });
-  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && state.mode !== "hint" && !state.busy) deselect(); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && state.mode !== "hint" && !state.busy && !(window.RoomUI && window.RoomUI.isOpen())) deselect(); });
   function deselect() {
     state.id = -1; if (view) { view.select(-1); view.setGhost(null); }
     showView("hint"); setUrl(-1);
@@ -63,10 +63,15 @@
       if (c.message) { $("litMsg").textContent = (lang === "en" ? "“" : "«") + c.message + (lang === "en" ? "”" : "»"); $("litMsg").hidden = false; }
       else { $("litMsg").textContent = t("lights.nolight"); $("litMsg").hidden = false; $("litMsg").classList.add("muted"); }
       if (c.signature) $("litSig").textContent = t("lights.lit_by", { name: c.signature });
+      state.visit = { id: id, room: c.room || null, message: c.message || "", signature: c.signature || "" };
       if (c.lit_at) $("litDate").textContent = t("lights.lit_on", { date: new Date(c.lit_at).toLocaleDateString(D.locale || lang, { day: "numeric", month: "long" }) });
     }).catch(function () {});
   }
   $("litShare").addEventListener("click", function () { shareLight(state.id); });
+  $("litVisit").addEventListener("click", function () {
+    var v = state.visit && state.visit.id === state.id ? state.visit : { room: null };
+    window.RoomUI.open({ mode: "view", layout: v.room, title: placeTitle(state.id), message: v.message, signature: v.signature });
+  });
   $("litCopy").addEventListener("click", function () { A.copy(cellUrl(state.id)); });
   function shareLight(id) {
     var L = view.lights.get(id) || { i: 0, c: 0, b: 0 };
@@ -76,6 +81,25 @@
     });
     A.shareCanvas(card, "light-" + id + ".png", cellUrl(id));
   }
+
+  function placeTitle(id) { var tn = MC.townName(m, id, lang); return tn ? MC.provName(m, id, lang) + " · " + tn : MC.provName(m, id, lang); }
+
+  /* ---------- the room of the plot being designed (draft kept per plot in this browser) ---------- */
+  function roomKey(id) { return "room:" + id; }
+  function loadRoom(id) { try { return JSON.parse(localStorage.getItem(roomKey(id)) || "null"); } catch (e) { return null; } }
+  function saveRoom(id, l) { try { localStorage.setItem(roomKey(id), JSON.stringify(l)); } catch (e) {} }
+  var roomImgs = {};
+  function paintRoomButton(id) {
+    var img = roomImgs[id], has = !!loadRoom(id);
+    $("dRoomImg").hidden = !img; if (img) $("dRoomImg").src = img;
+    $("dRoomT").textContent = t(has ? "room.edit_again" : "room.open_editor");
+  }
+  $("dRoom").addEventListener("click", function () {
+    var id = state.id;
+    window.RoomUI.open({ mode: "edit", layout: loadRoom(id), title: placeTitle(id), onDone: function (layout, img) {
+      saveRoom(id, layout); if (img) roomImgs[id] = img; if (state.id === id) paintRoomButton(id);
+    } });
+  });
 
   /* ---------- designer ---------- */
   form.querySelectorAll(".lt-ic").forEach(function (s) { s.appendChild(MC.iconCanvas(s.getAttribute("data-icon"), "amber", 40)); });
@@ -94,6 +118,7 @@
   }
   function showDesign(id) {
     $("dPlace").innerHTML = placeHtml(id); $("dNear").textContent = nearText(id);
+    paintRoomButton(id);
     $("lErr").textContent = "";
     showView("design"); sync();
     if (wide()) setTimeout(function () { try { form.querySelector('input[name="icon"]:checked').focus({ preventScroll: true }); } catch (e) {} }, 50);
@@ -138,7 +163,7 @@
     var body = {
       product: "light", cell_id: state.id, text: clean($("lMsg").value),
       light_icon: val("icon"), light_color: val("color"), light_signature: clean($("lSig").value) || null,
-      email: clean($("lEmail").value) || null, lang: lang, consent: true
+      email: clean($("lEmail").value) || null, lang: lang, consent: true, room: loadRoom(state.id)
     };
     var id = state.id;
     setBusy(true);
@@ -186,7 +211,7 @@
     select(pick, true);
   }
   $("randomBtn").addEventListener("click", randomFree);
-  panel.querySelector("[data-random]").addEventListener("click", randomFree);
+  panel.querySelectorAll("[data-random]").forEach(function (b) { b.addEventListener("click", randomFree); });
 
   /* ---------- live data ---------- */
   var tickQ = [], tickOn = false;

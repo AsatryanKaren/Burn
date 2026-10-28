@@ -10,6 +10,7 @@ export const LIMITS = {
   waitlist: { limit: 5, windowSeconds: 600 },
   bloggers: { limit: 5, windowSeconds: 3600 },
   orderStatus: { limit: 120, windowSeconds: 600 },
+  room: { limit: 60, windowSeconds: 3600 },
   // Bank-facing endpoints (per caller IP hash).
   ameriaReturn: { limit: 60, windowSeconds: 600 },
   idramCallback: { limit: 60, windowSeconds: 600 },

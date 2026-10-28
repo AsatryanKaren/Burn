@@ -47,6 +47,7 @@ test("valid light order", () => {
       light_icon: "pomegranate",
       light_color: "amber",
       light_signature: "Anna",
+      room: null,
       email: null,
       lang: "hy",
     });

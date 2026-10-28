@@ -12,6 +12,7 @@ import type {
   OrderStatus,
   PaymentProvider,
   ProductCode,
+  RoomLayout,
 } from "./types.ts";
 
 let client: SupabaseClient | null = null;
@@ -56,12 +57,14 @@ export interface OrderRow {
   light_icon: LightIcon | null;
   light_color: LightColor | null;
   light_signature: string | null;
+  /** The light's 3D room (0010); null for papers and lights without one. */
+  room: RoomLayout | null;
 }
 
 const ORDER_COLUMNS =
   "id, code, product, amount_amd, status, lang, email, text, wish_text, recipient_name, show_on_stream, " +
   "moderation, burn_number, provider, provider_payment_id, provider_order_num, created_at, paid_at, " +
-  "cell_id, light_icon, light_color, light_signature";
+  "cell_id, light_icon, light_color, light_signature, room";
 
 export const PAYABLE_STATUSES: readonly OrderStatus[] = ["awaiting_launch", "pending", "failed"];
 
@@ -103,6 +106,7 @@ export interface NewOrder {
   light_icon?: LightIcon | null;
   light_color?: LightColor | null;
   light_signature?: string | null;
+  room?: RoomLayout | null;
 }
 
 /** Inserts an order; retries with a new code on the (astronomically rare) code collision. */
@@ -153,6 +157,27 @@ export async function holdCell(orderId: number, cellId: number, minutes = CELL_H
   const { data, error } = await db().rpc("hold_cell", { p_order_id: orderId, p_cell_id: cellId, p_minutes: minutes });
   if (error) throw dbError("hold_cell", error);
   return data === true;
+}
+
+/**
+ * Replaces the room of a light order, only while it is still editable
+ * (conditional update, so a refund/cancel racing with it wins). Returns
+ * false when no row matched.
+ */
+export async function updateOrderRoom(
+  orderId: number,
+  room: RoomLayout,
+  editableStatuses: readonly OrderStatus[],
+): Promise<boolean> {
+  const { data, error } = await db()
+    .from("orders")
+    .update({ room })
+    .eq("id", orderId)
+    .in("product", ["light", "light_big"])
+    .in("status", editableStatuses as OrderStatus[])
+    .select("id");
+  if (error) throw dbError("updateOrderRoom", error);
+  return Array.isArray(data) && data.length > 0;
 }
 
 export async function getMapCell(cellId: number): Promise<{ province: string; town_index: number } | null> {

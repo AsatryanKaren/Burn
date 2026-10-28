@@ -6,8 +6,14 @@ import type {
   LightIcon,
   LightProductCode,
   PaperProductCode,
+  OrderStatus,
   ProductCode,
   Result,
+  RoomFloor,
+  RoomItem,
+  RoomItemType,
+  RoomLayout,
+  RoomWall,
 } from "./types.ts";
 import { ErrorCode } from "./errors.ts";
 
@@ -134,6 +140,8 @@ export interface LightOrderInput {
   light_icon: LightIcon;
   light_color: LightColor;
   light_signature: string | null;
+  /** The light's 3D room (validateRoom), or null when none was sent. */
+  room: RoomLayout | null;
   email: string | null;
   lang: Lang;
 }
@@ -216,6 +224,11 @@ export function validateOrderInput(body: unknown, opts: OrderValidationOptions):
     return fail(ErrorCode.RECIPIENT_NOT_ALLOWED, "This option does not include a recipient.");
   }
 
+  // Only lights come with a room.
+  if (b.room !== undefined && b.room !== null) {
+    return fail(ErrorCode.ROOM_NOT_ALLOWED, "This option does not include a room.");
+  }
+
   const email = validateEmail(b, opts);
   if (!email.ok) return email;
 
@@ -233,7 +246,10 @@ export function validateOrderInput(body: unknown, opts: OrderValidationOptions):
   };
 }
 
-/** Light fields: message 1–60, plot, icon, colour, optional signature ≤ 30. show_on_stream is ignored. */
+/**
+ * Light fields: message 1–60, plot, icon, colour, optional signature ≤ 30,
+ * optional room (validateRoom; absent or null = no room). show_on_stream is ignored.
+ */
 function validateLightFields(
   b: Record<string, unknown>,
   product: LightProductCode,
@@ -262,6 +278,13 @@ function validateLightFields(
     }
   }
 
+  let room: RoomLayout | null = null;
+  if (b.room !== undefined && b.room !== null) {
+    const r = validateRoom(b.room);
+    if (!r.ok) return r;
+    room = r.value;
+  }
+
   if (!isEmptyOptional(b.wish_text)) {
     return fail(ErrorCode.WISH_NOT_ALLOWED, "This option does not include a wish.");
   }
@@ -281,10 +304,134 @@ function validateLightFields(
       light_icon,
       light_color,
       light_signature,
+      room,
       email: email.value,
       lang: parseLang(b.lang),
     },
   };
+}
+
+// ---------------------------------------------------------------------------
+// The light's 3D room (orders.room, migration 0010)
+//
+// Pure structured data, no free text, so it needs no moderation. Strict:
+// exactly the keys below, values from fixed lists, integer ranges; anything
+// else -> ROOM_INVALID. Footprint overlap is checked in the browser only.
+// ---------------------------------------------------------------------------
+
+export const ROOM_VERSION = 1;
+export const ROOM_WALLS: readonly RoomWall[] = ["cream", "sage", "night", "berry"];
+export const ROOM_FLOORS: readonly RoomFloor[] = ["oak", "walnut", "tile"];
+export const ROOM_ITEM_TYPES: readonly RoomItemType[] = [
+  "tree", "tree_small", "sofa", "armchair", "table", "tv", "fireplace", "gifts", "rug", "lamp",
+  "shelf", "plant", "piano", "snowman", "cat", "dog", "candles", "pomegranates", "radio", "clock",
+];
+export const ROOM_MAX_ITEMS = 40;
+/** Grid cells 0..ROOM_GRID_MAX on x and z. */
+export const ROOM_GRID_MAX = 7;
+/** Rotation in quarter turns, 0..ROOM_ROTATION_MAX. */
+export const ROOM_ROTATION_MAX = 3;
+/** Limit on JSON.stringify(room) in UTF-8 bytes (checked on the input and on the result). */
+export const ROOM_MAX_BYTES = 4096;
+
+const ROOM_KEYS = ["floor", "glow", "items", "v", "wall"]; // sorted
+
+function roomInvalid(message: string): Result<RoomLayout> {
+  return fail(ErrorCode.ROOM_INVALID, `Room layout is not valid: ${message}`);
+}
+
+function jsonBytes(value: unknown): number | null {
+  try {
+    const s = JSON.stringify(value);
+    return typeof s === "string" ? new TextEncoder().encode(s).length : null;
+  } catch {
+    return null;
+  }
+}
+
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  if (typeof value !== "object" || value === null || Array.isArray(value)) return false;
+  const proto = Object.getPrototypeOf(value);
+  return proto === Object.prototype || proto === null;
+}
+
+function isIntIn(value: unknown, max: number): value is number {
+  return typeof value === "number" && Number.isInteger(value) && value >= 0 && value <= max;
+}
+
+/**
+ * Validates a room layout:
+ *   { "v": 1, "wall": cream|sage|night|berry, "floor": oak|walnut|tile, "glow": boolean,
+ *     "items": [[type, x, z, r], ...] }   (0..40 items, x/z 0..7, r 0..3)
+ * All five keys are required, no other keys; item order is preserved.
+ * Returns a fresh canonical copy (key order v, wall, floor, glow, items).
+ */
+export function validateRoom(value: unknown): Result<RoomLayout> {
+  const size = jsonBytes(value);
+  if (size === null || size > ROOM_MAX_BYTES) return roomInvalid(`must be at most ${ROOM_MAX_BYTES} bytes of JSON.`);
+  if (!isPlainObject(value)) return roomInvalid("must be a JSON object.");
+
+  const keys = Object.keys(value).sort();
+  if (keys.length !== ROOM_KEYS.length || keys.some((k, i) => k !== ROOM_KEYS[i])) {
+    return roomInvalid("keys must be exactly v, wall, floor, glow, items.");
+  }
+  if (value.v !== ROOM_VERSION) return roomInvalid("v must be 1.");
+  if (typeof value.wall !== "string" || !(ROOM_WALLS as readonly string[]).includes(value.wall)) {
+    return roomInvalid("unknown wall.");
+  }
+  if (typeof value.floor !== "string" || !(ROOM_FLOORS as readonly string[]).includes(value.floor)) {
+    return roomInvalid("unknown floor.");
+  }
+  if (typeof value.glow !== "boolean") return roomInvalid("glow must be true or false.");
+
+  const rawItems = value.items;
+  if (!Array.isArray(rawItems)) return roomInvalid("items must be an array.");
+  if (rawItems.length > ROOM_MAX_ITEMS) return roomInvalid(`at most ${ROOM_MAX_ITEMS} items.`);
+
+  const items: RoomItem[] = [];
+  for (let i = 0; i < rawItems.length; i++) {
+    const it: unknown = rawItems[i];
+    if (!Array.isArray(it) || it.length !== 4) return roomInvalid(`item ${i} must be [type, x, z, r].`);
+    const [type, x, z, r] = it;
+    if (typeof type !== "string" || !(ROOM_ITEM_TYPES as readonly string[]).includes(type)) {
+      return roomInvalid(`item ${i} has an unknown type.`);
+    }
+    if (!isIntIn(x, ROOM_GRID_MAX) || !isIntIn(z, ROOM_GRID_MAX)) {
+      return roomInvalid(`item ${i}: x and z must be integers 0..${ROOM_GRID_MAX}.`);
+    }
+    if (!isIntIn(r, ROOM_ROTATION_MAX)) return roomInvalid(`item ${i}: r must be an integer 0..${ROOM_ROTATION_MAX}.`);
+    // `+ 0` turns -0 into 0.
+    items.push([type as RoomItemType, x + 0, z + 0, r + 0]);
+  }
+
+  const room: RoomLayout = {
+    v: ROOM_VERSION,
+    wall: value.wall as RoomWall,
+    floor: value.floor as RoomFloor,
+    glow: value.glow,
+    items,
+  };
+  const outSize = jsonBytes(room);
+  if (outSize === null || outSize > ROOM_MAX_BYTES) return roomInvalid(`must be at most ${ROOM_MAX_BYTES} bytes of JSON.`);
+  return { ok: true, value: room };
+}
+
+/** Order statuses in which the buyer may still change the room (update-room). */
+export const ROOM_EDITABLE_STATUSES: readonly OrderStatus[] = ["awaiting_launch", "pending", "paid"];
+
+/**
+ * update-room decision for the order found by its code: null (unknown code)
+ * -> 404 NOT_FOUND; not a light, or a status other than awaiting_launch /
+ * pending / paid -> 409 ORDER_NOT_EDITABLE; else ok.
+ */
+export function checkRoomEditable(
+  order: { product: string; status: string } | null | undefined,
+): { ok: true } | { ok: false; status: 404 | 409; code: string; message: string } {
+  if (!order) return { ok: false, status: 404, code: ErrorCode.NOT_FOUND, message: "Order not found." };
+  if (!isLightProduct(order.product) || !(ROOM_EDITABLE_STATUSES as readonly string[]).includes(order.status)) {
+    return { ok: false, status: 409, code: ErrorCode.ORDER_NOT_EDITABLE, message: "This room can no longer be changed." };
+  }
+  return { ok: true };
 }
 
 export interface WaitlistInput {

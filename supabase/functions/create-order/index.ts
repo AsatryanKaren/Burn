@@ -1,5 +1,7 @@
 // POST create-order — save a paper (or a light on a map plot) and start its payment.
 // Contract: docs/ARCHITECTURE.md "POST create-order" and "Light up Armenia".
+// Lights may carry an optional `room` (validateRoom; ROOM_INVALID), papers
+// must not (ROOM_NOT_ALLOWED).
 
 import { getConfig } from "../_shared/env.ts";
 import { browserEndpoint, jsonResponse, readJson } from "../_shared/http.ts";
@@ -88,6 +90,7 @@ Deno.serve(browserEndpoint(["POST"], cfg.cors, async (req) => {
       light_icon: light.light_icon,
       light_color: light.light_color,
       light_signature: light.light_signature,
+      room: light.room,
     }
     : {
       ...common,

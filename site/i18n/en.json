@@ -14,7 +14,8 @@
     "sound_off": "Turn off the fire sound",
     "skip": "Skip to content",
     "language": "Language",
-    "lights": "Map"
+    "lights": "Map",
+    "fire": "The fire"
   },
   "meta": {
     "home_title": "Goodbye, {year}",
@@ -343,7 +344,7 @@
     "board_t": "Which province shines brightest",
     "how_t": "How it works",
     "s1": "Pick a plot: in your town, your village, or wherever your heart is.",
-    "s2": "Choose what to light, its colour, and write your words.",
+    "s2": "Decorate your room (a tree, a sofa, a fireplace, a cat) and choose how your light looks on the map.",
     "s3": "Pay, and your light shines for the whole country to see. 20% of the payment goes to New Year gifts for children in orphanages.",
     "only_one": "One light per plot. First come, first served.",
     "email_hint": "We'll send you the link to your light. Nothing else.",
@@ -352,6 +353,64 @@
     "fire_cta": "And what you're leaving in {year}, burn it in the fire",
     "nolight": "The light is on; its words are still being reviewed",
     "your_light": "Your light",
-    "gift_share": "{amount} from this light went to gifts for children in orphanages."
+    "gift_share": "{amount} from this light went to gifts for children in orphanages.",
+    "lead2": "Armenia is split into 7,048 plots, and every plot is a little room. Pick yours, decorate it with a tree and a fireplace, light it up, and drop in on everyone else's.",
+    "h1_t": "Pick your spot",
+    "h2_t": "Decorate your room",
+    "h3_t": "Light it for {price}",
+    "also": "And to say goodbye to 2026",
+    "final_t": "Let all of Armenia light up"
+  },
+  "room": {
+    "decorate": "Decorate your room",
+    "decorate_d": "Every plot is a little room. Put in a tree, a sofa, a fireplace and whatever you love. Anyone who taps your light can step inside.",
+    "open_editor": "Decorate the room",
+    "edit_again": "Change the room",
+    "visit": "Step inside",
+    "done": "Done",
+    "close": "Close",
+    "rotate": "Rotate",
+    "remove": "Remove",
+    "wall": "Walls",
+    "floor": "Floor",
+    "glow": "Fairy lights",
+    "full": "There's no more space for that",
+    "hint": "Tap an item to select it, drag to move it. Drag empty space to turn the room.",
+    "kicker_edit": "Your room",
+    "kicker_visit": "You're visiting",
+    "walls": {
+      "cream": "Cream",
+      "sage": "Sage",
+      "night": "Night",
+      "berry": "Berry"
+    },
+    "floors": {
+      "oak": "Oak",
+      "walnut": "Walnut",
+      "tile": "Tiles"
+    },
+    "items": {
+      "tree": "Tree",
+      "tree_small": "Small tree",
+      "sofa": "Sofa",
+      "armchair": "Armchair",
+      "table": "Table",
+      "tv": "TV",
+      "fireplace": "Fireplace",
+      "gifts": "Gifts",
+      "rug": "Rug",
+      "lamp": "Lamp",
+      "shelf": "Bookshelf",
+      "plant": "Plant",
+      "piano": "Piano",
+      "snowman": "Snowman",
+      "cat": "Cat",
+      "dog": "Dog",
+      "candles": "Candles",
+      "pomegranates": "Pomegranates",
+      "radio": "Radio",
+      "clock": "Clock"
+    },
+    "every": "Every plot is a room"
   }
 }

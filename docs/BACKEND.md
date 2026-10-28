@@ -16,9 +16,10 @@ supabase/
     0007_revoke_pg_net.sql    pg_net functions out of reach of anon/authenticated
     0008_single_price.sql     one price: burn + light at 500 AMD; burn_wish/gift/midnight/light_big inactive
     0009_bloggers.sql         blogger_applications table, admin_export('bloggers'), admin_stats.bloggers_count
+    0010_rooms.sql            orders.room (a light's 3D room layout) + CHECKs; get_cell gains `room`
   functions/
     _shared/                  shared code (see "Code layout")
-    create-order/  order-status/  start-payment/  join-waitlist/  join-bloggers/
+    create-order/  order-status/  start-payment/  update-room/  join-waitlist/  join-bloggers/
     pay-return-ameria/  pay-callback-idram/  pay-mock/  admin/
   tests/                      unit tests for the pure modules (node:test)
 ```
@@ -46,7 +47,8 @@ The `products` table is the source of truth for charging; `site/config/site.json
 | `0003_admin` | **not applied** — the apply was cancelled at the confirmation prompt (it contains a `delete` inside `admin_mark_refunded`). Apply it (below) or the `admin` function answers 500. |
 | `0003a_map_cells`, `0004_cells_seed`, `0005_lights`, `0006_needs_refund`, `0007_revoke_pg_net` | **not applied** — written 2026-10-27, waiting for the owner's confirmation. Verified on a local PostgreSQL 16 (all 8 files in order, then scenario tests; see "Light up Armenia"). |
 | `0008_single_price`, `0009_bloggers` | **not applied** — written 2026-10-27. Verified on a local PostgreSQL 16 (all 10 files in order; prices/active flags, blogger CHECKs, privileges, `admin_export('bloggers')`, `admin_stats.bloggers_count`, gift share 100 on a 500 order). |
-| Code changed since the last deploy | `create-order`, `start-payment`, `order-status`, `pay-return-ameria`, `pay-callback-idram`, `pay-mock`, `admin` (and `_shared/`): **not deployed**. New function `join-bloggers`: **not deployed**. Deploy only after the migrations (see "Deploy order"). |
+| `0010_rooms` | **not applied** — written 2026-10-28. Verified on a local PostgreSQL 16 (all 11 files in order; room CHECKs reject papers with a room, non-objects, `v ≠ 1`, oversize; a 40-item room fits; `get_cell` returns `room` only when lit, callable as `anon`, grants unchanged). |
+| Code changed since the last deploy | `create-order`, `start-payment`, `order-status`, `pay-return-ameria`, `pay-callback-idram`, `pay-mock`, `admin` (and `_shared/`): **not deployed**. New functions `join-bloggers`, `update-room`: **not deployed**. Since 2026-10-28 `create-order`, `order-status` and `update-room` select `orders.room`: they answer 500 until `0010_rooms` is applied. Deploy only after the migrations (see "Deploy order"). |
 | `pg_net` extension | enabled (schema `extensions`) to smoke-test the deployed functions from SQL. Harmless; drop it if you don't want it: `drop extension pg_net;` |
 | Edge functions | all 8 deployed, `verify_jwt = false` |
 | Function secrets | **none set yet** — the code runs on safe defaults (see "Secrets") |
@@ -66,10 +68,10 @@ Or paste a migration file into the dashboard SQL editor. Migrations are plain SQ
 ### Apply order
 
 ```
-0001_init → 0002_payment_attempts → 0003_admin → 0003a_map_cells → 0004_cells_seed → 0005_lights → 0006_needs_refund → 0007_revoke_pg_net → 0008_single_price → 0009_bloggers
+0001_init → 0002_payment_attempts → 0003_admin → 0003a_map_cells → 0004_cells_seed → 0005_lights → 0006_needs_refund → 0007_revoke_pg_net → 0008_single_price → 0009_bloggers → 0010_rooms
 ```
 
-0001 and 0002 are live. Apply the rest **in this order**, each file as one transaction (SQL editor, or MCP `apply_migration` with the file's name). 0004 inserts into `map_cells` (created by 0003a), 0005 needs both 0003 (it replaces `admin_stats`, `admin_list_orders`, `admin_mark_refunded`) and the plots, 0006 replaces `admin_stats` again. 0008 needs 0005 (the `light`/`light_big` rows). 0009 replaces `admin_export` (0003) and `admin_stats` (0006) with `create or replace`, keeping everything they returned.
+0001 and 0002 are live. Apply the rest **in this order**, each file as one transaction (SQL editor, or MCP `apply_migration` with the file's name). 0004 inserts into `map_cells` (created by 0003a), 0005 needs both 0003 (it replaces `admin_stats`, `admin_list_orders`, `admin_mark_refunded`) and the plots, 0006 replaces `admin_stats` again. 0008 needs 0005 (the `light`/`light_big` rows). 0009 replaces `admin_export` (0003) and `admin_stats` (0006) with `create or replace`, keeping everything they returned. 0010 (after 0009) adds `orders.room` and replaces `get_cell` (0005) with `create or replace`, keeping everything it returned and its grants.
 
 **Supabase CLI caveat:** `supabase db push` only picks up files named `<digits>_name.sql`, so it **skips `0003a_map_cells.sql`** and 0004 then fails (`relation "public.map_cells" does not exist`). Apply these files by hand in the order above (SQL editor or MCP `apply_migration`).
 
@@ -96,16 +98,20 @@ Functions import shared code as `../_shared/*.ts` and `npm:@supabase/supabase-js
 ### Deploy order for the 2026-10-27 changes
 
 1. **Secrets first** (the CORS default changed, see "Secrets"): set `SITE_URL` to the real site, or `ALLOWED_ORIGINS=…`, and/or `ALLOW_VERCEL_PREVIEWS=1` while the site lives on `*.vercel.app` (plus `ALLOW_LOCALHOST=1` for local frontend work). With none of these set, redeployed functions refuse every browser origin (403 `ORIGIN_NOT_ALLOWED`). Also decide `AUTO_APPROVE` (default is now `0`).
-2. Apply migrations 0003 → 0009 (above).
-3. Deploy the changed functions and the new `join-bloggers`:
+2. Apply migrations 0003 → 0010 (above).
+3. Deploy the changed functions and the new `join-bloggers` and `update-room`:
 
 ```sh
-for f in create-order start-payment order-status pay-return-ameria pay-callback-idram pay-mock admin join-waitlist join-bloggers; do
+for f in create-order start-payment order-status update-room pay-return-ameria pay-callback-idram pay-mock admin join-waitlist join-bloggers; do
   supabase functions deploy "$f" --no-verify-jwt --project-ref maqcaowpfhmqcavboszy
 done
-# or only the new one:
-supabase functions deploy join-bloggers --no-verify-jwt --project-ref maqcaowpfhmqcavboszy
+# or only the room changes (after 0010_rooms):
+for f in create-order order-status update-room; do
+  supabase functions deploy "$f" --no-verify-jwt --project-ref maqcaowpfhmqcavboszy
+done
 ```
+
+**Rooms (0010) must be applied before** `create-order`, `order-status` or `update-room` with the room code is deployed: they read `orders.room`, and without the column every call answers 500. `start-payment` and the payment endpoints also bundle `_shared/db.ts` (which now selects `room`), so redeploy them only after 0010 as well. The old deployed code keeps working after 0010 (the column is nullable).
 
 `join-bloggers` needs 0009 (else it answers 500). `admin` `bloggers_csv` needs 0009 (unknown export kind → empty CSV until then); `stats` works either way, `bloggers_count` appears after 0009.
 
@@ -168,8 +174,9 @@ All JSON errors are `{ "error": { "code", "message" } }`. Browser endpoints also
 
 | Function | Codes |
 |---|---|
-| `create-order` | 400 `INVALID_JSON`, `CONSENT_REQUIRED`, `INVALID_PRODUCT`, `TEXT_REQUIRED`, `TEXT_TOO_LONG` (>120 papers, >60 lights), `WISH_REQUIRED`, `WISH_TOO_LONG`, `WISH_NOT_ALLOWED`, `RECIPIENT_REQUIRED`, `RECIPIENT_TOO_LONG`, `RECIPIENT_NOT_ALLOWED`, `EMAIL_REQUIRED` (only while payments are disabled), `EMAIL_INVALID`, `TEXT_REJECTED`, `PRODUCT_UNAVAILABLE`; lights also 400 `CELL_INVALID`, `ICON_INVALID`, `COLOR_INVALID`, `SIGNATURE_TOO_LONG`, `SIGNATURE_REJECTED`, 409 `CELL_TAKEN`; 429 `RATE_LIMITED`; 502 `PAYMENT_UNAVAILABLE` (bank did not answer InitPayment; order marked failed); 503 `PAYMENT_MISCONFIGURED` |
+| `create-order` | 400 `INVALID_JSON`, `CONSENT_REQUIRED`, `INVALID_PRODUCT`, `TEXT_REQUIRED`, `TEXT_TOO_LONG` (>120 papers, >60 lights), `WISH_REQUIRED`, `WISH_TOO_LONG`, `WISH_NOT_ALLOWED`, `RECIPIENT_REQUIRED`, `RECIPIENT_TOO_LONG`, `RECIPIENT_NOT_ALLOWED`, `EMAIL_REQUIRED` (only while payments are disabled), `EMAIL_INVALID`, `TEXT_REJECTED`, `PRODUCT_UNAVAILABLE`, `ROOM_NOT_ALLOWED` (a paper with a `room`); lights also 400 `CELL_INVALID`, `ICON_INVALID`, `COLOR_INVALID`, `SIGNATURE_TOO_LONG`, `SIGNATURE_REJECTED`, `ROOM_INVALID`, 409 `CELL_TAKEN`; 429 `RATE_LIMITED`; 502 `PAYMENT_UNAVAILABLE` (bank did not answer InitPayment; order marked failed); 503 `PAYMENT_MISCONFIGURED` |
 | `order-status` | 404 `NOT_FOUND` (also for malformed codes); 429 `RATE_LIMITED` (120 / 10 min) |
+| `update-room` | 400 `INVALID_JSON`, `ROOM_INVALID`; 404 `NOT_FOUND` (unknown or malformed code); 409 `ORDER_NOT_EDITABLE` (not a light, or status not `awaiting_launch`/`pending`/`paid`); 429 `RATE_LIMITED` (60 / hour). Contract: `docs/ARCHITECTURE.md` "The room" |
 | `start-payment` | 400 `INVALID_JSON`, `PRODUCT_UNAVAILABLE` (product no longer sold); 404 `NOT_FOUND`; 409 `ALREADY_PAID`, `ORDER_NOT_PAYABLE` (cancelled/refunded), `CELL_TAKEN` (lights); 429 `RATE_LIMITED`; 502 `PAYMENT_UNAVAILABLE`; 503 `PAYMENT_MISCONFIGURED` |
 | `join-waitlist` | 400 `INVALID_JSON`, `EMAIL_REQUIRED`, `EMAIL_INVALID`; 429 `RATE_LIMITED`. Same `{ok:true}` for new and known emails |
 | `join-bloggers` | 400 `INVALID_JSON`, `CONSENT_REQUIRED`, `NAME_REQUIRED`, `LINK_REQUIRED`, `LINK_INVALID`, `PLATFORM_INVALID`, `EMAIL_REQUIRED`, `EMAIL_INVALID`, `PHONE_INVALID`, `TOO_LONG` (+ `field`: `name`/`link`/`audience`/`email`/`phone`/`message`); 429 `RATE_LIMITED` (5 / hour). Same `{ok:true}` for new and known emails. Contract: `docs/ARCHITECTURE.md` "POST join-bloggers" |
@@ -178,7 +185,7 @@ All JSON errors are `{ "error": { "code", "message" } }`. Browser endpoints also
 | `pay-return-ameria` | 302 (order page, or `${SITE_URL}/` when the order can't be identified); 413 (query or body > 8 KB); 429 (rate limit) |
 | `pay-callback-idram` | text/plain `OK` (accepted) or `FAIL` (refused; also with 413 for a body > 8 KB and 429 for the rate limit); `ERROR` with 500 on internal errors |
 
-Rate limits (per salted IP hash, fixed 10-minute windows unless noted): create-order 8, start-payment 8, join-waitlist 5, join-bloggers 5 per **hour**, order-status 120, admin failed logins 10, pay-return-ameria 60, pay-callback-idram 60.
+Rate limits (per salted IP hash, fixed 10-minute windows unless noted): create-order 8, start-payment 8, join-waitlist 5, join-bloggers 5 per **hour**, update-room 60 per **hour**, order-status 120, admin failed logins 10, pay-return-ameria 60, pay-callback-idram 60.
 
 Admin login limiter: every admin request first counts against `admin_fail:<ip_hash>` with `check_rate_limit` (atomic, so parallel guesses can't exceed 10), then the token is compared in constant time; a correct token gives its count back with `release_rate_limit` (0006).
 
@@ -207,14 +214,14 @@ A confirmed payment for an order already paid by a different payment (`ORDER_PAI
 node --experimental-strip-types --test supabase/tests/
 ```
 
-Node 22, no packages. `supabase/tests/package.json` points the directory at `index.ts`, which imports every `*.test.ts`. Pure modules under test import nothing from npm/jsr and use no Deno globals: `validation`, `moderation(+data)`, `codes`, `money`, `md5`, `idram`, `ameria`, `cors`, `config`, `iphash`, `sanitize`, `strings`, `admin`, `callbacks`. Lights: `tests/lights.test.ts`. Bloggers (validation, `field` in errors, `bloggers_csv`) and the active-product check: `tests/bloggers.test.ts`.
+Node 22, no packages. `supabase/tests/package.json` points the directory at `index.ts`, which imports every `*.test.ts`. Pure modules under test import nothing from npm/jsr and use no Deno globals: `validation`, `moderation(+data)`, `codes`, `money`, `md5`, `idram`, `ameria`, `cors`, `config`, `iphash`, `sanitize`, `strings`, `admin`, `callbacks`. Lights: `tests/lights.test.ts`. Bloggers (validation, `field` in errors, `bloggers_csv`) and the active-product check: `tests/bloggers.test.ts`. Rooms (`validateRoom`, the create-order `room` field, the update-room decision `checkRoomEditable`): `tests/rooms.test.ts`.
 
 ## Code layout (`functions/_shared`)
 
 | Module | Pure? | Purpose |
 |---|---|---|
 | `types.ts`, `errors.ts` | yes | domain types, error codes, `ApiError` |
-| `validation.ts` | yes | text normalization, order/waitlist/blogger validation, `checkProductAvailable` |
+| `validation.ts` | yes | text normalization, order/waitlist/blogger validation, `checkProductAvailable`, `validateRoom` / `checkRoomEditable` (rooms) |
 | `moderation.ts`, `moderation-data.ts` | yes | auto-moderation and its word lists |
 | `codes.ts` | yes | 16-char Crockford base32 order codes |
 | `money.ts` | yes | floor(20%) gift share, provider amount parsing |
@@ -236,7 +243,8 @@ Contract: `docs/ARCHITECTURE.md` "Light up Armenia". What the backend does:
 - **confirm_payment**: lights get no burn number (`burn_number: null`); the hold becomes `infinity` (taking the plot if it is free or expired). If another order holds it, the order is still paid, `moderation_reason = 'cell_conflict'`, result `cell_conflict: true` → admin moves (`update orders set cell_id = … ; update cell_holds …`) or refunds. Admin `stats.lights_cell_conflict` counts them.
 - **Refund** (`admin_mark_refunded`) deletes the order's hold: the plot is free again.
 - **Public.** `get_map()` — one SQL statement, `lit` = `[cell_id, icon_index, color_index, big]` arrays sorted by id, `held` = unexpired unpaid holds, `total` = rows in `map_cells`, `by_province` = lit counts for all 11 provinces (zeros included). Locally with 7,001 lit plots: ~20 ms, 133 KB JSON. `get_cell(p_cell_id)` → `null` for a non-plot; `big` is a boolean; `icon/color/lit_at` only when lit; `message/signature` only when lit and approved. `get_public_stats` gains `lights_lit`; `papers_burned` and `get_fire_feed` cover papers only.
-- **order-status** adds `cell_id`, `light_icon`, `light_color`, `light_signature`, `province`, `town_index` for light orders (`text` is the message, `burn_number` null).
+- **order-status** adds `cell_id`, `light_icon`, `light_color`, `light_signature`, `province`, `town_index`, `room` for light orders (`text` is the message, `burn_number` null).
+- **Rooms (0010).** `orders.room jsonb null`: the light's 3D room layout (contract: ARCHITECTURE.md "The room"). CHECKs `orders_room_light_only` (null for papers) and `orders_room_shape` (object, `v = 1`, `items` array ≤ 40, text form and stored size ≤ 8192 bytes — a backstop; the strict 4096-byte / lists / ranges check is `validateRoom`). `create-order` stores an optional room for lights; `update-room` `{code, room}` replaces it while the order is `awaiting_launch`/`pending`/`paid` (conditional `update … where status in (…)`, so a refund racing with it wins → 409). `get_cell` returns `room` for lit plots. No moderation (no free text). Inspect: `select code, status, room from orders where room is not null order by id desc limit 20;`
 - **admin**: `stats` gains `lights_lit`, `lights_held`, `lights_cell_conflict` (and `needs_refund`, 0006; `bloggers_count`, 0009); `papers_burned` is papers only. `list_orders` rows include the light fields; `q` also searches signatures.
 
 Operations:

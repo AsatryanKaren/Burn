@@ -41,8 +41,8 @@
       <span>{{ brand }}</span>
     </a>
     <nav class="nav" aria-label="{{ t('nav.menu') }}">
-      <a href="{{ url('home') }}#how">{{ t('nav.how') }}</a>
-      <a href="{{ url('lights') }}" {% if page == 'lights' %}aria-current="page"{% endif %}>{{ t('nav.lights') }}</a>
+      <a href="{{ url('home') }}" {% if page == 'home' %}aria-current="page"{% endif %}>{{ t('nav.lights') }}</a>
+      <a href="{{ url('fire') }}" {% if page in ('fire', 'burn') %}aria-current="page"{% endif %}>{{ t('nav.fire') }}</a>
       <a href="{{ url('gifts') }}" {% if page == 'gifts' %}aria-current="page"{% endif %}>{{ t('nav.gifts') }}</a>
       <a href="{{ url('live') }}" {% if page == 'live' %}aria-current="page"{% endif %}>{{ t('nav.live') }}</a>
       <a href="{{ url('faq') }}" {% if page == 'faq' %}aria-current="page"{% endif %}>{{ t('nav.faq') }}</a>
@@ -55,7 +55,7 @@
       </div>
       {% block sound %}{% endblock %}
       {% if page not in ['burn'] %}
-      <a class="btn btn-paper btn-sm topbar-cta" href="{{ url('burn') }}">{{ t('nav.cta') }}</a>
+      <a class="btn btn-paper btn-sm topbar-cta" href="{{ url('home') }}#stage">{{ t('hero.c2_cta') }}</a>
       {% endif %}
       <button type="button" class="icon-btn menu-btn" id="menuBtn" aria-expanded="false" aria-controls="menu" aria-label="{{ t('nav.menu') }}">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 8h16M4 16h16"/></svg>
@@ -66,12 +66,12 @@
 
 <div class="menu" id="menu" hidden>
   <nav class="menu-inner" aria-label="{{ t('nav.menu') }}">
-    <a href="{{ url('home') }}#how">{{ t('nav.how') }}</a>
-    <a href="{{ url('lights') }}">{{ t('lights.title') }}</a>
+    <a href="{{ url('home') }}">{{ t('lights.title') }}</a>
+    <a href="{{ url('fire') }}">{{ t('hero.c1_t') }}</a>
     <a href="{{ url('gifts') }}">{{ t('nav.gifts') }}</a>
     <a href="{{ url('live') }}">{{ t('nav.live') }}</a>
     <a href="{{ url('faq') }}">{{ t('nav.faq') }}</a>
-    <a class="btn btn-paper" href="{{ url('burn') }}">{{ t('nav.cta') }}</a>
+    <a class="btn btn-paper" href="{{ url('home') }}#stage">{{ t('hero.c2_cta') }}</a>
     <div class="lang menu-lang" role="group" aria-label="{{ t('nav.language') }}">
       {% for l in langs %}
       <a href="{{ alternates[l] }}" hreflang="{{ l }}" lang="{{ l }}" {% if l == lang %}aria-current="true"{% endif %} data-lang-link>{{ {'hy':'Հայերեն','en':'English','ru':'Русский'}[l] }}</a>
@@ -94,8 +94,8 @@
     </div>
     <nav class="footer-col" aria-label="{{ t('footer.pages') }}">
       <h2>{{ t('footer.pages') }}</h2>
-      <a href="{{ url('burn') }}">{{ t('nav.cta') }}</a>
-      <a href="{{ url('lights') }}">{{ t('lights.title') }}</a>
+      <a href="{{ url('home') }}">{{ t('lights.title') }}</a>
+      <a href="{{ url('fire') }}">{{ t('hero.c1_t') }}</a>
       <a href="{{ url('live') }}">{{ t('nav.live') }}</a>
       <a href="{{ url('gifts') }}">{{ t('nav.gifts') }}</a>
       <a href="{{ url('faq') }}">{{ t('nav.faq') }}</a>

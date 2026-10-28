@@ -11,4 +11,5 @@ import "./lights.test.ts";
 import "./md5-idram.test.ts";
 import "./moderation.test.ts";
 import "./money-codes.test.ts";
+import "./rooms.test.ts";
 import "./validation.test.ts";

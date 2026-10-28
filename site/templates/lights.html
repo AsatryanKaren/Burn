@@ -3,11 +3,11 @@
 {% block description %}{{ t('lights.meta_desc') }}{% endblock %}
 {% block og_image %}og-lights-{{ lang }}.jpg{% endblock %}
 {% block main %}
-{% set lp = cfg.light_products %}
+{% set lp = cfg.light_products %}{% set p0 = lp[0].price %}
 <header class="lt-head wrap">
   <p class="kicker">{{ fmt(cfg.map.total_plots) }} · 2×2 km · {{ price(lp[0].price) }}</p>
   <h1>{{ t('lights.title') }}</h1>
-  <p class="lead">{{ t('lights.lead') }}</p>
+  <p class="lead">{{ t('lights.lead2') }}</p>
   <div class="lt-progress" aria-live="polite">
     <div class="lt-bar" aria-hidden="true"><i id="ltBar"></i></div>
     <p><span id="ltCount">{{ t('lights.progress', n='0', total=fmt(cfg.map.total_plots)) }}</span> · <span class="muted">{{ t('lights.goal') }}</span></p>
@@ -33,12 +33,13 @@
     <button type="button" class="icon-btn lt-close" id="panelClose" aria-label="{{ t('lights.close') }}">×</button>
 
     <div data-view="hint">
-      <h2 class="h-sub" id="panelTitle">{{ t('lights.design_t') }}</h2>
-      <p class="muted">{{ t('lights.tap_hint') }}</p>
-      <p class="muted">{{ t('lights.only_one') }}</p>
+      <h2 class="h-sub" id="panelTitle">{{ t('room.every') }}</h2>
+      <img class="lt-hint-img" src="{{ asset('img/room-preview.jpg') }}" alt="" width="720" height="530" loading="lazy">
+      <p class="muted">{{ t('room.decorate_d') }}</p>
       <ol class="lt-steps">
         <li>{{ t('lights.s1') }}</li><li>{{ t('lights.s2') }}</li><li>{{ t('lights.s3') }}</li>
       </ol>
+      <button type="button" class="btn btn-fire btn-block" data-random>✦ {{ t('lights.random') }}</button>
     </div>
 
     <div data-view="lit" hidden>
@@ -48,6 +49,7 @@
       <blockquote class="lt-msg" id="litMsg"></blockquote>
       <p class="lt-sig" id="litSig"></p>
       <p class="hint" id="litDate"></p>
+      <button type="button" class="btn btn-fire btn-block" id="litVisit">🏠 {{ t('room.visit') }}</button>
       <div class="row lt-row">
         <button type="button" class="btn btn-paper btn-sm" id="litShare">{{ t('lights.share') }}</button>
         <button type="button" class="btn btn-ghost btn-sm" id="litCopy">{{ t('lights.copy') }}</button>
@@ -64,6 +66,10 @@
       <p class="kicker" style="margin:0">{{ t('lights.free') }}</p>
       <h2 class="h-sub" id="dPlace"></h2>
       <p class="muted" id="dNear" style="margin-top:-6px"></p>
+      <button type="button" class="lt-room" id="dRoom">
+        <span class="lt-room-img"><img id="dRoomImg" alt="" hidden><img class="lt-room-ph" src="{{ asset('img/room-preview.jpg') }}" alt=""></span>
+        <span class="lt-room-t"><b id="dRoomT">{{ t('room.open_editor') }}</b><span>{{ t('room.decorate_d') }}</span></span>
+      </button>
 
       <fieldset class="lt-fs">
         <legend>{{ t('lights.icon') }}</legend>
@@ -113,24 +119,114 @@
   </aside>
 </section>
 
-<section class="section bg-deep" aria-labelledby="boardTitle">
+<section class="section bg-deep" id="how" aria-labelledby="howTitle">
+  <div class="wrap">
+    <h2 class="h-section" id="howTitle" data-reveal>{{ t('lights.how_t') }}</h2>
+    <ol class="lt-how" data-reveal>
+      <li><span class="n">1</span><b>{{ t('lights.h1_t') }}</b><p>{{ t('lights.s1') }}</p></li>
+      <li><span class="n">2</span><b>{{ t('lights.h2_t') }}</b><p>{{ t('lights.s2') }}</p><img class="lt-how-img" src="{{ asset('img/room-preview.jpg') }}" alt="" loading="lazy" width="720" height="530"></li>
+      <li><span class="n">3</span><b>{{ t('lights.h3_t', price=price(p0)) }}</b><p>{{ t('lights.s3') }}</p></li>
+    </ol>
+  </div>
+</section>
+
+<section class="section bg-deep rule-top" aria-labelledby="boardTitle">
   <div class="wrap lt-lower">
     <div>
       <h2 class="h-section" id="boardTitle" data-reveal>{{ t('lights.board_t') }}</h2>
       <ol class="lt-board" id="board" data-reveal></ol>
     </div>
+    <a class="fire-card" href="{{ url('fire') }}" data-reveal>
+      <span class="fire-card-glow" aria-hidden="true"></span>
+      <span class="kicker">{{ t('lights.also') }}</span>
+      <span class="fire-card-t">{{ t('hero.c1_t') }}</span>
+      <span class="fire-card-d">{{ t('hero.c1_d') }}</span>
+      <span class="btn btn-fire">{{ t('hero.c1_cta') }}<span class="price-tag">{{ price(p0) }}</span></span>
+    </a>
+  </div>
+</section>
+
+<section class="section bg-deep" id="gifts" aria-labelledby="giftsTitle">
+  <div class="wrap gift-grid">
     <div data-reveal>
-      <h2 class="h-sub">{{ t('lights.how_t') }}</h2>
-      <ol class="lt-steps lt-steps-big">
-        <li>{{ t('lights.s1') }}</li><li>{{ t('lights.s2') }}</li><li>{{ t('lights.s3') }}</li>
-      </ol>
-      <p style="margin-top:28px"><a class="link-arrow" href="{{ url('burn') }}">{{ t('lights.fire_cta') }} →</a></p>
+      <p class="big-pct" aria-hidden="true">20%</p>
+      <p class="kicker" style="margin-top:-6px">{{ t('gifts_page.dec31_t') }}</p>
+      <h2 class="h-section" id="giftsTitle">{{ t('gifts.title') }}</h2>
+      <p class="lead" style="margin-top:16px;max-width:46ch">{{ t('gifts.body') }}</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:22px" data-reveal>
+      <div class="fund">
+        <span class="label">{{ t('gifts.fund') }}</span>
+        <span class="value" data-stat="gift_fund_amd" data-format="price">—</span>
+        <span class="sub2">{{ t('gifts.per_paper', amount=price(gift_share(p0))) }}</span>
+      </div>
+      <div class="honest">
+        <h3>{{ t('gifts.honest_t') }}</h3>
+        <p>{{ t('gifts.honest') }}</p>
+      </div>
+      <div class="blogger-cta">
+        <div><h3>{{ t('gifts.blogger_t') }}</h3><p>{{ t('gifts.blogger_d') }}</p></div>
+        <a class="btn btn-ghost" href="{{ url('gifts') }}#bloggers">{{ t('gifts.blogger_cta') }} →</a>
+      </div>
+      <a class="link-arrow" href="{{ url('gifts') }}">{{ t('gifts.more') }} →</a>
     </div>
   </div>
 </section>
+
+<section class="section bg-deep rule-top" id="faq" aria-labelledby="faqTitle">
+  <div class="wrap wrap-narrow">
+    <div class="section-head" data-reveal>
+      <h2 class="h-section" id="faqTitle">{{ t('faq.title') }}</h2>
+    </div>
+    <div class="faq-list" data-reveal>
+      {% for item in faq[:6] %}
+      <details class="faq-item"><summary>{{ item.q }}</summary><div class="answer"><p>{{ item.a }}</p></div></details>
+      {% endfor %}
+    </div>
+    <p style="margin-top:24px"><a class="link-arrow" href="{{ url('faq') }}">{{ t('faq.all') }} →</a></p>
+  </div>
+</section>
+
+<section class="section final" aria-labelledby="finalTitle">
+  <div class="wrap">
+    <h2 id="finalTitle" data-reveal>{{ t('lights.final_t') }}</h2>
+    <div class="final-actions" data-reveal>
+      <a class="btn btn-fire" href="#stage">{{ t('hero.c2_cta') }}<span class="price-tag">{{ price(p0) }}</span></a>
+    </div>
+  </div>
+</section>
+
+<div class="rm" id="roomOverlay" hidden role="dialog" aria-modal="true" aria-labelledby="rmTitle" data-three="{{ asset('vendor/three-r128.min.js') }}" data-room="{{ asset('js/room.js') }}">
+  <canvas id="roomCanvas" aria-label="{{ t('room.hint') }}"></canvas>
+  <div class="rm-loading" id="rmLoading"><span class="spinner" style="border-color:rgba(255,255,255,.2);border-top-color:#ffc46b"></span></div>
+  <header class="rm-top">
+    <div class="rm-head"><p class="kicker" id="rmKicker"></p><h2 id="rmTitle"></h2></div>
+    <button type="button" class="btn btn-fire btn-sm" id="rmDone">{{ t('room.done') }}</button>
+    <button type="button" class="icon-btn rm-x" id="rmClose" aria-label="{{ t('room.close') }}">×</button>
+  </header>
+  <div class="rm-msg" id="rmMsg" hidden><p id="rmMsgText"></p><span id="rmMsgSig"></span></div>
+  <div class="rm-zoom"><button type="button" class="icon-btn" data-zoom="0.85" aria-label="+">+</button><button type="button" class="icon-btn" data-zoom="1.18" aria-label="−">−</button></div>
+  <div class="rm-sel" id="rmSel" hidden>
+    <span id="rmSelName"></span>
+    <button type="button" class="btn btn-ghost btn-sm" id="rmRotate">↻ {{ t('room.rotate') }}</button>
+    <button type="button" class="btn btn-ghost btn-sm" id="rmRemove">{{ t('room.remove') }}</button>
+  </div>
+  <div class="rm-dock" id="rmDock">
+    <div class="rm-styles">
+      <div class="rm-sw" role="group" aria-label="{{ t('room.wall') }}"><span>{{ t('room.wall') }}</span>
+        {% for w in ['cream','sage','night','berry'] %}<button type="button" class="sw-btn wall-{{ w }}" data-wall="{{ w }}" title="{{ t('room.walls.' ~ w) }}" aria-label="{{ t('room.walls.' ~ w) }}"></button>{% endfor %}</div>
+      <div class="rm-sw" role="group" aria-label="{{ t('room.floor') }}"><span>{{ t('room.floor') }}</span>
+        {% for f in ['oak','walnut','tile'] %}<button type="button" class="sw-btn floor-{{ f }}" data-floor="{{ f }}" title="{{ t('room.floors.' ~ f) }}" aria-label="{{ t('room.floors.' ~ f) }}"></button>{% endfor %}</div>
+      <label class="rm-glow"><input type="checkbox" id="rmGlow" checked> {{ t('room.glow') }}</label>
+    </div>
+    <div class="rm-items" id="rmItems"></div>
+    <p class="rm-hint">{{ t('room.hint') }}</p>
+  </div>
+</div>
 {% endblock %}
 {% block scripts %}
 <script src="{{ asset('js/site.js') }}" defer></script>
 <script src="{{ asset('js/mapcore.js') }}" defer></script>
+<script src="{{ asset('js/roomui.js') }}" defer></script>
 <script src="{{ asset('js/lights.js') }}" defer></script>
 {% endblock %}

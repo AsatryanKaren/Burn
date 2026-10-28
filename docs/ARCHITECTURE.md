@@ -197,11 +197,48 @@ A second product: a night map of Armenia split into **7,048 plots** of 2×2 km (
 ### RPCs for the browser (anon, SECURITY DEFINER)
 
 - `get_map()` → `{ "lit": [[cell_id, icon_index, color_index, big(0|1)], ...], "held": [cell_id, ...], "total": 7048, "lit_count": n, "by_province": {"yer": n, ...}, "updated_at": ... }`. `icon_index` / `color_index` are positions in the lists above. `held` = plots currently reserved in an unexpired payment.
-- `get_cell(p_cell_id int)` → `{ cell_id, province, town_index, status: "free"|"held"|"lit", icon, color, big, message, signature, lit_at }` where message/signature are null unless approved.
+- `get_cell(p_cell_id int)` → `{ cell_id, province, town_index, status: "free"|"held"|"lit", icon, color, big, message, signature, lit_at, room }` where message/signature are null unless approved, and `room` is the plot's room layout (see "The room") when lit, else null (0010).
 - `get_public_stats()` gains `lights_lit`.
 
 ### Edge Functions
 
-- `create-order` accepts `product: "light"` (`light_big` → `400 PRODUCT_UNAVAILABLE`) with body fields `cell_id`, `text` (message), `light_icon`, `light_color`, `light_signature` (optional), `email`, `lang`, `consent`. Errors: `CELL_INVALID` (not a map cell), `CELL_TAKEN`, `ICON_INVALID`, `COLOR_INVALID`, `SIGNATURE_TOO_LONG`, `SIGNATURE_REJECTED`, `TEXT_TOO_LONG` (for >60). `show_on_stream` is ignored for lights.
-- `order-status` also returns `cell_id`, `light_icon`, `light_color`, `light_signature`, `province`, `town_index` for light orders.
+- `create-order` accepts `product: "light"` (`light_big` → `400 PRODUCT_UNAVAILABLE`) with body fields `cell_id`, `text` (message), `light_icon`, `light_color`, `light_signature` (optional), `room` (optional, see "The room"; absent or `null` = no room yet), `email`, `lang`, `consent`. Errors: `CELL_INVALID` (not a map cell), `CELL_TAKEN`, `ICON_INVALID`, `COLOR_INVALID`, `SIGNATURE_TOO_LONG`, `SIGNATURE_REJECTED`, `TEXT_TOO_LONG` (for >60), `ROOM_INVALID`. For papers `room` must be absent or `null`, else `400 ROOM_NOT_ALLOWED`. `show_on_stream` is ignored for lights.
+- `order-status` also returns `cell_id`, `light_icon`, `light_color`, `light_signature`, `province`, `town_index`, `room` (layout or `null`) for light orders.
+- `update-room` (below) changes a light's room.
 - Payment return for lights goes to the same paper page (`/p/?c=CODE`); the page shows the light instead of a paper.
+
+### The room (3D room of a light, migration 0010)
+
+Every light comes with a small decorated 3D room. The buyer arranges furniture in it; anyone who opens a lit plot can visit it (read-only, from `get_cell`). The layout is pure structured data (no free text), so it is **not moderated** and is shown for every lit plot.
+
+Stored in `orders.room jsonb null` (lights only; a CHECK keeps it null for papers and bounds its shape and size).
+
+Layout (validated strictly by `validateRoom` in `_shared/validation.ts`; anything else → `400 ROOM_INVALID`):
+
+```json
+{ "v": 1, "wall": "sage", "floor": "oak", "glow": true,
+  "items": [["tree", 0, 0, 0], ["sofa", 3, 5, 2], ["cat", 7, 7, 3]] }
+```
+
+| key | value |
+|---|---|
+| `v` | the number `1` |
+| `wall` | `cream` \| `sage` \| `night` \| `berry` |
+| `floor` | `oak` \| `walnut` \| `tile` |
+| `glow` | boolean (fairy lights on/off) |
+| `items` | array of 0–40 `[type, x, z, r]`: `type` one of `tree tree_small sofa armchair table tv fireplace gifts rug lamp shelf plant piano snowman cat dog candles pomegranates radio clock`; `x`, `z` integers 0–7 (grid cell of the item's anchor); `r` integer 0–3 (rotation in quarter turns) |
+
+- All five keys are required and no other keys are allowed (also none inside items: an item is exactly a 4-element array). Strings are matched exactly (case-sensitive, no trimming). Numbers must be JSON integers in range (`1.5`, `"1"`, `-1`, `8` are invalid; `-0` is stored as `0`).
+- `JSON.stringify(room)` must be ≤ 4096 bytes (UTF-8); checked first, on the input as sent. A valid layout is at most ~1.1 KB, so this only stops junk.
+- Item order is preserved. Footprint overlap is checked in the browser only; the server accepts two items on the same cell.
+- The server stores (and returns) a canonical copy. Read-back key order is not guaranteed (jsonb), item order is.
+
+#### `POST update-room` (verify_jwt false)
+
+Request: `{ "code": "<order code>", "room": { ...layout } }` — the order code is the capability (as in `order-status` / `start-payment`). `room` is required (`null` → `ROOM_INVALID`); it replaces the whole layout.
+
+Response: `{ "ok": true }`.
+
+Errors (checked in this order): `400 INVALID_JSON` (body not a JSON object), `404 NOT_FOUND` (malformed code), `400 ROOM_INVALID`, `429 RATE_LIMITED` (60 per IP hash per hour; invalid requests are not counted), `404 NOT_FOUND` (unknown code), `409 ORDER_NOT_EDITABLE` (not a light order, or status is not `awaiting_launch`, `pending` or `paid` — i.e. `failed`, `cancelled`, `refunded` can't be changed). Plus the browser-endpoint codes (`403 ORIGIN_NOT_ALLOWED`, `405`, `413 PAYLOAD_TOO_LARGE` > 8 KB, `500 INTERNAL`).
+
+Paid lights stay editable: the change shows up in `get_cell` immediately.

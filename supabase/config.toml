@@ -14,6 +14,9 @@ verify_jwt = false
 [functions.start-payment]
 verify_jwt = false
 
+[functions.update-room]
+verify_jwt = false
+
 [functions.join-waitlist]
 verify_jwt = false
 

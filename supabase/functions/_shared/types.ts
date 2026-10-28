@@ -14,7 +14,23 @@ export type LightIcon = "tree" | "home" | "candle" | "star" | "gift" | "pomegran
 
 export type LightColor = "amber" | "red" | "green" | "white" | "blue" | "violet";
 
-export type ProviderName = "disabled" | "mock" | "ameria" | "idram";
+/** A light's 3D room (orders.room, migration 0010). Contract: ARCHITECTURE.md "The room". */
+export type RoomWall = "cream" | "sage" | "night" | "berry";
+export type RoomFloor = "oak" | "walnut" | "tile";
+export type RoomItemType =
+  | "tree" | "tree_small" | "sofa" | "armchair" | "table" | "tv" | "fireplace" | "gifts" | "rug" | "lamp"
+  | "shelf" | "plant" | "piano" | "snowman" | "cat" | "dog" | "candles" | "pomegranates" | "radio" | "clock";
+/** [type, x 0..7, z 0..7, r 0..3 quarter turns] */
+export type RoomItem = [RoomItemType, number, number, number];
+export interface RoomLayout {
+  v: 1;
+  wall: RoomWall;
+  floor: RoomFloor;
+  glow: boolean;
+  items: RoomItem[];
+}
+
+export type ProviderName ="disabled" | "mock" | "ameria" | "idram";
 
 /** Providers that can actually take money (stored in orders.provider). */
 export type PaymentProvider = Exclude<ProviderName, "disabled">;

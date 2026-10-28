@@ -15,6 +15,36 @@
       "source": "/hy/:path*",
       "destination": "/:path*",
       "permanent": true
+    },
+    {
+      "source": "/lights",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/lights/",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/en/lights",
+      "destination": "/en/",
+      "permanent": false
+    },
+    {
+      "source": "/en/lights/",
+      "destination": "/en/",
+      "permanent": false
+    },
+    {
+      "source": "/ru/lights",
+      "destination": "/ru/",
+      "permanent": false
+    },
+    {
+      "source": "/ru/lights/",
+      "destination": "/ru/",
+      "permanent": false
     }
   ],
   "rewrites": [
