@@ -427,5 +427,31 @@
     },
     "edit_mine": "Edit my room",
     "saved": "Your room is saved"
+  },
+  "app": {
+    "tab_map": "Map",
+    "tab_mine": "My room",
+    "tab_fire": "Fire",
+    "tab_top": "Warmest",
+    "tab_help": "How",
+    "mine_t": "My rooms",
+    "mine_empty": "You don't have a plot yet. Pick one and your room will appear here.",
+    "top_t": "The warmest rooms",
+    "top_empty": "No one has sent warmth yet. Be the first.",
+    "random_room": "Step into a random room",
+    "about": "About",
+    "show": "Show",
+    "edit": "Edit",
+    "visit": "Visit"
+  },
+  "landing": {
+    "kicker": "New Year 2027 · {total} plots",
+    "cta": "Open the map",
+    "cta_note": "Pick your spot in Armenia · {price}",
+    "do_t": "What you can do",
+    "do1_t": "Light a light, get a room",
+    "do1_d": "Pick a plot in your town or village. It becomes your little New Year room, decorated however you like.",
+    "do2_t": "Visit others",
+    "do2_d": "Tap any light, step into other people's rooms, play with the tree and the piano, and send them warmth."
   }
 }

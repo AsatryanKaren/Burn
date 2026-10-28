@@ -18,32 +18,32 @@
     },
     {
       "source": "/lights",
-      "destination": "/",
+      "destination": "/map/",
       "permanent": false
     },
     {
       "source": "/lights/",
-      "destination": "/",
+      "destination": "/map/",
       "permanent": false
     },
     {
       "source": "/en/lights",
-      "destination": "/en/",
+      "destination": "/en/map/",
       "permanent": false
     },
     {
       "source": "/en/lights/",
-      "destination": "/en/",
+      "destination": "/en/map/",
       "permanent": false
     },
     {
       "source": "/ru/lights",
-      "destination": "/ru/",
+      "destination": "/ru/map/",
       "permanent": false
     },
     {
       "source": "/ru/lights/",
-      "destination": "/ru/",
+      "destination": "/ru/map/",
       "permanent": false
     }
   ],

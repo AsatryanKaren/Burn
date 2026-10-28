@@ -9,8 +9,12 @@
   var m = null, view = null, state = { id: -1, mode: "hint", busy: false, cellReq: 0 }, litRows = [], heldRows = [];
 
   /* ---------- panel views ---------- */
+  var TAB_OF = { hint: "map", lit: "map", held: "map", design: "map", saved: "map", mine: "mine", fire: "fire", fireSaved: "fire", top: "top", help: "help" };
   function showView(name) {
     state.mode = name;
+    var tab = TAB_OF[name] || "map";
+    document.querySelectorAll("#dock [data-tab]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-tab") === tab)); });
+    try { history.replaceState(null, "", location.pathname + location.search + (tab === "map" ? "" : "#" + tab)); } catch (e) {}
     panel.querySelectorAll("[data-view]").forEach(function (v) { v.hidden = v.getAttribute("data-view") !== name; });
     panel.classList.toggle("open", name !== "hint");
     stage.classList.toggle("panel-open", name !== "hint");
@@ -20,6 +24,71 @@
   }
   $("panelClose").addEventListener("click", function () { deselect(); });
   document.addEventListener("keydown", function (e) { if (e.key === "Escape" && state.mode !== "hint" && !state.busy && !(window.RoomUI && window.RoomUI.isOpen())) deselect(); });
+  /* ---------- the tabs: map, my rooms, fire, warmest, help ---------- */
+  function openTab(tab) {
+    if (tab !== "map") { state.id = -1; if (view) { view.select(-1); view.setGhost(null); } }
+    if (tab === "map") return deselect();
+    if (tab === "mine") renderMine();
+    if (tab === "top") renderTop();
+    showView(tab === "fire" ? "fire" : tab);
+  }
+  document.querySelectorAll("#dock [data-tab]").forEach(function (b) { b.addEventListener("click", function () { openTab(b.getAttribute("data-tab")); }); });
+  document.querySelectorAll("[data-tab-go]").forEach(function (b) { b.addEventListener("click", function () { openTab(b.getAttribute("data-tab-go")); }); });
+  function row(id, right) {
+    return '<div class="app-row" data-id="' + id + '"><button type="button" class="app-row-main" data-act="show"><b>' + esc(MC.provName(m, id, lang)) + "</b><span>" +
+      esc(MC.townName(m, id, lang) || "") + "</span></button>" + right + "</div>";
+  }
+  function renderMine() {
+    var ids = Object.keys(mine()).map(Number).filter(function (id) { return MC.isCell(m, id); });
+    $("mineEmpty").hidden = ids.length > 0;
+    $("mineList").innerHTML = ids.map(function (id) {
+      return row(id, '<button type="button" class="btn btn-fire btn-sm" data-act="edit">✎ ' + esc(t("app.edit")) + '</button><button type="button" class="btn btn-ghost btn-sm" data-act="visit">' + esc(t("app.visit")) + "</button>");
+    }).join("");
+  }
+  function renderTop() {
+    var warm = (state.lastMap && state.lastMap.warm) || [];
+    $("topEmpty").hidden = warm.length > 0;
+    $("topList").innerHTML = warm.slice(0, 30).map(function (w, i) {
+      return row(w[0], '<span class="app-warm">❤ ' + A.fmt(w[1]) + '</span><button type="button" class="btn btn-ghost btn-sm" data-act="visit">' + esc(t("app.visit")) + "</button>").replace('<b>', '<b><i>' + (i + 1) + "</i> ");
+    }).join("");
+  }
+  ["mineList", "topList"].forEach(function (lid) {
+    $(lid).addEventListener("click", function (e) {
+      var b = e.target.closest("[data-act]"); if (!b) return;
+      var id = Number(b.closest("[data-id]").getAttribute("data-id")), act = b.getAttribute("data-act");
+      if (act === "edit") return editMine(id, null);
+      if (act === "visit") { state.id = id; view.select(id); view.flyToCell(id, 26); return visit(id); }
+      select(id, true);
+    });
+  });
+  $("randomRoom").addEventListener("click", function () { nextRoom(); });
+
+  /* ---------- the fire, inside the map: write a paper and burn it ---------- */
+  var fForm = $("fireForm");
+  $("fNote").addEventListener("input", function () { $("fCount").textContent = $("fNote").value.length + "/120"; });
+  fForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    if (state.fbusy) return;
+    var text = clean($("fNote").value), em = clean($("fEmail").value);
+    var bad = !text ? ["EMPTY", $("fNote")] : (!em && !D.paymentsOpen) ? ["EMAIL_REQUIRED", $("fEmail")] :
+      (em && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em)) ? ["EMAIL_INVALID", $("fEmail")] : !$("fConsent").checked ? ["CONSENT_REQUIRED", $("fConsent")] : null;
+    if (bad) { $("fErr").textContent = errText(bad[0]); bad[1].focus(); return; }
+    $("fErr").textContent = ""; state.fbusy = true; $("fSubmit").disabled = true;
+    A.api.fn("create-order", { product: "burn", text: text, email: em || null, lang: lang, show_on_stream: $("fShow").checked, consent: true }).then(function (res) {
+      state.fbusy = false; $("fSubmit").disabled = false; remember(res.code);
+      var pay = res.payment || { mode: "disabled" };
+      if ((pay.mode === "redirect" || pay.mode === "mock") && A.safePaymentUrl(pay.url)) { try { sessionStorage.setItem("justPaid", res.code); } catch (e) {} location.href = pay.url; return; }
+      if (pay.mode === "form" && A.safePaymentUrl(pay.action)) { try { sessionStorage.setItem("justPaid", res.code); } catch (e) {} A.postForm(pay.action, pay.fields); return; }
+      $("fSavedText").innerHTML = t("burn.saved_d", { email: esc(em) });
+      $("fSavedLink").href = D.urls.paper + "?c=" + encodeURIComponent(res.code);
+      $("fNote").value = ""; showView("fireSaved");
+    }).catch(function (err) {
+      state.fbusy = false; $("fSubmit").disabled = false;
+      var code = (err && err.code) || "UNKNOWN"; if (code === "TEXT_REQUIRED") code = "EMPTY";
+      $("fErr").textContent = errText(code);
+    });
+  });
+
   function deselect() {
     state.id = -1; if (view) { view.select(-1); view.setGhost(null); }
     showView("hint"); setUrl(-1);
@@ -274,6 +343,7 @@
   }
   function refresh() {
     return A.api.rpc("get_map").then(function (r) {
+      state.lastMap = r || {};
       litRows = (r && r.lit) || []; heldRows = (r && r.held) || [];
       var fresh = view.setLights(litRows, heldRows);
       fresh.slice(0, 5).forEach(function (id) { tickQ.push(MC.placeName(m, id, lang)); }); tick();
@@ -295,7 +365,7 @@
       interactive: true, lang: lang, pad: 18,
       offsetX: function () { return wide() ? 400 : 0; },
       // On phones the bottom sheet covers the lower part: keep the chosen plot in the upper quarter.
-      offsetY: function (H) { return wide() ? 0 : H * 0.27; },
+      offsetY: function (H) { return wide() || state.mode === "hint" ? 0 : H * 0.27; },
       onTap: function (id) { if (id < 0) { if (state.mode !== "design") deselect(); return; } select(id, false); }
     });
     var sel = $("townPick");
@@ -309,8 +379,10 @@
     $("zIn").addEventListener("click", function () { view.zoomAt(1.6, view.W / 2, view.H / 2); });
     $("zOut").addEventListener("click", function () { view.zoomAt(1 / 1.6, view.W / 2, view.H / 2); });
     $("zFit").addEventListener("click", function () { view.fit(false); });
+    var startTab = (location.hash || "").slice(1);
     showView("hint");
     refresh().then(function () {
+      if (["mine", "fire", "top", "help"].indexOf(startTab) >= 0 && !new URLSearchParams(location.search).get("cell")) openTab(startTab);
       var qs = new URLSearchParams(location.search), want = parseInt(qs.get("cell"), 10), editCode = qs.get("edit");
       // Coming from my personal page with "Edit my room": remember the plot as mine and drop the code from the address bar.
       if (MC.isCell(m, want) && editCode && /^[a-z0-9]{8,40}$/i.test(editCode)) {

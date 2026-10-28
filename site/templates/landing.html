@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}{{ t('meta.lights_title') }} · {{ brand }}{% endblock %}
+{% block description %}{{ t('lights.meta_desc') }}{% endblock %}
+{% block og_image %}og-lights-{{ lang }}.jpg{% endblock %}
+{% block main %}
+{% set p0 = cfg.light_products[0].price %}
+<section class="ld-hero" aria-labelledby="ldTitle">
+  <a class="ld-map" href="{{ url('map') }}" id="ltTeaser" data-map="{{ asset('data/map.js') }}" aria-label="{{ t('landing.cta') }}" tabindex="-1">
+    <canvas aria-hidden="true"></canvas>
+  </a>
+  <div class="ld-shade" aria-hidden="true"></div>
+  <div class="ld-inner wrap">
+    <p class="kicker">{{ t('landing.kicker', total=fmt(cfg.map.total_plots)) }}</p>
+    <h1 id="ldTitle">{{ t('lights.title') }}</h1>
+    <p class="lead">{{ t('lights.lead2') }}</p>
+    <a class="ld-banner" href="{{ url('map') }}">
+      <span class="ld-banner-ic" aria-hidden="true">✦</span>
+      <span class="ld-banner-t"><b>{{ t('landing.cta') }}</b><span>{{ t('landing.cta_note', price=price(p0)) }}</span></span>
+      <span class="ld-banner-go" aria-hidden="true">→</span>
+    </a>
+    <p class="ld-count"><span class="dot" aria-hidden="true"></span><span id="ldCount">{{ t('lights.progress', n='—', total=fmt(cfg.map.total_plots)) }}</span></p>
+  </div>
+</section>
+
+<section class="section bg-deep" id="how" aria-labelledby="doTitle">
+  <div class="wrap">
+    <h2 class="h-section" id="doTitle" data-reveal>{{ t('landing.do_t') }}</h2>
+    <div class="ld-do">
+      <a class="ld-card" href="{{ url('map') }}" data-reveal>
+        <img src="{{ asset('img/room-preview.jpg') }}" alt="" loading="lazy" width="720" height="530">
+        <span class="n">1</span><b>{{ t('landing.do1_t') }}</b><p>{{ t('landing.do1_d') }}</p><span class="link-arrow">{{ t('landing.cta') }} →</span>
+      </a>
+      <a class="ld-card" href="{{ url('map') }}#top" data-reveal>
+        <span class="ld-card-art ld-art-visit" aria-hidden="true"><span>❤</span><span>❤</span><span>❤</span></span>
+        <span class="n">2</span><b>{{ t('landing.do2_t') }}</b><p>{{ t('landing.do2_d') }}</p><span class="link-arrow">{{ t('app.tab_top') }} →</span>
+      </a>
+      <a class="ld-card" href="{{ url('map') }}#fire" data-reveal>
+        <span class="ld-card-art ld-art-fire" aria-hidden="true"><span class="fire-card-glow"></span><span class="ld-paper">{{ cfg.year }}</span></span>
+        <span class="n">3</span><b>{{ t('hero.c1_t') }}</b><p>{{ t('hero.c1_d') }}</p><span class="link-arrow">{{ t('hero.c1_cta') }} →</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="section bg-deep" id="gifts" aria-labelledby="giftsTitle">
+  <div class="wrap gift-grid">
+    <div data-reveal>
+      <p class="big-pct" aria-hidden="true">20%</p>
+      <p class="kicker" style="margin-top:-6px">{{ t('gifts_page.dec31_t') }}</p>
+      <h2 class="h-section" id="giftsTitle">{{ t('gifts.title') }}</h2>
+      <p class="lead" style="margin-top:16px;max-width:46ch">{{ t('gifts.body') }}</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:22px" data-reveal>
+      <div class="fund">
+        <span class="label">{{ t('gifts.fund') }}</span>
+        <span class="value" data-stat="gift_fund_amd" data-format="price">—</span>
+        <span class="sub2">{{ t('gifts.per_paper', amount=price(gift_share(p0))) }}</span>
+      </div>
+      <div class="honest">
+        <h3>{{ t('gifts.honest_t') }}</h3>
+        <p>{{ t('gifts.honest') }}</p>
+      </div>
+      <div class="blogger-cta">
+        <div><h3>{{ t('gifts.blogger_t') }}</h3><p>{{ t('gifts.blogger_d') }}</p></div>
+        <a class="btn btn-ghost" href="{{ url('gifts') }}#bloggers">{{ t('gifts.blogger_cta') }} →</a>
+      </div>
+      <a class="link-arrow" href="{{ url('gifts') }}">{{ t('gifts.more') }} →</a>
+    </div>
+  </div>
+</section>
+
+<section class="section bg-deep rule-top" id="faq" aria-labelledby="faqTitle">
+  <div class="wrap wrap-narrow">
+    <div class="section-head" data-reveal>
+      <h2 class="h-section" id="faqTitle">{{ t('faq.title') }}</h2>
+    </div>
+    <div class="faq-list" data-reveal>
+      {% for item in faq[:6] %}
+      <details class="faq-item"><summary>{{ item.q }}</summary><div class="answer"><p>{{ item.a }}</p></div></details>
+      {% endfor %}
+    </div>
+    <p style="margin-top:24px"><a class="link-arrow" href="{{ url('faq') }}">{{ t('faq.all') }} →</a></p>
+  </div>
+</section>
+
+<section class="section final" aria-labelledby="finalTitle">
+  <div class="wrap">
+    <h2 id="finalTitle" data-reveal>{{ t('lights.final_t') }}</h2>
+    <div class="final-actions" data-reveal>
+      <a class="btn btn-fire" href="{{ url('map') }}">{{ t('landing.cta') }}<span class="price-tag">{{ price(p0) }}</span></a>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script src="{{ asset('js/site.js') }}" defer></script>
+<script src="{{ asset('js/mapcore.js') }}" defer></script>
+<script src="{{ asset('js/landing.js') }}" defer></script>
+{% endblock %}

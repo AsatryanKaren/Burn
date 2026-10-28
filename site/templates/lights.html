@@ -2,18 +2,9 @@
 {% block title %}{{ t('meta.lights_title') }} · {{ brand }}{% endblock %}
 {% block description %}{{ t('lights.meta_desc') }}{% endblock %}
 {% block og_image %}og-lights-{{ lang }}.jpg{% endblock %}
+{% block bodyclass %}is-app{% endblock %}
 {% block main %}
 {% set lp = cfg.light_products %}{% set p0 = lp[0].price %}
-<header class="lt-head wrap">
-  <p class="kicker">{{ fmt(cfg.map.total_plots) }} · 2×2 km · {{ price(lp[0].price) }}</p>
-  <h1>{{ t('lights.title') }}</h1>
-  <p class="lead">{{ t('lights.lead2') }}</p>
-  <div class="lt-progress" aria-live="polite">
-    <div class="lt-bar" aria-hidden="true"><i id="ltBar"></i></div>
-    <p><span id="ltCount">{{ t('lights.progress', n='0', total=fmt(cfg.map.total_plots)) }}</span> · <span class="muted">{{ t('lights.goal') }}</span></p>
-  </div>
-</header>
-
 <section class="lt-stage" id="stage" data-map="{{ asset('data/map.js') }}" aria-label="{{ t('lights.title') }}">
   <canvas id="map" tabindex="0" aria-label="{{ t('lights.tap_hint') }}"></canvas>
   <div class="lt-tools">
@@ -27,6 +18,14 @@
     <button type="button" class="icon-btn" id="zFit" aria-label="{{ t('lights.reset') }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
   </div>
   <p class="lt-ticker" id="ticker" aria-live="polite"></p>
+  <div class="app-status" aria-live="polite"><div class="lt-bar" aria-hidden="true"><i id="ltBar"></i></div><span id="ltCount">{{ t('lights.progress', n='—', total=fmt(cfg.map.total_plots)) }}</span></div>
+  <nav class="app-dock" id="dock" aria-label="{{ t('nav.menu') }}">
+    <button type="button" data-tab="map" aria-pressed="true"><span class="i" aria-hidden="true">✦</span><span>{{ t('app.tab_map') }}</span></button>
+    <button type="button" data-tab="mine"><span class="i" aria-hidden="true">🏠</span><span>{{ t('app.tab_mine') }}</span></button>
+    <button type="button" data-tab="fire"><span class="i" aria-hidden="true">🔥</span><span>{{ t('app.tab_fire') }}</span></button>
+    <button type="button" data-tab="top"><span class="i" aria-hidden="true">❤</span><span>{{ t('app.tab_top') }}</span></button>
+    <button type="button" data-tab="help"><span class="i" aria-hidden="true">?</span><span>{{ t('app.tab_help') }}</span></button>
+  </nav>
   <p class="lt-hint" id="hintPill">{{ t('lights.tap_hint') }}</p>
 
   <aside class="lt-panel" id="panel" aria-labelledby="panelTitle">
@@ -118,84 +117,69 @@
       <button type="button" class="btn btn-fire" id="savedEdit">✎ {{ t('room.edit_mine') }}</button>
       <a class="link-arrow" id="savedLink" href="#">{{ t('lights.your_light') }} →</a>
     </div>
+
+    <div data-view="mine" hidden>
+      <h2 class="h-sub">{{ t('app.mine_t') }}</h2>
+      <div id="mineList" class="app-list"></div>
+      <div id="mineEmpty" hidden>
+        <p class="muted">{{ t('app.mine_empty') }}</p>
+        <button type="button" class="btn btn-fire btn-block" data-random>✦ {{ t('lights.random') }}</button>
+      </div>
+    </div>
+
+    <div data-view="top" hidden>
+      <h2 class="h-sub">{{ t('app.top_t') }}</h2>
+      <div id="topList" class="app-list"></div>
+      <p class="muted" id="topEmpty" hidden>{{ t('app.top_empty') }}</p>
+      <button type="button" class="btn btn-ghost btn-block" id="randomRoom">🏠 {{ t('app.random_room') }}</button>
+    </div>
+
+    <form data-view="fire" id="fireForm" novalidate hidden>
+      <p class="kicker" style="margin:0">{{ t('app.tab_fire') }} · {{ price(p0) }}</p>
+      <h2 class="h-sub">{{ t('burn.s1') }}</h2>
+      <p class="muted">{{ t('hero.c1_d') }}</p>
+      <div class="paper app-paper">
+        <span class="paper-year">{{ cfg.year }}</span>
+        <label class="sr-only" for="fNote">{{ t('burn.s1') }}</label>
+        <textarea id="fNote" maxlength="120" rows="3" autocomplete="off" placeholder="{{ t('burn.placeholders')[0] }}"></textarea>
+        <span class="count" id="fCount">0/120</span>
+      </div>
+      <label class="check"><input type="checkbox" id="fShow" checked><span>{{ t('burn.show_on_stream') }}</span></label>
+      <p class="hint">{{ t('burn.s1_hint') }}</p>
+      <div class="field">
+        <label for="fEmail">{{ t('burn.email_label') }}</label>
+        <input class="input" id="fEmail" type="email" inputmode="email" autocomplete="email" placeholder="{{ t('burn.email_ph') }}">
+      </div>
+      <label class="check"><input type="checkbox" id="fConsent"><span>{{ t('burn.consent', terms=url('terms'), privacy=url('privacy')) }}</span></label>
+      <p class="hint">{{ t('burn.of_which', amount=price(gift_share(p0))) }}</p>
+      <p class="error" id="fErr" role="alert"></p>
+      <button type="submit" class="btn btn-fire btn-block" id="fSubmit">{{ t('burn.pay', price=price(p0)) if cfg.payments_open else t('burn.save_soon') }}</button>
+    </form>
+
+    <div data-view="fireSaved" hidden>
+      <h2 class="h-sub">{{ t('burn.saved_t') }}</h2>
+      <p class="muted" id="fSavedText"></p>
+      <a class="btn btn-fire" id="fSavedLink" href="#">🔥 {{ t('burn.preview') }}</a>
+      <button type="button" class="btn btn-ghost" data-tab-go="map">✦ {{ t('app.tab_map') }}</button>
+    </div>
+
+    <div data-view="help" hidden>
+      <h2 class="h-sub">{{ t('lights.how_t') }}</h2>
+      <ol class="lt-steps lt-steps-big">
+        <li><b>{{ t('lights.h1_t') }}.</b> {{ t('lights.s1') }}</li>
+        <li><b>{{ t('lights.h2_t') }}.</b> {{ t('lights.s2') }}</li>
+        <li><b>{{ t('lights.h3_t', price=price(p0)) }}.</b> {{ t('lights.s3') }}</li>
+        <li><b>{{ t('landing.do2_t') }}.</b> {{ t('landing.do2_d') }}</li>
+      </ol>
+      <div class="app-links">
+        <a href="{{ url('home') }}">← {{ t('app.about') }}</a>
+        <a href="{{ url('gifts') }}">{{ t('nav.gifts') }}</a>
+        <a href="{{ url('faq') }}">{{ t('nav.faq') }}</a>
+        <a href="{{ url('live') }}">{{ t('nav.live') }}</a>
+        <a href="{{ url('terms') }}">{{ t('footer.terms') }}</a>
+      </div>
+    </div>
   </aside>
-</section>
-
-<section class="section bg-deep" id="how" aria-labelledby="howTitle">
-  <div class="wrap">
-    <h2 class="h-section" id="howTitle" data-reveal>{{ t('lights.how_t') }}</h2>
-    <ol class="lt-how" data-reveal>
-      <li><span class="n">1</span><b>{{ t('lights.h1_t') }}</b><p>{{ t('lights.s1') }}</p></li>
-      <li><span class="n">2</span><b>{{ t('lights.h2_t') }}</b><p>{{ t('lights.s2') }}</p><img class="lt-how-img" src="{{ asset('img/room-preview.jpg') }}" alt="" loading="lazy" width="720" height="530"></li>
-      <li><span class="n">3</span><b>{{ t('lights.h3_t', price=price(p0)) }}</b><p>{{ t('lights.s3') }}</p></li>
-    </ol>
-  </div>
-</section>
-
-<section class="section bg-deep rule-top" aria-labelledby="boardTitle">
-  <div class="wrap lt-lower">
-    <div>
-      <h2 class="h-section" id="boardTitle" data-reveal>{{ t('lights.board_t') }}</h2>
-      <ol class="lt-board" id="board" data-reveal></ol>
-    </div>
-    <a class="fire-card" href="{{ url('fire') }}" data-reveal>
-      <span class="fire-card-glow" aria-hidden="true"></span>
-      <span class="kicker">{{ t('lights.also') }}</span>
-      <span class="fire-card-t">{{ t('hero.c1_t') }}</span>
-      <span class="fire-card-d">{{ t('hero.c1_d') }}</span>
-      <span class="btn btn-fire">{{ t('hero.c1_cta') }}<span class="price-tag">{{ price(p0) }}</span></span>
-    </a>
-  </div>
-</section>
-
-<section class="section bg-deep" id="gifts" aria-labelledby="giftsTitle">
-  <div class="wrap gift-grid">
-    <div data-reveal>
-      <p class="big-pct" aria-hidden="true">20%</p>
-      <p class="kicker" style="margin-top:-6px">{{ t('gifts_page.dec31_t') }}</p>
-      <h2 class="h-section" id="giftsTitle">{{ t('gifts.title') }}</h2>
-      <p class="lead" style="margin-top:16px;max-width:46ch">{{ t('gifts.body') }}</p>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:22px" data-reveal>
-      <div class="fund">
-        <span class="label">{{ t('gifts.fund') }}</span>
-        <span class="value" data-stat="gift_fund_amd" data-format="price">—</span>
-        <span class="sub2">{{ t('gifts.per_paper', amount=price(gift_share(p0))) }}</span>
-      </div>
-      <div class="honest">
-        <h3>{{ t('gifts.honest_t') }}</h3>
-        <p>{{ t('gifts.honest') }}</p>
-      </div>
-      <div class="blogger-cta">
-        <div><h3>{{ t('gifts.blogger_t') }}</h3><p>{{ t('gifts.blogger_d') }}</p></div>
-        <a class="btn btn-ghost" href="{{ url('gifts') }}#bloggers">{{ t('gifts.blogger_cta') }} →</a>
-      </div>
-      <a class="link-arrow" href="{{ url('gifts') }}">{{ t('gifts.more') }} →</a>
-    </div>
-  </div>
-</section>
-
-<section class="section bg-deep rule-top" id="faq" aria-labelledby="faqTitle">
-  <div class="wrap wrap-narrow">
-    <div class="section-head" data-reveal>
-      <h2 class="h-section" id="faqTitle">{{ t('faq.title') }}</h2>
-    </div>
-    <div class="faq-list" data-reveal>
-      {% for item in faq[:6] %}
-      <details class="faq-item"><summary>{{ item.q }}</summary><div class="answer"><p>{{ item.a }}</p></div></details>
-      {% endfor %}
-    </div>
-    <p style="margin-top:24px"><a class="link-arrow" href="{{ url('faq') }}">{{ t('faq.all') }} →</a></p>
-  </div>
-</section>
-
-<section class="section final" aria-labelledby="finalTitle">
-  <div class="wrap">
-    <h2 id="finalTitle" data-reveal>{{ t('lights.final_t') }}</h2>
-    <div class="final-actions" data-reveal>
-      <a class="btn btn-fire" href="#stage">{{ t('hero.c2_cta') }}<span class="price-tag">{{ price(p0) }}</span></a>
-    </div>
-  </div>
 </section>
 
 <div class="rm" id="roomOverlay" hidden role="dialog" aria-modal="true" aria-labelledby="rmTitle" data-three="{{ asset('vendor/three-r128.min.js') }}" data-room="{{ asset('js/room.js') }}">
@@ -238,6 +222,7 @@
   </div>
 </div>
 {% endblock %}
+{% block footer %}{% endblock %}
 {% block scripts %}
 <script src="{{ asset('js/site.js') }}" defer></script>
 <script src="{{ asset('js/mapcore.js') }}" defer></script>
