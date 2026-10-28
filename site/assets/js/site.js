@@ -30,6 +30,14 @@
     });
   }
 
+  /* ---------- storage: localStorage when allowed, memory otherwise (private mode, sandboxed previews) ---------- */
+  var mem = {};
+  var store = {
+    get: function (k) { try { var v = localStorage.getItem(k); return v === null && k in mem ? mem[k] : v; } catch (e) { return k in mem ? mem[k] : null; } },
+    set: function (k, v) { mem[k] = String(v); try { localStorage.setItem(k, String(v)); } catch (e) {} },
+    json: function (k, dflt) { try { var v = store.get(k); return v ? JSON.parse(v) : dflt; } catch (e) { return dflt; } }
+  };
+
   /* ---------- API ---------- */
   function withTimeout(promise, ms) {
     return new Promise(function (resolve, reject) {
@@ -243,7 +251,7 @@
   if (inApp) document.documentElement.classList.add("in-app");
 
   window.APP = {
-    D: D, t: t, fmt: fmt, price: price, giftShare: giftShare, esc: esc, api: api,
+    D: D, store: store, t: t, fmt: fmt, price: price, giftShare: giftShare, esc: esc, api: api,
     loadStats: loadStats, paintStats: paintStats, mountScene: mountScene, toast: toast, copy: copy,
     shareStory: shareStory, shareCanvas: shareCanvas, reduceMotion: reduceMotion, inApp: inApp,
     safePaymentUrl: safePaymentUrl, postForm: postForm

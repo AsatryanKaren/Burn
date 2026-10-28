@@ -57,6 +57,7 @@
     $("litPlace").innerHTML = placeHtml(id); $("litNear").textContent = nearText(id);
     $("litMsg").textContent = ""; $("litSig").textContent = ""; $("litDate").textContent = "";
     $("litMsg").hidden = true;
+    $("litEdit").hidden = !mine()[id];
     showView("lit");
     A.api.rpc("get_cell", { p_cell_id: id }).then(function (c) {
       if (req !== state.cellReq || !c) return;
@@ -105,8 +106,8 @@
 
   /* ---------- the room of the plot being designed (draft kept per plot in this browser) ---------- */
   function roomKey(id) { return "room:" + id; }
-  function loadRoom(id) { try { return JSON.parse(localStorage.getItem(roomKey(id)) || "null"); } catch (e) { return null; } }
-  function saveRoom(id, l) { try { localStorage.setItem(roomKey(id), JSON.stringify(l)); } catch (e) {} }
+  function loadRoom(id) { return A.store.json(roomKey(id), null); }
+  function saveRoom(id, l) { A.store.set(roomKey(id), JSON.stringify(l)); }
   var roomImgs = {};
   function paintRoomButton(id) {
     var img = roomImgs[id], has = !!loadRoom(id);
@@ -166,6 +167,22 @@
     if (b) { btn.setAttribute("aria-busy", "true"); btn.innerHTML = '<span class="spinner" aria-hidden="true"></span><span class="sr-only">' + esc(t("common.loading")) + "</span>"; }
     else { btn.removeAttribute("aria-busy"); sync(); }
   }
+  /* ---------- plots I own (order code per plot, kept in this browser) ---------- */
+  function mine() { return A.store.json("myLights", {}) || {}; }
+  function setMine(id, code) { var x = mine(); x[id] = code; A.store.set("myLights", JSON.stringify(x)); }
+  function editMine(id, current) {
+    var code = mine()[id]; if (!code) return;
+    window.RoomUI.open({ mode: "edit", cellId: id, layout: loadRoom(id) || current || null, title: placeTitle(id), onDone: function (layout, img) {
+      saveRoom(id, layout); if (img) roomImgs[id] = img;
+      if (state.visit && state.visit.id === id && state.visit.raw) state.visit.raw.room = layout;
+      A.api.fn("update-room", { code: code, room: layout }).then(function () { A.toast(t("room.saved")); }, function (err) {
+        A.toast(errText((err && err.code) || "UNKNOWN"));
+      });
+    } });
+  }
+  $("litEdit").addEventListener("click", function () { editMine(state.id, state.visit && state.visit.id === state.id && state.visit.raw ? state.visit.raw.room : null); });
+  $("savedEdit").addEventListener("click", function () { editMine(state.savedId, null); });
+
   function remember(code) {
     try {
       var list = JSON.parse(localStorage.getItem("papers") || "[]");
@@ -187,7 +204,7 @@
     var id = state.id;
     setBusy(true);
     A.api.fn("create-order", body).then(function (res) {
-      remember(res.code);
+      remember(res.code); setMine(id, res.code); state.savedId = id;
       var pay = res.payment || { mode: "disabled" };
       if ((pay.mode === "redirect" || pay.mode === "mock") && A.safePaymentUrl(pay.url)) {
         try { sessionStorage.setItem("justPaid", res.code); } catch (e) {}
@@ -202,7 +219,7 @@
         $("savedText").innerHTML = t("lights.saved_d", { email: esc(body.email || "") });
         $("savedLink").href = D.urls.paper + "?c=" + encodeURIComponent(res.code);
         view.flare(id);
-        showView("saved");
+        showView("saved"); refresh();
       }
     }).catch(function (err) {
       setBusy(false);
@@ -294,8 +311,16 @@
     $("zFit").addEventListener("click", function () { view.fit(false); });
     showView("hint");
     refresh().then(function () {
-      var want = parseInt(new URLSearchParams(location.search).get("cell"), 10);
-      if (MC.isCell(m, want)) setTimeout(function () { select(want, true); }, 500);
+      var qs = new URLSearchParams(location.search), want = parseInt(qs.get("cell"), 10), editCode = qs.get("edit");
+      // Coming from my personal page with "Edit my room": remember the plot as mine and drop the code from the address bar.
+      if (MC.isCell(m, want) && editCode && /^[a-z0-9]{8,40}$/i.test(editCode)) {
+        setMine(want, editCode);
+        try { qs.delete("edit"); history.replaceState(null, "", location.pathname + "?" + qs.toString()); } catch (e) {}
+      }
+      if (MC.isCell(m, want)) setTimeout(function () {
+        select(want, true);
+        if (editCode && mine()[want]) A.api.rpc("get_cell", { p_cell_id: want }).then(function (c) { editMine(want, c && c.room); }, function () { editMine(want, null); });
+      }, 500);
       poll();
     });
   }).catch(function () { A.toast(t("lights.map_err")); });

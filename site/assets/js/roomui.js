@@ -8,7 +8,7 @@
   var ov = $("roomOverlay");
   if (!ov) return;
   var room = null, cur = null, loading = null, lastFocus = null, muted = false;
-  try { muted = localStorage.getItem("roomMuted") === "1"; } catch (e) {}
+  muted = A.store.get("roomMuted") === "1";
 
   function loadScript(src) {
     return new Promise(function (res, rej) { var s = document.createElement("script"); s.src = src; s.onload = res; s.onerror = rej; document.head.appendChild(s); });
@@ -59,7 +59,7 @@
 
   /* ---------- visiting: warmth, visits, next room ---------- */
   function warmedKey(id) { return "warmed:" + id; }
-  function hasWarmed(id) { try { return localStorage.getItem(warmedKey(id)) === "1"; } catch (e) { return false; } }
+  function hasWarmed(id) { return A.store.get(warmedKey(id)) === "1"; }
   function paintVisit(o) {
     $("rmWarmN").textContent = o.warmth ? A.fmt(o.warmth) : "";
     var done = hasWarmed(o.cellId);
@@ -81,7 +81,7 @@
     var o = cur; if (!o || o.mode !== "view" || o.cellId == null) return;
     hearts($("rmWarm"));
     if (hasWarmed(o.cellId)) return;
-    try { localStorage.setItem(warmedKey(o.cellId), "1"); } catch (e) {}
+    A.store.set(warmedKey(o.cellId), "1");
     o.warmth = (o.warmth || 0) + 1; paintVisit(o);
     A.api.fn("room-warmth", { cell_id: o.cellId, action: "warm" }).then(function (r) {
       if (r && typeof r.warmth === "number" && cur === o) { o.warmth = r.warmth; paintVisit(o); }
@@ -92,7 +92,7 @@
   /* ---------- open / close ---------- */
   function paintMute() { $("rmMute").textContent = muted ? "🔇" : "🔊"; $("rmMute").setAttribute("aria-pressed", String(muted)); }
   $("rmMute").addEventListener("click", function () {
-    muted = !muted; try { localStorage.setItem("roomMuted", muted ? "1" : "0"); } catch (e) {}
+    muted = !muted; A.store.set("roomMuted", muted ? "1" : "0");
     if (room) room.mute(muted); paintMute();
   });
 

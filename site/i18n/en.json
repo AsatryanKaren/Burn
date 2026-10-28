@@ -424,6 +424,8 @@
       "cozy": "Cozy",
       "party": "Party",
       "classic": "Classic"
-    }
+    },
+    "edit_mine": "Edit my room",
+    "saved": "Your room is saved"
   }
 }

@@ -121,6 +121,7 @@
         (paid ? '<div class="row"><button type="button" class="btn btn-paper" id="lShare">' + esc(t("lights.share")) + "</button>" +
           '<button type="button" class="btn btn-ghost" id="lCopy">' + esc(t("lights.copy")) + "</button>" +
           '<a class="btn btn-ghost" href="' + esc(mapLink) + '">' + esc(t("lights.paper_see")) + "</a></div>" : payButton(o)) +
+        '<p><a class="btn btn-fire" href="' + esc(mapLink + "&edit=" + encodeURIComponent(code)) + '">✎ ' + esc(t("room.edit_mine")) + "</a></p>" +
         '<p><a class="link-arrow" href="' + D.urls.burn + '">' + esc(t("lights.fire_cta")) + " →</a></p>"
       );
       var ic = document.getElementById("lIc"); if (ic) ic.appendChild(MC.iconCanvas(icon, color, 72));

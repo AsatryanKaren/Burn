@@ -49,6 +49,7 @@
       <blockquote class="lt-msg" id="litMsg"></blockquote>
       <p class="lt-sig" id="litSig"></p>
       <p class="hint" id="litDate"></p>
+      <button type="button" class="btn btn-fire btn-block" id="litEdit" hidden>✎ {{ t('room.edit_mine') }}</button>
       <button type="button" class="btn btn-fire btn-block" id="litVisit">🏠 {{ t('room.visit') }}</button>
       <div class="row lt-row">
         <button type="button" class="btn btn-paper btn-sm" id="litShare">{{ t('lights.share') }}</button>
@@ -114,6 +115,7 @@
     <div data-view="saved" hidden>
       <h2 class="h-sub">{{ t('lights.saved_t') }}</h2>
       <p class="muted" id="savedText"></p>
+      <button type="button" class="btn btn-fire" id="savedEdit">✎ {{ t('room.edit_mine') }}</button>
       <a class="link-arrow" id="savedLink" href="#">{{ t('lights.your_light') }} →</a>
     </div>
   </aside>
