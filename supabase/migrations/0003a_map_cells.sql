@@ -5,7 +5,8 @@
 -- it, and 0005_lights.sql builds everything else on top of it.
 -- Apply order: 0003_admin, 0003a_map_cells, 0004_cells_seed, 0005_lights.
 --
--- id = row * 135 + col of the 2x2 km grid. town_index = index of the nearest
+-- id = row * 540 + col of the 500x500 m grid (540 x 537, 111,111 plots, ids < 290,000;
+-- 0004 is regenerated for it). town_index = index of the nearest
 -- town in the frontend's town list, -1 when the plot is not near a town.
 -- Province codes: yer ara arm ag kt gr sh lo tv vd su.
 -- =============================================================================

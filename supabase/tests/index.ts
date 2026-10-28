@@ -8,6 +8,7 @@ import "./callbacks.test.ts";
 import "./cors-config.test.ts";
 import "./iphash-sanitize.test.ts";
 import "./lights.test.ts";
+import "./mappack.test.ts";
 import "./md5-idram.test.ts";
 import "./moderation.test.ts";
 import "./money-codes.test.ts";

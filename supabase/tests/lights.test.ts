@@ -5,6 +5,7 @@ import {
   LIGHT_COLORS,
   LIGHT_ICONS,
   parseCellId,
+  CELL_ID_MAX,
   validateOrderInput,
 } from "../functions/_shared/validation.ts";
 import { initialModeration, moderate } from "../functions/_shared/moderation.ts";
@@ -66,7 +67,13 @@ test("light message is 1..60", () => {
 test("cell id", () => {
   assert.equal(parseCellId(12), 12);
   assert.equal(parseCellId(" 17 "), 17);
-  for (const bad of [-1, 1.5, "1e3", "", null, undefined, {}, NaN, 1_000_000, "abc"]) {
+  // 111,111-plot map: ids are row * 540 + col on a 540 x 537 grid (max 289,979)
+  assert.equal(CELL_ID_MAX, 299_999);
+  assert.equal(parseCellId(289_979), 289_979);
+  assert.equal(parseCellId("289979"), 289_979);
+  assert.equal(parseCellId(299_999), 299_999);
+  assert.equal(parseCellId(0), 0);
+  for (const bad of [-1, 1.5, "1e3", "", null, undefined, {}, NaN, 300_000, "300000", "0000017", 1_000_000, "abc"]) {
     assert.equal(parseCellId(bad), null, String(bad));
   }
   assert.equal(errCode(validateOrderInput({ ...base, cell_id: undefined }, opt)), "CELL_INVALID");

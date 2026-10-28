@@ -15,7 +15,7 @@ export interface WarmthInput {
 
 /**
  * Body { cell_id, action: "warm" | "visit" }. Checks in this order:
- * object (INVALID_JSON), cell_id (CELL_INVALID: an integer 0–999999, or a
+ * object (INVALID_JSON), cell_id (CELL_INVALID: an integer 0–299999, or a
  * string of digits, as in create-order), action (ACTION_INVALID: exact,
  * case-sensitive). Whether the plot exists and is lit is decided by the
  * database (NOT_LIT).

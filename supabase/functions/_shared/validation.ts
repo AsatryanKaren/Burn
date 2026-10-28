@@ -32,8 +32,12 @@ export const TEXT_MAX = 120;
 /** A light's message (orders.text for light products). */
 export const LIGHT_TEXT_MAX = 60;
 export const SIGNATURE_MAX = 30;
-/** Same bound as the map_cells_id_range check; existence is checked in the database. */
-export const CELL_ID_MAX = 999_999;
+/**
+ * Plot ids: row * 540 + col on the 540 x 537 grid of the 111,111-plot map
+ * (0004_cells_seed), so every id is < 290,000. Whether the id is a plot is
+ * checked in the database (map_cells foreign key / get_cell).
+ */
+export const CELL_ID_MAX = 299_999;
 export const WISH_MAX = 200;
 export const RECIPIENT_MAX = 40;
 export const EMAIL_MAX = 254;
@@ -85,11 +89,11 @@ export function isLightProduct(value: unknown): value is LightProductCode {
   return typeof value === "string" && (LIGHT_PRODUCT_CODES as readonly string[]).includes(value);
 }
 
-/** A plot id: a non-negative integer (or a string of digits), else null. */
+/** A plot id: an integer 0..CELL_ID_MAX (or a string of up to 6 digits), else null. */
 export function parseCellId(value: unknown): number | null {
   let n: number;
   if (typeof value === "number") n = value;
-  else if (typeof value === "string" && /^\d{1,7}$/.test(value.trim())) n = Number(value.trim());
+  else if (typeof value === "string" && /^\d{1,6}$/.test(value.trim())) n = Number(value.trim());
   else return null;
   return Number.isInteger(n) && n >= 0 && n <= CELL_ID_MAX ? n : null;
 }
