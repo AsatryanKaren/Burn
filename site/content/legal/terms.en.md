@@ -1,6 +1,6 @@
 # Terms of Service
 
-*Last updated: 27 October 2026*
+*Last updated: 29 October 2026*
 
 These terms apply to the {{brand.name}} website at {{domain}} and to every order placed on it. Please read them before you pay. By placing an order you confirm that you have read and accept these terms, the [Refund Policy](/en/refund/), the [Delivery and Payment](/en/delivery/) page and the [Privacy Policy](/en/privacy/).
 
@@ -18,21 +18,25 @@ We are a for-profit company registered in the Republic of Armenia. In these term
 
 ## 2. What the service is
 
-On {{brand.name}} you can buy two digital services:
+On {{brand.name}} you can buy one digital service: **a place on the map**. One payment gets you all of this:
 
-- **Burn a paper.** You write something you want to leave behind in 2026 (up to 120 characters), pay for it, and your paper burns in a shared digital fire on the website and on our YouTube live stream, which runs from 20 to 31 December 2026. After payment you get a personal page with your paper's number and a replay of it burning, plus a story image you can download and share.
-- **Light a light on the map.** On the [Light up Armenia](/en/map/) New Year map you place your own light on one free plot of a digital map of Armenia (see section 7).
+- **Your place on the map.** One free plot on the [Light up Armenia](/en/map/) New Year map of Armenia, with your message and, if you like, your signature (see section 7).
+- **Your room.** Every place is a little 3D room. You decorate it and can change it later at any time. Other visitors can step into your room and send you warmth.
+- **One wish for the fire.** You write something you want to leave behind in 2026 (up to 120 characters), and it burns in a shared digital fire on the website and on our YouTube live stream, which runs from 20 to 31 December 2026.
 
-The fire and the lights are computer animations. No physical paper is burned and nothing physical is sent to you.
+The wish is included in the price of the place: there is no extra charge for it, and papers are no longer sold separately. Each place has exactly one wish; once it has burned, you cannot burn another one for the same place. You can write your wish right after buying your place or later, from the "Fire" tab on the [map](/en/map/). A wish burns only once its place is paid.
+
+After payment you get a personal page with a link to your place. Once your wish has burned, you also get its number, a replay of it burning and a story image you can download and share.
+
+The map, the rooms and the fire are computer animations. No physical paper is burned and nothing physical is sent to you.
 
 ## 3. Price
 
 | What you buy | Price | What you get |
 |---|---|---|
-| Burn a paper | 500 AMD | Your paper burns in the fire. Personal page with your paper's number, plus a story image. |
-| Light a light on the map | 500 AMD | Your light is placed on the plot you chose. Personal page with a link to your light, plus an image to share. |
+| A place on the map with a room and one wish | 500 AMD | Your place on the plot you chose, your own room, and one wish that burns in the fire. Personal page, plus a story image to share. |
 
-Every payment is 500 AMD, of which 100 AMD (20%) goes to the children's gift fund (see section 10).
+There are no other products or options. Every payment is 500 AMD, of which 100 AMD (20%) goes to the children's gift fund (see section 10).
 
 Prices are final and shown in Armenian drams (AMD). The price you see on the order page before payment is the price you pay. We may change prices for future orders; this does not affect orders already paid.
 
@@ -51,9 +55,9 @@ You must be at least 18 years old to pay, or have permission from a parent or le
 
 ## 6. What you may write
 
-Your paper is shown in a public fire and on a public live stream, so some rules apply. Do not write:
+Your wish is shown in a public fire and on a public live stream, and your place's message and signature are shown on a public map, so some rules apply. Do not write:
 
-- names or surnames of real people;
+- names or surnames of real people (a signature with your own or your family's name is fine, see section 7);
 - insults, threats, hate speech or anything humiliating people because of their nationality, religion, gender or any other trait;
 - phone numbers, addresses, links, usernames or other contact details;
 - advertising;
@@ -61,58 +65,59 @@ Your paper is shown in a public fire and on a public live stream, so some rules 
 
 How we handle content:
 
-- **Before payment**, our system may refuse a text that clearly breaks these rules. You can rewrite it; you are not charged.
-- **Texts that may contain names, phone numbers or links** can be accepted but **hidden**. A hidden paper still burns and counts as delivered, but its text is never shown publicly. You still see it on your own personal page.
-- Every text is checked before it can appear publicly. Until it is checked, your paper burns without visible text.
-- You can choose when ordering not to show your text publicly at all.
+- **When you write a text**, our system may refuse one that clearly breaks these rules. You can rewrite it; nothing extra is charged.
+- **Texts that may contain names, phone numbers or links** can be accepted but **hidden**. A hidden wish still burns and counts as delivered, but its text is never shown publicly. You still see it on your own personal page.
+- Every text is checked before it can appear publicly. Until it is checked, your wish burns without visible text.
+- When writing your wish, you can choose not to show its text publicly at all.
 - We may hide any text at any time if we believe it breaks these rules.
-- If, after payment, we have to refuse a text completely because it is illegal, the paper does not burn and we refund the payment in full.
+- If, after payment, we have to refuse a wish completely because it is illegal, the wish does not burn, we refund the payment in full and the place is removed from the map.
 
-**Permission to show your text.** By ordering, you allow us to show your text (if it is approved and you chose to show it) in the fire on the website, on the live stream and in the stream recordings, free of charge, for the purposes of this service. If you later want your text removed from public view, write to us; see the [Privacy Policy](/en/privacy/).
+The rules for your place's message and signature are in section 7.
+
+**Permission to show your content.** By ordering, you allow us, free of charge and for the purposes of this service, to show your wish (if it is approved and you chose to show it) in the fire on the website, on the live stream and in the stream recordings, and to show your place, your room, your message and your signature (if approved) on the map and on your place's page. If you later want your text removed from public view, write to us; see the [Privacy Policy](/en/privacy/).
 
 You are responsible for what you write. Do not write anything you would not want strangers to read.
 
-## 7. Light up Armenia
+## 7. Your place and your room
 
-[Light up Armenia](/en/map/) is a digital night map of Armenia divided into 111,111 plots of 500×500 m each (Lake Sevan is not divided into plots). For 500 AMD you choose one free plot and place your light on it, choosing:
+[Light up Armenia](/en/map/) is a digital night map of Armenia divided into 111,111 plots of 500×500 m each (Lake Sevan is not divided into plots). There are only this many places this year, and the map will not grow. For 500 AMD you choose one free plot and make it your place:
 
-- an icon: tree, glowing home, candle, star, gift or pomegranate;
-- the colour of the light;
-- your message (up to 60 characters);
-- optionally, a signature (up to 30 characters).
+- you choose how your place looks on the map;
+- you write your message (up to 60 characters);
+- optionally, you add a signature (up to 30 characters);
+- you decorate your room, for example with a tree, a sofa or a fireplace.
 
-After payment you get a personal page with a link to your light, plus an image to share.
+You can change your room later at any time. Anyone who taps your place can step into your room and send you warmth.
 
-**This is a symbolic digital marker, not land.** A plot is simply a cell of a picture. By placing a light you **do not acquire any land, property or territory, or any right to any real place**. The borders on the map are approximate and illustrative only. They are drawn from public map data and say nothing about any legal or political borders.
+**This is a symbolic digital marker, not land.** A plot is simply a cell of a picture. By buying a place you **do not acquire any land, property or territory, or any right to any real place**. The borders on the map are approximate and illustrative only. They are drawn from public map data and say nothing about any legal or political borders.
 
 How it works:
 
-- **One light per plot.** A plot goes to whoever pays for it first. While you are paying, the plot is reserved for you for 30 minutes.
+- **One plot, one owner.** A plot goes to whoever pays for it first. While you are paying, the plot is reserved for you for 30 minutes.
 - If, rarely, someone else takes the same plot at the same moment, we offer you the nearest free plot or a full refund, whichever you prefer.
-- **Before payments open**, you can save your light with your email. Nothing is charged and the plot is not reserved. When payments open, we email you a link. If the plot you chose has been taken by then, we offer you the nearest free one.
-- Your light appears on the map right after payment and stays there at least until 31 January 2027. After that, we may keep the map as a read-only archive page or remove it.
-- Anyone can tap a light and see its message, its signature (if approved), the date it was lit, the province and the nearest town. Your email is never shown.
+- **Before payments open**, you can save your place with your email. Nothing is charged and the plot is not reserved. When payments open, we email you a link. If the plot you chose has been taken by then, we offer you the nearest free one. You can already write your wish for a saved place; it burns as soon as the place is paid.
+- Your place appears on the map right after payment and stays there at least until 31 January 2027. After that, we may keep the map as a read-only archive page or remove it.
+- Anyone can tap a place and see its message, its signature (if approved), the date it was taken, the province and the nearest town. Your email is never shown.
 
 **Message and signature.** The rules of section 6 apply: no insults, phone numbers, links or other people's private data. The signature is meant for your own or your family's name (for example, "The Petrosyan family") and is shown publicly by your choice.
 
-- A message or signature may be hidden while it is being checked, or if it breaks the rules. The light itself stays on the map and the service counts as delivered.
-- If, after payment, we have to refuse a message or signature completely because it is illegal, the light is not placed on the map (or is removed) and we refund the payment in full.
-- By ordering, you allow us to show your light, message and signature (if approved) on the map and on the light's page, free of charge, for the purposes of this service.
+- A message or signature may be hidden while it is being checked, or if it breaks the rules. The place itself stays on the map and the service counts as delivered.
+- If, after payment, we have to refuse a message or signature completely because it is illegal, the place is not shown on the map (or is removed) and we refund the payment in full.
 
 ## 8. Delivery
 
 The service is digital and is delivered online:
 
 - your personal page is available immediately after payment;
-- your paper appears in the fire on the website within minutes;
-- during 20–31 December 2026 papers appear on the YouTube live stream in the order they were paid;
-- your light appears on the map right after payment.
+- your place appears on the map right after payment;
+- your wish appears in the fire on the website within minutes after you write it, if your place is paid;
+- during 20–31 December 2026 wishes appear on the YouTube live stream, one after another.
 
-Full details, including what happens with papers paid near the end of the year, are on the [Delivery and Payment](/en/delivery/) page.
+Full details, including what happens with wishes written near the end of the year, are on the [Delivery and Payment](/en/delivery/) page.
 
 ## 9. Refunds
 
-You get a full refund if we fail to deliver the service, if you were charged twice, or if a technical error occurred. Because the service is delivered right away, a change of mind after your paper has burned, or after your light has appeared on the map, is not a reason for a refund, except where the law requires it. If someone else took your plot at the same moment and you do not want the nearest free plot, you get a full refund. Full rules are in the [Refund Policy](/en/refund/).
+You get a full refund if we fail to deliver the service (for example, your place did not appear on the map, or your wish did not burn through our fault), if you were charged twice, or if a technical error occurred. Because the service is delivered right away, a change of mind after your place has appeared on the map is not a reason for a refund, except where the law requires it. If someone else took your plot at the same moment and you do not want the nearest free plot, you get a full refund. Full rules are in the [Refund Policy](/en/refund/).
 
 ## 10. The 20% for children's gifts
 
@@ -126,13 +131,13 @@ From every 500 AMD payment we set aside 100 AMD (20%) for the gift fund. On 31 D
 ## 11. Availability and our responsibility
 
 - We do our best to keep the website and the live stream running. Short interruptions can happen because of maintenance, internet problems, YouTube or other providers we do not control.
-- If the YouTube stream is interrupted, your paper still burns in the fire on the website and in your replay.
+- If the YouTube stream is interrupted, your wish still burns in the fire on the website and in your replay.
 - Our total liability for any order is limited to the amount you paid for it, except where Armenian law does not allow such a limit.
 - Nothing in these terms limits the rights you have as a consumer under the Law of the Republic of Armenia on Protection of Consumer Rights.
 
 ## 12. Intellectual property
 
-The website, the fire animation, the map of lights, the design and the story images belong to us. You may download your story image and share it for personal, non-commercial purposes. Your text remains yours.
+The website, the fire animation, the map, the rooms and the items in them, the design and the story images belong to us. You may download your story image and share it for personal, non-commercial purposes. Your text remains yours.
 
 ## 13. Personal data
 

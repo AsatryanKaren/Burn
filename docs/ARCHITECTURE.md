@@ -27,6 +27,8 @@ Languages: Armenian (`hy`, default, at `/`), English (`/en/`), Russian (`/ru/`).
   | `burn` | 500 | A paper burned in the fire |
   | `light` | 500 | A light on the map ("Light up Armenia") |
 
+  **Since migration 0013 only `light` can be ordered**: one payment (500 AMD) buys a plot with its room **and exactly one wish burned in the fire** (`POST burn-wish`, see "Wish in the fire"). No separate payment for burning, no second wish for the same light. Every paper product (`burn`, `burn_wish`, `gift`, `midnight`) is retired for new orders: `create-order` answers `400 PRODUCT_RETIRED`. Existing paper orders keep working (start-payment, bank callbacks, the fire feed); the `burn` row stays `active` for them.
+
   `burn_wish`, `gift`, `midnight` and `light_big` are **no longer sold**: their rows stay in `products` with `active = false` (old orders reference them). `create-order` and `start-payment` answer `400 PRODUCT_UNAVAILABLE` for an inactive product. Their code paths (wish, recipient, big light) still exist but are unreachable while the rows are inactive.
 - **20% of every paid amount** goes to the New Year gift fund for children in Armenian orphanages (100 AMD per 500 AMD order). It is recorded per payment in `gift_ledger` at the moment the payment is confirmed, rounded down to whole AMD.
 - We are a for-profit company and say so. The 20% is a choice we made, not the business model.
@@ -59,8 +61,8 @@ Languages: Armenian (`hy`, default, at `/`), English (`/en/`), Russian (`/ru/`).
 
 ### RPCs callable by the browser (anon), all `SECURITY DEFINER`, `set search_path = public`
 
-- `get_public_stats()` → `{ papers_burned, gift_fund_amd, wishes_kept, waitlist_count, updated_at }`
-- `get_fire_feed(after_number int default 0, max_rows int default 50)` → rows `{ burn_number, text_public (null unless show_on_stream and approved), paid_at, product }` ordered by `burn_number`, `max_rows` capped at 100.
+- `get_public_stats()` → `{ papers_burned, gift_fund_amd, wishes_kept, waitlist_count, lights_lit, updated_at }`. Since 0013 `papers_burned` = paid papers + wishes in the fire of paid lights.
+- `get_fire_feed(after_number int default 0, max_rows int default 50)` → rows `{ burn_number, text_public (null unless show_on_stream and approved), paid_at, product }` ordered by `burn_number`, `max_rows` capped at 100. Since 0013 the rows are paid papers (`product` = the paper product) **and** wishes of paid lights (`product = "wish"`, `paid_at` = when the wish entered the fire); one shared `burn_number` sequence.
 
 ### Internal functions (service role only)
 
@@ -79,6 +81,7 @@ Request:
 { "product": "burn", "text": "...", "wish_text": null, "recipient_name": null,
   "email": "optional@x.am", "lang": "hy", "show_on_stream": true, "consent": true }
 ```
+**Since 0013** any paper product (`burn`, `burn_wish`, `gift`, `midnight`) → `400 PRODUCT_RETIRED` (checked first, before the other fields); only `light` orders are accepted (see "Light up Armenia"). The paper rules below describe the retired path.
 Rules: `consent` must be true; `product` must be an active product (`burn` or `light`; others → `400 PRODUCT_UNAVAILABLE`); `text` 1–120 chars after trim and whitespace collapse; `wish_text` and `recipient_name` must be empty for `burn` (they belonged to the retired `burn_wish`/`midnight` and `gift`); email optional but must be valid if present (required when payments are disabled, so we can send the link at launch).
 Moderation: blocklist hit → `400 TEXT_REJECTED`; likely personal names/phone numbers/links → order allowed but `moderation='hidden'` (never shown publicly); otherwise `pending`.
 Rate limit: 8 orders per IP hash per 10 minutes → `429 RATE_LIMITED`.
@@ -93,7 +96,7 @@ Moderation at creation: texts the automatic checks reject are `rejected`/`hidden
 
 ### `GET order-status?code=...`
 
-Returns the buyer's own order: `{ code, status, product, amount_amd, burn_number, text, has_wish, recipient_name, created_at, paid_at, gift_share_amd }`. The wish itself is never returned (order links get shared); `has_wish` is a boolean. `gift_share_amd` is the gift_ledger amount once paid, else the floor(20%) the order will contribute. 404 if unknown.
+Returns the buyer's own order: `{ code, status, product, amount_amd, burn_number, text, has_wish, recipient_name, created_at, paid_at, gift_share_amd }`. The wish itself is never returned (order links get shared); `has_wish` is a boolean (it is about the retired next-year wish, `wish_text`, not the wish in the fire). `gift_share_amd` is the gift_ledger amount once paid, else the floor(20%) the order will contribute. 404 if unknown.
 
 ### `POST start-payment`
 
@@ -138,8 +141,9 @@ Checks run in this order, the first failure is returned: body (`INVALID_JSON`), 
 
 Header `x-admin-token` must equal secret `ADMIN_TOKEN` (≥ 32 chars, else always 401). 10 failed attempts per IP hash per 10 minutes → 429. Body `{ "action": ... }`:
 `stats` → `{ orders_by_status, revenue_amd, gift_fund_amd, waitlist_count, papers_burned, pending_moderation, lights_lit, lights_held, lights_cell_conflict, needs_refund, bloggers_count }`;
-`list_orders` `{ status?, moderation?, q?, limit ≤ 200, before_id? }` → `{ orders: [...] }` (newest first);
+`list_orders` `{ status?, moderation?, q?, limit ≤ 200, before_id? }` → `{ orders: [...] }` (newest first; since 0013 each row also has `fire_text`, `fire_moderation`, `fire_burn_number`, `fire_show_on_stream` — null without a wish; `q` also searches the wish text; the `moderation` filter is the order's, not the wish's);
 `moderate` `{ code, moderation: approved|hidden|rejected, reason? }`;
+`moderate_wish` `{ code, moderation: approved|hidden|rejected, reason? }` — the order's wish in the fire (0013) → `{ ok, code, moderation }`, 404 `NOT_FOUND` for an unknown order or an order without a wish;
 `mark_refunded` `{ code }` (paid → refunded, removes its gift_ledger row, audit row in payment_events);
 `waitlist_csv` → `{ csv }`; `awaiting_launch_csv` → `{ csv }` with email, lang, code, product, amount_amd, link, created_at;
 `bloggers_csv` → `{ csv }` with id, created_at, status, name, link, platform, audience, email, phone, message, lang (oldest first).
@@ -183,7 +187,7 @@ A second product: a night map of Armenia split into exactly **111,111 plots** of
 - `map_cells(id int pk, province text, town_index int)` seeded by `migrations/0004_cells_seed.sql` (regenerated by `tools/make_map.py` for the 111,111-plot map; several `INSERT` statements). id = row * 540 + col on a 540 × 537 grid, so ids are 0–289,979 (never ≥ 300,000); only 111,111 of the grid positions are plots. Province codes: yer ara arm ag kt gr sh lo tv vd su.
 - New columns on `orders`: `cell_id int null references map_cells(id)`, `light_icon text null` (one of `tree home candle star gift pomegranate`), `light_color text null` (one of `amber red green white blue violet`), `light_signature text null` (≤ 30). For light products the order `text` is the light's message, **1–60 chars**. For paper products these columns must be null.
 - `cell_holds(cell_id int pk references map_cells, order_id bigint not null references orders(id), expires_at timestamptz not null)`: a plot is taken when a hold exists with `expires_at > now()`. Paid lights have `expires_at = 'infinity'`.
-- Lights do **not** get a `burn_number` and are **not** counted in `papers_burned` and **not** shown in `get_fire_feed`.
+- Lights do **not** get a `burn_number` and are **not** counted in `papers_burned` and **not** shown in `get_fire_feed`. Their one **wish in the fire** (0013, `fire_wishes`) does get a `burn_number` and is counted and shown (see "Wish in the fire").
 
 ### Reservation rules
 
@@ -212,7 +216,8 @@ A second product: a night map of Armenia split into exactly **111,111 plots** of
 ### Edge Functions
 
 - `create-order` accepts `product: "light"` (`light_big` → `400 PRODUCT_UNAVAILABLE`) with body fields `cell_id`, `text` (message), `light_icon`, `light_color`, `light_signature` (optional), `room` (optional, see "The room"; absent or `null` = no room yet), `email`, `lang`, `consent`. Errors: `CELL_INVALID` (not an integer 0–299999, or not a map cell), `CELL_TAKEN`, `ICON_INVALID`, `COLOR_INVALID`, `SIGNATURE_TOO_LONG`, `SIGNATURE_REJECTED`, `TEXT_TOO_LONG` (for >60), `ROOM_INVALID`. For papers `room` must be absent or `null`, else `400 ROOM_NOT_ALLOWED`. `show_on_stream` is ignored for lights.
-- `order-status` also returns `cell_id`, `light_icon`, `light_color`, `light_signature`, `province`, `town_index`, `room` (layout or `null`) for light orders.
+- `order-status` also returns `cell_id`, `light_icon`, `light_color`, `light_signature`, `province`, `town_index`, `room` (layout or `null`) and `fire` (the wish in the fire or `null`, 0013) for light orders.
+- `burn-wish` (below) burns the light's one wish in the fire.
 - `update-room` (below) changes a light's room.
 - `room-warmth` (below) sends warmth to a lit room or counts a visit.
 - Payment return for lights goes to the same paper page (`/p/?c=CODE`); the page shows the light instead of a paper.
@@ -287,3 +292,49 @@ Rules and errors (checked in this order):
 - Plus the browser-endpoint codes (`403 ORIGIN_NOT_ALLOWED`, `405`, `413 PAYLOAD_TOO_LARGE` > 8 KB, `500 INTERNAL`).
 
 Frontend: call `visit` once when a room opens; show `warmth`/`visits` from `get_cell` and update them from the `room-warmth` answer. After `warm`, show the heart as sent whether `already` is `true` or `false` (the visitor may have warmed this room before).
+
+### Wish in the fire (migration 0013)
+
+One payment (a `light`, 500 AMD) includes **exactly one wish burned in the shared fire** (the same fire and counter as the papers). The buyer writes it after paying — or already while the order is saved before payments open (`awaiting_launch`); such a wish is not public until the order is paid. No separate payment, no second wish for the same light.
+
+Data: `fire_wishes(order_id pk → orders, text 1–120, show_on_stream bool default true, lang, moderation pending|approved|hidden|rejected default pending, moderation_reason, burn_number int unique from burn_number_seq, created_at)`. RLS on, no policies, service role only. Service-role RPC `burn_wish(p_code, p_text, p_show, p_lang, p_moderation, p_reason)` → `{ ok: true, already, burn_number } | { ok: false, error: "ORDER_NOT_FOUND" | "ORDER_NOT_LIGHT" | "ORDER_NOT_PAID" | "INVALID_ARGS" }` (locks the order row).
+
+Public: in `get_fire_feed` as `product: "wish"` once the order is `paid` (refunded/cancelled orders drop out); `text_public` only when `show_on_stream` and `moderation = 'approved'`; counted in `get_public_stats.papers_burned`.
+
+**Burn numbers.** A wish written on a paid order gets its number at once. A wish written on an `awaiting_launch` order gets a provisional number, and a **new** number when the order becomes paid (so it enters the fire after everything already burned; the live page polls with `after_number`). Always read the current number from `order-status`.
+
+#### `POST burn-wish` (verify_jwt false)
+
+Request:
+```json
+{ "code": "<order code>", "text": "...", "show_on_stream": true, "lang": "hy" }
+```
+- `code` — the light order's code (the capability, as in `order-status`); normalized like every code input (trim, lower-case, `i`/`l` → `1`, `o` → `0`).
+- `text` — 1–120 characters after the paper normalization (NFC, invisible characters dropped, newlines/tabs and repeated whitespace → one space, trimmed).
+- `show_on_stream` — optional, default `true`; only `false` turns it off (the wish still burns, without its text).
+- `lang` — `hy` | `en` | `ru`, default `hy`.
+
+Response (200):
+```json
+{ "ok": true, "burn_number": 1234, "already": false }   // saved now
+{ "ok": true, "burn_number": 1234, "already": true }    // this order already has its wish: nothing changed, the text sent now is ignored
+```
+
+Errors (checked in this order; error shape `{ "error": { "code", "message" } }`):
+- `400 INVALID_JSON` — body is not a JSON object.
+- `400 CODE_INVALID` — `code` is not a well-formed order code.
+- `400 TEXT_REQUIRED`, `400 TEXT_TOO_LONG` (> 120).
+- `429 RATE_LIMITED` — 20 per IP hash per hour, 10 per order code per hour (invalid requests above are not counted; `Retry-After: 600`).
+- `400 TEXT_REJECTED` — blocklist hit (as for papers); nothing saved. Contact data or names are accepted but stored `hidden` (never public); everything else is `pending` until approved in admin (`approved` directly only with `AUTO_APPROVE=1`).
+- `404 ORDER_NOT_FOUND` — no order with this code.
+- `409 ORDER_NOT_LIGHT` — the order is not a light (e.g. an old paper).
+- `409 ORDER_NOT_PAID` — the order's status is not `paid` or `awaiting_launch` (`pending` = payment in progress: retry after the payment page; `failed`, `cancelled`, `refunded`).
+- Plus the browser-endpoint codes (`403 ORIGIN_NOT_ALLOWED`, `405`, `413 PAYLOAD_TOO_LARGE` > 8 KB, `500 INTERNAL`).
+
+#### `order-status` → `fire`
+
+For light orders `order-status` returns `fire`:
+```json
+"fire": { "burn_number": 1234, "text": "...", "show_on_stream": true, "created_at": "2026-12-31T19:00:00Z" }
+```
+or `"fire": null` when no wish was written yet. `text` is what the code holder wrote (the same person already sees the order's own `text`); the moderation state is not returned. Paper orders have no `fire` key.

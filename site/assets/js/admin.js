@@ -98,13 +98,24 @@
           (o.moderation_reason ? " · reason: " + esc(o.moderation_reason) : "") + '</div></div><div class="acts">' +
           '<button type="button" class="btn btn-ghost btn-sm" data-mod="approved">Approve</button>' +
           '<button type="button" class="btn btn-ghost btn-sm" data-mod="hidden">Hide text</button>' +
-          '<button type="button" class="btn btn-ghost btn-sm" data-mod="rejected">Reject</button></div></div>';
+          '<button type="button" class="btn btn-ghost btn-sm" data-mod="rejected">Reject</button></div></div>' +
+          (o.fire_text ? '<div class="adm-item adm-wish" data-code="' + esc(o.code) + '"><div><div class="txt">🔥 ' + esc(o.fire_text) + '</div><div class="meta">wish in the fire · ' +
+            (o.fire_burn_number ? "№ " + fmt(o.fire_burn_number) + " · " : "") + esc(o.fire_moderation || "") + " · " + (o.fire_show_on_stream ? "public allowed" : "private") + '</div></div><div class="acts">' +
+            '<button type="button" class="btn btn-ghost btn-sm" data-modwish="approved">Approve</button>' +
+            '<button type="button" class="btn btn-ghost btn-sm" data-modwish="hidden">Hide text</button>' +
+            '<button type="button" class="btn btn-ghost btn-sm" data-modwish="rejected">Reject</button></div></div>' : "");
       }).join("");
     }).catch(onErr);
   }
   $("modFilter").addEventListener("change", loadModeration);
   $("modReload").addEventListener("click", loadModeration);
   $("modList").addEventListener("click", function (e) {
+    var w = e.target.closest("[data-modwish]");
+    if (w) {
+      var wi = w.closest("[data-code]"); w.disabled = true;
+      call("moderate_wish", { code: wi.getAttribute("data-code"), moderation: w.getAttribute("data-modwish") }).then(function () { wi.remove(); }).catch(function (err) { w.disabled = false; onErr(err); });
+      return;
+    }
     var b = e.target.closest("[data-mod]"); if (!b) return;
     var item = b.closest("[data-code]"), code = item.getAttribute("data-code");
     b.disabled = true;

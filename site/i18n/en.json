@@ -178,7 +178,7 @@
       "ORDER_NOT_PAYABLE": "This paper can no longer be paid for",
       "PAYMENT_UNAVAILABLE": "Payment isn't available right now. Please try again a little later.",
       "NOT_FOUND": "Paper not found",
-      "ORDER_NOT_PAID": "Your place isn't paid yet.",
+      "ORDER_NOT_PAID": "Your payment is still being confirmed. Try again in a minute.",
       "ORDER_NOT_LIGHT": "This code isn't a place code.",
       "ORDER_NOT_FOUND": "We couldn't find your place. Open it from the link to your page.",
       "CODE_INVALID": "We couldn't find your place. Open it from the link to your page.",

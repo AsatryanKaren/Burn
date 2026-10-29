@@ -88,7 +88,10 @@
     ids.forEach(function (id) {
       var code = mineMap[id];
       A.api.fn("order-status", null, { code: code }).then(function (o) {
-        if (o && o.fire && !fireOf(code)) { setFire(code, { n: o.fire.burn_number, text: o.fire.text, paid: o.status === "paid" }); if (state.mode === "fire") renderFire(); }
+        // The server is the truth: a wish saved before payment gets its final number once the place is paid.
+        if (!o || !o.fire) return;
+        var had = fireOf(code), f = { n: o.status === "paid" ? o.fire.burn_number : null, text: o.fire.text };
+        if (!had || had.n !== f.n || had.text !== f.text) { setFire(code, f); if (state.mode === "fire" || state.mode === "fireSaved") renderFire(); }
       }).catch(function () {});
     });
   }
@@ -103,6 +106,7 @@
     A.api.fn("burn-wish", { code: code, text: text, show_on_stream: $("fShow").checked, lang: lang }).then(function (res) {
       state.fbusy = false; $("fSubmit").disabled = false;
       var f = { n: res.burn_number, text: text };
+      A.api.fn("order-status", null, { code: code }).then(function (o) { if (o && o.status !== "paid") { f.n = null; setFire(code, f); if (state.mode === "fireSaved") showFireDone(f); } }).catch(function () {});
       if (res.already) { var known = fireOf(code); if (known) f = known; }
       setFire(code, f); $("fNote").value = ""; $("fCount").textContent = "0/120";
       showFireDone(f);
