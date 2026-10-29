@@ -9,6 +9,7 @@ export const ADMIN_ACTIONS = [
   "stats",
   "list_orders",
   "moderate",
+  "moderate_wish",
   "mark_refunded",
   "waitlist_csv",
   "awaiting_launch_csv",

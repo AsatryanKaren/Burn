@@ -198,6 +198,44 @@ export async function addRoomVisit(cellId: number): Promise<unknown> {
   return data;
 }
 
+/**
+ * Saves the one wish of a light order (burn_wish, 0013). Returns the raw RPC
+ * answer: { ok: true, burn_number, already } or { ok: false, error } (see
+ * _shared/firewish.ts burnWishDecision).
+ */
+export async function burnWish(args: {
+  code: string;
+  text: string;
+  show_on_stream: boolean;
+  lang: Lang;
+  moderation: ModerationStatus;
+  moderation_reason: string | null;
+}): Promise<unknown> {
+  const { data, error } = await db().rpc("burn_wish", {
+    p_code: args.code,
+    p_text: args.text,
+    p_show: args.show_on_stream,
+    p_lang: args.lang,
+    p_moderation: args.moderation,
+    p_reason: args.moderation_reason,
+  });
+  if (error) throw dbError("burn_wish", error);
+  return data;
+}
+
+/** The order's wish in the fire (0013), or null. */
+export async function getFireWish(
+  orderId: number,
+): Promise<{ burn_number: number; text: string; show_on_stream: boolean; created_at: string } | null> {
+  const { data, error } = await db()
+    .from("fire_wishes")
+    .select("burn_number, text, show_on_stream, created_at")
+    .eq("order_id", orderId)
+    .maybeSingle();
+  if (error) throw dbError("getFireWish", error);
+  return data as { burn_number: number; text: string; show_on_stream: boolean; created_at: string } | null;
+}
+
 export async function getMapCell(cellId: number): Promise<{ province: string; town_index: number } | null> {
   const { data, error } = await db().from("map_cells").select("province, town_index").eq("id", cellId).maybeSingle();
   if (error) throw dbError("getMapCell", error);

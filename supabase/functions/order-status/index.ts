@@ -4,7 +4,8 @@ import { getConfig } from "../_shared/env.ts";
 import { browserEndpoint, jsonResponse } from "../_shared/http.ts";
 import { ApiError, ErrorCode } from "../_shared/errors.ts";
 import { normalizeOrderCode } from "../_shared/codes.ts";
-import { findOrderByCode, getGiftShare, getMapCell } from "../_shared/db.ts";
+import { findOrderByCode, getFireWish, getGiftShare, getMapCell } from "../_shared/db.ts";
+import { fireWishView } from "../_shared/firewish.ts";
 import { enforceRateLimit, requestIpHash } from "../_shared/ratelimit.ts";
 import { giftShareAmd } from "../_shared/money.ts";
 import { isLightProduct } from "../_shared/validation.ts";
@@ -38,6 +39,8 @@ Deno.serve(browserEndpoint(["GET"], cfg.cors, async (req) => {
       province: cell?.province ?? null,
       town_index: cell?.town_index ?? null,
       room: order.room ?? null,
+      // The one wish in the fire (0013): what the code holder wrote, or null.
+      fire: fireWishView(await getFireWish(order.id)),
     }
     : {};
 

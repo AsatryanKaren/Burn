@@ -7,7 +7,7 @@
 // (so parallel guesses can't slip past the limit), and a request with the
 // right token gives its count back (release_rate_limit, migration 0006).
 //
-// Body: { "action": "stats" | "list_orders" | "moderate" | "mark_refunded"
+// Body: { "action": "stats" | "list_orders" | "moderate" | "moderate_wish" | "mark_refunded"
 //                  | "waitlist_csv" | "awaiting_launch_csv" | "bloggers_csv", ...params }
 
 import { getConfig } from "../_shared/env.ts";
@@ -96,6 +96,20 @@ Deno.serve(browserEndpoint(["POST"], cfg.cors, async (req) => {
         p_moderation: p.value.moderation,
         p_reason: p.value.reason,
       });
+      if (!r.ok) throw new ApiError(404, ErrorCode.NOT_FOUND, "Order not found.");
+      return jsonResponse(r);
+    }
+
+    // The order's wish in the fire (0013): same params as moderate.
+    case "moderate_wish": {
+      const p = parseModerate(b);
+      if (!p.ok) throw badRequest(p.message);
+      const r = await rpc<{ ok: boolean; error?: string }>("admin_moderate_wish", {
+        p_code: p.value.code,
+        p_moderation: p.value.moderation,
+        p_reason: p.value.reason,
+      });
+      if (!r.ok && r.error === "WISH_NOT_FOUND") throw new ApiError(404, ErrorCode.NOT_FOUND, "This order has no wish.");
       if (!r.ok) throw new ApiError(404, ErrorCode.NOT_FOUND, "Order not found.");
       return jsonResponse(r);
     }

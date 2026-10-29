@@ -40,6 +40,13 @@ export const ErrorCode = {
   // lights: warmth and visits of a room (room-warmth)
   ACTION_INVALID: "ACTION_INVALID",
   NOT_LIT: "NOT_LIT",
+  // create-order: paper products are no longer sold for new orders (0013)
+  PRODUCT_RETIRED: "PRODUCT_RETIRED",
+  // burn-wish: the one wish of a light order (0013)
+  CODE_INVALID: "CODE_INVALID",
+  ORDER_NOT_FOUND: "ORDER_NOT_FOUND",
+  ORDER_NOT_LIGHT: "ORDER_NOT_LIGHT",
+  ORDER_NOT_PAID: "ORDER_NOT_PAID",
   // payments
   PAYMENT_UNAVAILABLE: "PAYMENT_UNAVAILABLE",
   PAYMENT_MISCONFIGURED: "PAYMENT_MISCONFIGURED",

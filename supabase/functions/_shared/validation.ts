@@ -476,6 +476,31 @@ export function checkProductAvailable(product: ProductRow | null | undefined): R
   return { ok: true, value: product };
 }
 
+/**
+ * Products that can no longer be ordered (0013): every paper. A light now
+ * includes its one wish in the fire (burn-wish), so there is no paid paper.
+ * Existing paper orders keep working (start-payment, payment callbacks).
+ */
+export const RETIRED_PRODUCT_CODES: readonly ProductCode[] = PAPER_PRODUCT_CODES;
+
+/**
+ * create-order, before the field checks: a body asking for a retired product
+ * -> 400 PRODUCT_RETIRED. Anything else (including non-objects, unknown or
+ * missing products) passes on to validateOrderInput.
+ */
+export function checkProductNotRetired(body: unknown): Result<null> {
+  if (typeof body === "object" && body !== null && !Array.isArray(body)) {
+    const p = (body as Record<string, unknown>).product;
+    if (typeof p === "string" && (RETIRED_PRODUCT_CODES as readonly string[]).includes(p)) {
+      return fail(
+        ErrorCode.PRODUCT_RETIRED,
+        "Papers are no longer sold separately: every light on the map includes one wish in the fire.",
+      );
+    }
+  }
+  return { ok: true, value: null };
+}
+
 // ---------------------------------------------------------------------------
 // join-bloggers
 // ---------------------------------------------------------------------------

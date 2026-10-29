@@ -6,6 +6,7 @@ import "./ameria.test.ts";
 import "./bloggers.test.ts";
 import "./callbacks.test.ts";
 import "./cors-config.test.ts";
+import "./firewish.test.ts";
 import "./iphash-sanitize.test.ts";
 import "./lights.test.ts";
 import "./mappack.test.ts";

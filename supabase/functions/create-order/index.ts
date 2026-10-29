@@ -1,13 +1,15 @@
 // POST create-order — save a paper (or a light on a map plot) and start its payment.
 // Contract: docs/ARCHITECTURE.md "POST create-order" and "Light up Armenia".
 // Lights may carry an optional `room` (validateRoom; ROOM_INVALID), papers
-// must not (ROOM_NOT_ALLOWED).
+// must not (ROOM_NOT_ALLOWED). Since 0013 papers are retired for new orders
+// (400 PRODUCT_RETIRED); the paper code path stays for existing orders' types.
 
 import { getConfig } from "../_shared/env.ts";
 import { browserEndpoint, jsonResponse, readJson } from "../_shared/http.ts";
 import { ApiError, ErrorCode } from "../_shared/errors.ts";
 import {
   checkProductAvailable,
+  checkProductNotRetired,
   isLightProduct,
   type LightOrderInput,
   type OrderInput,
@@ -34,6 +36,12 @@ Deno.serve(browserEndpoint(["POST"], cfg.cors, async (req) => {
 
   const body = await readJson(req);
   const disabled = cfg.provider === "disabled";
+
+  // Papers (burn, burn_wish, gift, midnight) are retired for new orders (0013):
+  // a light includes its one wish in the fire (burn-wish). Existing paper
+  // orders are still paid through start-payment and the bank callbacks.
+  const retired = checkProductNotRetired(body);
+  if (!retired.ok) throw new ApiError(400, retired.code, retired.message);
 
   const v = validateOrderInput(body, { emailRequired: disabled });
   if (!v.ok) throw new ApiError(400, v.code, v.message);

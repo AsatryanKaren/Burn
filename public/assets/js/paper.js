@@ -77,8 +77,7 @@
       '<button type="button" class="btn btn-paper" id="shareBtn">' + esc(t("paper.share")) + "</button>" +
       '<button type="button" class="btn btn-ghost" id="copyBtn">' + esc(t("paper.copy_link")) + "</button>" +
       '<button type="button" class="btn btn-ghost" id="replayBtn">' + esc(t("paper.replay")) + "</button>" +
-      "</div>" +
-      '<p><a class="link-arrow" href="' + D.urls.burn + '">' + esc(t("paper.again")) + " →</a></p>"
+      "</div>"
     );
     // Story and copied links point to the public home page with the number, never to this private page
     // (except "For a friend", where the link is meant for the friend).
@@ -122,7 +121,7 @@
           '<button type="button" class="btn btn-ghost" id="lCopy">' + esc(t("lights.copy")) + "</button>" +
           '<a class="btn btn-ghost" href="' + esc(mapLink) + '">' + esc(t("lights.paper_see")) + "</a></div>" : payButton(o)) +
         '<p><a class="btn btn-fire" href="' + esc(mapLink + "&edit=" + encodeURIComponent(code)) + '">✎ ' + esc(t("room.edit_mine")) + "</a></p>" +
-        '<p><a class="link-arrow" href="' + D.urls.burn + '">' + esc(t("lights.fire_cta")) + " →</a></p>"
+        '<p><a class="link-arrow" href="' + esc(D.urls.lights) + '#fire">🔥 ' + esc(t("lights.fire_cta")) + " →</a></p>"
       );
       var ic = document.getElementById("lIc"); if (ic) ic.appendChild(MC.iconCanvas(icon, color, 72));
       if (!paid) { bindPay(); return; }
