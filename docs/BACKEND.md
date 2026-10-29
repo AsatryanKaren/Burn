@@ -341,3 +341,12 @@ select setval('public.burn_number_seq', 1, false);
 ```
 
 (`provider_order_num_seq` may stay where it is; gaps are fine.)
+
+## Live state (29 Oct 2026)
+
+Migrations 0003 → 0013 are applied to the live project `maqcaowpfhmqcavboszy`, in order.
+0004 was applied in its compact form (`tools/cells_seed_compact.sql`: the same rows decoded
+from the map's run-length grid, small enough for the API). Verified after applying:
+111,111 rows and md5 of `string_agg(id:province:town_index order by id)` =
+`5eb02af01723931fe4d13cb863cdf551`, identical to `0004_cells_seed.sql`.
+Edge functions are NOT redeployed yet (the live ones are the 26 Oct versions).
