@@ -1,6 +1,6 @@
 # Refund Policy
 
-*Last updated: 27 October 2026*
+*Last updated: 29 October 2026*
 
 We want this to be fair and simple. This page explains exactly when you get your money back and how.
 
@@ -8,31 +8,31 @@ We want this to be fair and simple. This page explains exactly when you get your
 
 You get a full refund of the amount paid if:
 
-- **we did not deliver the service:** your paper did not burn in the fire, or you did not get your personal page;
+- **we did not deliver the service:** your place did not appear on the map, your wish did not burn in the fire through our fault, or you did not get your personal page;
 - **you were charged twice** for the same order (duplicate payment);
 - **a technical error** occurred: for example, money was taken from your card but the order was not marked as paid, or you were charged a wrong amount;
-- **we refused your text after payment** because it was illegal, so the paper did not burn;
-- **with Light up Armenia:** your light did not appear on the map, or someone else took your plot at the same moment and you chose a refund instead of the nearest free plot (see below).
+- **someone else took your plot at the same moment** and you chose a refund instead of the nearest free plot;
+- **we refused your wish, message or signature after payment** because it was illegal (see below).
 
 ## When there is no refund
 
-The service is digital and is delivered immediately: your personal page opens right after payment and your paper burns within minutes. So once your paper has burned, **a change of mind is not a reason for a refund**, except where the law requires it.
+The service is digital and is delivered immediately: your place appears on the map and your personal page opens right after payment. So once your place has appeared on the map, **a change of mind is not a reason for a refund**, except where the law requires it.
 
 Also not grounds for a refund:
 
-- your text was **hidden** by moderation (for example, because it contained a name, phone number or link). A hidden paper still burns and the service counts as delivered;
-- your paper appeared later in the YouTube stream than you expected, while it burned on the website on time;
+- your wish, message or signature was **hidden** by moderation, while being checked or because it broke the rules (for example, because it contained a name, phone number or link). A hidden wish still burns and your place stays on the map, so the service counts as delivered;
+- you have not written your wish yet, or chose not to write it. The wish is included in the price of the place and is not charged separately;
+- your wish appeared later in the YouTube stream than you expected, while it burned on the website on time;
+- after 31 January 2027, the map became a read-only archive page or was removed;
 - your card issuer charged a currency conversion fee. This fee is set by your bank, not by us.
 
-## Light up Armenia
+## Good to know
 
-- The service counts as delivered when your light appears on the map, which happens right after payment. After that, **a change of mind is not a reason for a refund**, except where the law requires it.
+- One payment covers the place, the room and one wish. There is no separate payment for the wish, so there is no separate refund for it.
 - If, rarely, someone else takes your plot at the same moment, we offer you the nearest free plot or **a full refund**, whichever you prefer.
-- If, after payment, we refused your message or signature because it was illegal, the light is not placed on the map (or is removed) and you get a full refund.
-- It is not grounds for a refund that your message or signature was **hidden** while being checked or because it broke the rules. The light itself stays on the map and the service counts as delivered.
-- Nor is it grounds for a refund that, after 31 January 2027, the map became a read-only archive page or was removed.
-- Nothing is charged for a light saved before payments open.
-- When a light is refunded in full, it is removed from the map and the plot becomes free again.
+- If, after payment, we refuse your wish, message or signature because it is illegal, the place is removed from the map (or not shown on it) and you get a full refund.
+- Nothing is charged for a place saved before payments open.
+- When a place is refunded in full, it is removed from the map and the plot becomes free again.
 
 ## How to request a refund
 

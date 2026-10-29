@@ -14,10 +14,10 @@ We process personal data in line with the Law of the Republic of Armenia on Prot
 
 | Data | Why | Required? |
 |---|---|---|
-| Your paper text (up to 120 characters) | To burn it in the fire and, if you allowed it and it passed moderation, show it publicly | Yes |
-| Your light: plot, icon, colour and message (up to 60 characters) | To place your light on the map and show it to visitors (the message only after it passes moderation) | Only for Light up Armenia |
-| Your light's signature (up to 30 characters) | To show it publicly with your light (after it passes moderation) | No (optional) |
-| Email address | To send you the link to your page or light and receipt, a payment link for a saved paper or light, and the launch notification if you asked for it | No (optional) |
+| Your wish text (up to 120 characters) | To burn it in the fire and, if you allowed it and it passed moderation, show it publicly | Only if you write a wish |
+| Your place: plot, how it looks on the map, your room and message (up to 60 characters) | To show your place and room on the map to visitors (the message only after it passes moderation) | Yes |
+| Your place's signature (up to 30 characters) | To show it publicly with your place (after it passes moderation) | No (optional) |
+| Email address | To send you the link to your page and receipt, a payment link for a saved place, and the launch notification if you asked for it | No (optional) |
 | Language you chose | To show pages and emails in your language | Yes |
 | Order and payment status | To deliver the service, handle refunds and keep accounting records | Yes |
 | A salted hash of your IP address | To protect the service from abuse (for example, limiting how many orders can be made in a short time) | Yes |
@@ -57,7 +57,7 @@ If you are a blogger and apply through the form on the [20% for gifts](/en/gifts
 
 ## Why we may use your data (legal bases)
 
-- **To provide the service you ordered** (paper, light, page, email with the link).
+- **To provide the service you ordered** (place, room, wish, page, email with the link).
 - **To meet legal obligations**, such as accounting and tax records of payments.
 - **Our legitimate interest** in keeping the service safe from abuse and spam (IP hash, moderation).
 - **Your consent**, for the launch notification and for handling a blogger application. You can withdraw it at any time.
