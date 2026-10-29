@@ -116,6 +116,7 @@
       <h2 class="h-sub">{{ t('lights.saved_t') }}</h2>
       <p class="muted" id="savedText"></p>
       <button type="button" class="btn btn-fire" id="savedEdit">✎ {{ t('room.edit_mine') }}</button>
+      <button type="button" class="btn btn-paper" id="savedFire">🔥 {{ t('app.fire_go') }}</button>
       <a class="link-arrow" id="savedLink" href="#">{{ t('lights.your_light') }} →</a>
     </div>
 
@@ -135,32 +136,40 @@
       <button type="button" class="btn btn-ghost btn-block" id="randomRoom">🏠 {{ t('app.random_room') }}</button>
     </div>
 
-    <form data-view="fire" id="fireForm" novalidate hidden>
-      <p class="kicker" style="margin:0">{{ t('app.tab_fire') }} · {{ price(p0) }}</p>
-      <h2 class="h-sub">{{ t('burn.s1') }}</h2>
-      <p class="muted">{{ t('hero.c1_d') }}</p>
-      <div class="paper app-paper">
-        <span class="paper-year">{{ cfg.year }}</span>
-        <label class="sr-only" for="fNote">{{ t('burn.s1') }}</label>
-        <textarea id="fNote" maxlength="120" rows="3" autocomplete="off" placeholder="{{ t('burn.placeholders')[0] }}"></textarea>
-        <span class="count" id="fCount">0/120</span>
+    <div data-view="fire" hidden>
+      <div id="fireNeed" hidden>
+        <p class="kicker" style="margin:0">🔥 {{ t('app.tab_fire') }}</p>
+        <h2 class="h-sub">{{ t('app.fire_need_t') }}</h2>
+        <p class="muted">{{ t('app.fire_need_d', price=price(p0)) }}</p>
+        <button type="button" class="btn btn-fire btn-block" data-random>✦ {{ t('app.fire_need_btn') }}</button>
       </div>
-      <label class="check"><input type="checkbox" id="fShow" checked><span>{{ t('burn.show_on_stream') }}</span></label>
-      <p class="hint">{{ t('burn.s1_hint') }}</p>
-      <div class="field">
-        <label for="fEmail">{{ t('burn.email_label') }}</label>
-        <input class="input" id="fEmail" type="email" inputmode="email" autocomplete="email" placeholder="{{ t('burn.email_ph') }}">
-      </div>
-      <label class="check"><input type="checkbox" id="fConsent"><span>{{ t('burn.consent', terms=url('terms'), privacy=url('privacy')) }}</span></label>
-      <p class="hint">{{ t('burn.of_which', amount=price(gift_share(p0))) }}</p>
-      <p class="error" id="fErr" role="alert"></p>
-      <button type="submit" class="btn btn-fire btn-block" id="fSubmit">{{ t('burn.pay', price=price(p0)) if cfg.payments_open else t('burn.save_soon') }}</button>
-    </form>
+      <form id="fireForm" novalidate hidden>
+        <p class="kicker" style="margin:0">🔥 {{ t('app.tab_fire') }}</p>
+        <h2 class="h-sub">{{ t('app.fire_t') }}</h2>
+        <p class="muted">{{ t('app.fire_d') }}</p>
+        <div class="field" id="fPlaceWrap" hidden>
+          <label for="fPlace">{{ t('app.fire_place') }}</label>
+          <select class="input" id="fPlace"></select>
+        </div>
+        <div class="paper app-paper">
+          <span class="paper-year">{{ cfg.year }}</span>
+          <label class="sr-only" for="fNote">{{ t('burn.s1') }}</label>
+          <textarea id="fNote" maxlength="120" rows="3" autocomplete="off" placeholder="{{ t('burn.placeholders')[0] }}"></textarea>
+          <span class="count" id="fCount">0/120</span>
+        </div>
+        <label class="check"><input type="checkbox" id="fShow" checked><span>{{ t('burn.show_on_stream') }}</span></label>
+        <p class="hint">{{ t('app.fire_once') }} {{ t('burn.s1_hint') }}</p>
+        <p class="error" id="fErr" role="alert"></p>
+        <button type="submit" class="btn btn-fire btn-block" id="fSubmit">🔥 {{ t('app.fire_btn') }}</button>
+      </form>
+    </div>
 
     <div data-view="fireSaved" hidden>
-      <h2 class="h-sub">{{ t('burn.saved_t') }}</h2>
-      <p class="muted" id="fSavedText"></p>
-      <a class="btn btn-fire" id="fSavedLink" href="#">🔥 {{ t('burn.preview') }}</a>
+      <p class="kicker" style="margin:0">🔥 {{ t('app.tab_fire') }}</p>
+      <h2 class="h-sub">{{ t('app.fire_done_t') }}</h2>
+      <div class="paper app-paper"><span class="paper-year">{{ cfg.year }}</span><p class="paper-text" id="fSavedText"></p></div>
+      <p class="muted" id="fSavedNote"></p>
+      <a class="btn btn-fire" href="{{ url('fire') }}">🔥 {{ t('app.fire_watch') }}</a>
       <button type="button" class="btn btn-ghost" data-tab-go="map">✦ {{ t('app.tab_map') }}</button>
     </div>
 

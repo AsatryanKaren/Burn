@@ -14,12 +14,12 @@
     <h1 class="headline" id="heroTitle"><span class="bye">{{ t('hero.bye') }}</span><span class="year">{{ cfg.year }}</span></h1>
     <p class="sub">{{ t('hero.sub', price=price(p0)) }}</p>
     <div class="choose">
-      <a class="choice-card" href="{{ url('burn') }}">
+      <a class="choice-card" href="{{ url('map') }}#fire">
         <span class="cc-icon cc-fire" aria-hidden="true"><svg width="26" height="30" viewBox="0 0 18 22"><path d="M9 1c1 4 6 6 6 12a6 6 0 0 1-12 0c0-3 2-4 2-7 2 1 3 3 3 5 1-3 2-6 1-10z" fill="url(#ccf)"/><defs><linearGradient id="ccf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe2a0"/><stop offset="1" stop-color="#ff6a2b"/></linearGradient></defs></svg></span>
         <span class="cc-body"><span class="cc-title">{{ t('hero.c1_t') }}</span><span class="cc-desc">{{ t('hero.c1_d') }}</span></span>
         <span class="cc-go"><span class="cc-cta">{{ t('hero.c1_cta') }}</span> →</span>
       </a>
-      <a class="choice-card" href="{{ url('lights') }}">
+      <a class="choice-card" href="{{ url('map') }}">
         <span class="cc-icon cc-map" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 30 30"><g fill="#ffd27a"><circle cx="8" cy="10" r="2"/><circle cx="19" cy="7" r="1.6" fill="#7cc2ff"/><circle cx="14" cy="16" r="2.4"/><circle cx="23" cy="18" r="1.8" fill="#74e6a0"/><circle cx="9" cy="22" r="1.5" fill="#ff6b57"/><circle cx="20" cy="25" r="1.4" fill="#c7a0ff"/></g></svg></span>
         <span class="cc-body"><span class="cc-title">{{ t('hero.c2_t') }}</span><span class="cc-desc">{{ t('hero.c2_d') }}</span></span>
         <span class="cc-go"><span class="cc-cta">{{ t('hero.c2_cta') }}</span> →</span>
@@ -131,8 +131,8 @@
   <div class="wrap">
     <h2 id="finalTitle" data-reveal>{{ t('final.title') }}</h2>
     <div class="final-actions" data-reveal>
-      <a class="btn btn-fire" href="{{ url('burn') }}">{{ t('hero.c1_cta') }}<span class="price-tag">{{ price(p0) }}</span></a>
-      <a class="btn btn-paper" href="{{ url('lights') }}">{{ t('hero.c2_cta') }}<span class="price-tag">{{ price(p0) }}</span></a>
+      <a class="btn btn-fire" href="{{ url('map') }}">{{ t('hero.c2_cta') }}<span class="price-tag">{{ price(p0) }}</span></a>
+      <a class="btn btn-paper" href="{{ url('map') }}#fire">🔥 {{ t('hero.c1_cta') }}</a>
     </div>
   </div>
 </section>

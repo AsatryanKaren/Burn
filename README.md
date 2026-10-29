@@ -2,7 +2,7 @@
 
 A New Year ritual website: people write what they want to leave in the old year, pay a small amount, and watch their paper burn in a shared fire, on the site and on a YouTube live stream. 20% of every payment goes to New Year gifts for children in Armenian orphanages.
 
-The home page introduces the project; the **map app** (`/map/`, "Light up Armenia"): a night map of Armenia split into 7,048 plots of 2×2 km. Each plot is a small 3D room. A buyer picks a free plot, decorates its room (tree, sofa, fireplace, TV and so on; `site/assets/js/room.js`), sets a light on the map (icon, colour, message, signature) and pays 500 AMD. Anyone can tap a lit plot and step into its room. The paper-burning fire lives at `/fire/` (write at `/burn/`). Everything costs 500 AMD; 20% goes to the gift fund.
+The home page introduces the project; the **map app** (`/map/`, "Light up Armenia"): a night map of Armenia split into 111,111 plots of 500×500 m (this year only). Each plot is a small 3D room. A buyer picks a free plot, decorates its room (tree, sofa, fireplace, TV and so on; `site/assets/js/room.js`), sets a light on the map (icon, colour, message, signature) and pays 500 AMD. Anyone can tap a lit plot and step into its room. The paper-burning fire lives at `/fire/` (write at `/burn/`). Everything costs 500 AMD; 20% goes to the gift fund.
 
 The brand name is a placeholder. Change it in one place: `site/config/site.json`.
 

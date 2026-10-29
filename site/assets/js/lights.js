@@ -30,7 +30,8 @@
     if (tab === "map") return deselect();
     if (tab === "mine") renderMine();
     if (tab === "top") renderTop();
-    showView(tab === "fire" ? "fire" : tab);
+    if (tab === "fire") return renderFire();
+    showView(tab);
   }
   document.querySelectorAll("#dock [data-tab]").forEach(function (b) { b.addEventListener("click", function () { openTab(b.getAttribute("data-tab")); }); });
   document.querySelectorAll("[data-tab-go]").forEach(function (b) { b.addEventListener("click", function () { openTab(b.getAttribute("data-tab-go")); }); });
@@ -63,29 +64,52 @@
   });
   $("randomRoom").addEventListener("click", function () { nextRoom(); });
 
-  /* ---------- the fire, inside the map: write a paper and burn it ---------- */
+  /* ---------- the fire, inside the map: every place comes with one wish, no extra payment ---------- */
   var fForm = $("fireForm");
+  function fireOf(code) { return A.store.json("fire:" + code, null); }
+  function setFire(code, f) { A.store.set("fire:" + code, JSON.stringify(f)); }
+  function placeLabel(id) { return MC.townName(m, id, lang) || MC.provName(m, id, lang); }
+  function showFireDone(f) {
+    $("fSavedText").textContent = f.text || "";
+    $("fSavedNote").textContent = f.n ? t("app.fire_done_n", { n: A.fmt(f.n) }) : t("app.fire_wait");
+    showView("fireSaved");
+  }
+  // Which of my places still has its wish? Server state wins over what this browser remembers.
+  function renderFire() {
+    var mineMap = mine(), ids = Object.keys(mineMap).map(Number).filter(function (id) { return MC.isCell(m, id); });
+    $("fErr").textContent = "";
+    if (!ids.length) { $("fireNeed").hidden = false; fForm.hidden = true; showView("fire"); return; }
+    $("fireNeed").hidden = true;
+    var open = ids.filter(function (id) { return !fireOf(mineMap[id]); });
+    if (!open.length) { showFireDone(fireOf(mineMap[ids[0]])); return; }
+    $("fPlace").innerHTML = open.map(function (id) { return '<option value="' + id + '">' + esc(placeLabel(id)) + "</option>"; }).join("");
+    $("fPlaceWrap").hidden = open.length < 2;
+    fForm.hidden = false; showView("fire");
+    ids.forEach(function (id) {
+      var code = mineMap[id];
+      A.api.fn("order-status", null, { code: code }).then(function (o) {
+        if (o && o.fire && !fireOf(code)) { setFire(code, { n: o.fire.burn_number, text: o.fire.text, paid: o.status === "paid" }); if (state.mode === "fire") renderFire(); }
+      }).catch(function () {});
+    });
+  }
   $("fNote").addEventListener("input", function () { $("fCount").textContent = $("fNote").value.length + "/120"; });
   fForm.addEventListener("submit", function (e) {
     e.preventDefault();
     if (state.fbusy) return;
-    var text = clean($("fNote").value), em = clean($("fEmail").value);
-    var bad = !text ? ["EMPTY", $("fNote")] : (!em && !D.paymentsOpen) ? ["EMAIL_REQUIRED", $("fEmail")] :
-      (em && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em)) ? ["EMAIL_INVALID", $("fEmail")] : !$("fConsent").checked ? ["CONSENT_REQUIRED", $("fConsent")] : null;
-    if (bad) { $("fErr").textContent = errText(bad[0]); bad[1].focus(); return; }
+    var text = clean($("fNote").value), id = Number($("fPlace").value), code = mine()[id];
+    if (!text) { $("fErr").textContent = errText("EMPTY"); $("fNote").focus(); return; }
+    if (!code) { renderFire(); return; }
     $("fErr").textContent = ""; state.fbusy = true; $("fSubmit").disabled = true;
-    A.api.fn("create-order", { product: "burn", text: text, email: em || null, lang: lang, show_on_stream: $("fShow").checked, consent: true }).then(function (res) {
-      state.fbusy = false; $("fSubmit").disabled = false; remember(res.code);
-      var pay = res.payment || { mode: "disabled" };
-      if ((pay.mode === "redirect" || pay.mode === "mock") && A.safePaymentUrl(pay.url)) { try { sessionStorage.setItem("justPaid", res.code); } catch (e) {} location.href = pay.url; return; }
-      if (pay.mode === "form" && A.safePaymentUrl(pay.action)) { try { sessionStorage.setItem("justPaid", res.code); } catch (e) {} A.postForm(pay.action, pay.fields); return; }
-      $("fSavedText").innerHTML = t("burn.saved_d", { email: esc(em) });
-      $("fSavedLink").href = D.urls.paper + "?c=" + encodeURIComponent(res.code);
-      $("fNote").value = ""; showView("fireSaved");
+    A.api.fn("burn-wish", { code: code, text: text, show_on_stream: $("fShow").checked, lang: lang }).then(function (res) {
+      state.fbusy = false; $("fSubmit").disabled = false;
+      var f = { n: res.burn_number, text: text };
+      if (res.already) { var known = fireOf(code); if (known) f = known; }
+      setFire(code, f); $("fNote").value = ""; $("fCount").textContent = "0/120";
+      showFireDone(f);
     }).catch(function (err) {
       state.fbusy = false; $("fSubmit").disabled = false;
-      var code = (err && err.code) || "UNKNOWN"; if (code === "TEXT_REQUIRED") code = "EMPTY";
-      $("fErr").textContent = errText(code);
+      var c = (err && err.code) || "UNKNOWN"; if (c === "TEXT_REQUIRED") c = "EMPTY";
+      $("fErr").textContent = errText(c);
     });
   });
 
@@ -251,6 +275,7 @@
   }
   $("litEdit").addEventListener("click", function () { editMine(state.id, state.visit && state.visit.id === state.id && state.visit.raw ? state.visit.raw.room : null); });
   $("savedEdit").addEventListener("click", function () { editMine(state.savedId, null); });
+  $("savedFire").addEventListener("click", function () { openTab("fire"); });
 
   function remember(code) {
     try {
