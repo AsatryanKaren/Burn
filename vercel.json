@@ -75,6 +75,66 @@
       "source": "/ru/faq/",
       "destination": "/ru/#faq",
       "permanent": false
+    },
+    {
+      "source": "/fire",
+      "destination": "/live/",
+      "permanent": false
+    },
+    {
+      "source": "/fire/",
+      "destination": "/live/",
+      "permanent": false
+    },
+    {
+      "source": "/burn",
+      "destination": "/map/#fire",
+      "permanent": false
+    },
+    {
+      "source": "/burn/",
+      "destination": "/map/#fire",
+      "permanent": false
+    },
+    {
+      "source": "/en/fire",
+      "destination": "/en/live/",
+      "permanent": false
+    },
+    {
+      "source": "/en/fire/",
+      "destination": "/en/live/",
+      "permanent": false
+    },
+    {
+      "source": "/en/burn",
+      "destination": "/en/map/#fire",
+      "permanent": false
+    },
+    {
+      "source": "/en/burn/",
+      "destination": "/en/map/#fire",
+      "permanent": false
+    },
+    {
+      "source": "/ru/fire",
+      "destination": "/ru/live/",
+      "permanent": false
+    },
+    {
+      "source": "/ru/fire/",
+      "destination": "/ru/live/",
+      "permanent": false
+    },
+    {
+      "source": "/ru/burn",
+      "destination": "/ru/map/#fire",
+      "permanent": false
+    },
+    {
+      "source": "/ru/burn/",
+      "destination": "/ru/map/#fire",
+      "permanent": false
     }
   ],
   "rewrites": [

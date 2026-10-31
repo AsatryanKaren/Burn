@@ -34,8 +34,6 @@ STRINGS = {l: json.loads((ROOT / "i18n" / f"{l}.json").read_text(encoding="utf-8
 PAGES = {
     "home": ("landing.html", ""),
     "map": ("lights.html", "map"),
-    "fire": ("home.html", "fire"),
-    "burn": ("burn.html", "burn"),
     "paper": ("paper.html", "p"),
     "live": ("live.html", "live"),
     "gifts": ("gifts.html", "gifts"),
@@ -75,6 +73,10 @@ def page_url(page: str, lang: str) -> str:
         page = "map"
     if page == "faq":  # the questions live on the home page
         return page_url("home", lang) + "#faq"
+    if page == "fire":  # the shared fire is the live page
+        page = "live"
+    if page == "burn":  # a wish is burned from the map's Fire tab
+        return page_url("map", lang) + "#fire"
     slug = PAGES[page][1]
     prefix = "/" if lang == DEFAULT else f"/{lang}/"
     return prefix + (slug + "/" if slug else "")
@@ -149,7 +151,7 @@ def js_payload(lang: str, page: str) -> str:
         "products": CONFIG["products"],
         "lightProducts": CONFIG["light_products"],
         "supabase": CONFIG["supabase"],
-        "urls": {**{k: page_url(k, lang) for k in PAGES}, "lights": page_url("map", lang)},
+        "urls": {**{k: page_url(k, lang) for k in PAGES}, **{k: page_url(k, lang) for k in ("lights", "fire", "burn", "faq")}},
         "t": {k: s[k] for k in ("hero", "burn", "paper", "story", "live", "feed", "gifts", "gifts_page", "nav", "common", "lights", "room", "app", "landing")},
     }
     # Escape so the JSON can't break out of the <script> element.
