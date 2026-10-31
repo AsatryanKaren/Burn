@@ -39,7 +39,6 @@ PAGES = {
     "paper": ("paper.html", "p"),
     "live": ("live.html", "live"),
     "gifts": ("gifts.html", "gifts"),
-    "faq": ("faq.html", "faq"),
     "terms": ("legal.html", "terms"),
     "refund": ("legal.html", "refund"),
     "privacy": ("legal.html", "privacy"),
@@ -74,6 +73,8 @@ def gift_share(amount: int) -> int:
 def page_url(page: str, lang: str) -> str:
     if page == "lights":  # the map app
         page = "map"
+    if page == "faq":  # the questions live on the home page
+        return page_url("home", lang) + "#faq"
     slug = PAGES[page][1]
     prefix = "/" if lang == DEFAULT else f"/{lang}/"
     return prefix + (slug + "/" if slug else "")

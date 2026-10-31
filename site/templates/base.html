@@ -45,7 +45,6 @@
       <a href="{{ url('map') }}" {% if page == 'map' %}aria-current="page"{% endif %}>{{ t('nav.lights') }}</a>
       <a href="{{ url('gifts') }}" {% if page == 'gifts' %}aria-current="page"{% endif %}>{{ t('nav.gifts') }}</a>
       <a href="{{ url('live') }}" {% if page == 'live' %}aria-current="page"{% endif %}>{{ t('nav.live') }}</a>
-      <a href="{{ url('faq') }}" {% if page == 'faq' %}aria-current="page"{% endif %}>{{ t('nav.faq') }}</a>
     </nav>
     <div class="tools">
       <div class="lang top-lang" role="group" aria-label="{{ t('nav.language') }}">
@@ -71,7 +70,6 @@
     <a href="{{ url('map') }}#fire">{{ t('hero.c1_t') }}</a>
     <a href="{{ url('gifts') }}">{{ t('nav.gifts') }}</a>
     <a href="{{ url('live') }}">{{ t('nav.live') }}</a>
-    <a href="{{ url('faq') }}">{{ t('nav.faq') }}</a>
     <a class="btn btn-fire" href="{{ url('map') }}">{{ t('landing.cta') }}</a>
     <div class="lang menu-lang" role="group" aria-label="{{ t('nav.language') }}">
       {% for l in langs %}

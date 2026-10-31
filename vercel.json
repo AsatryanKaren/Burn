@@ -45,6 +45,36 @@
       "source": "/ru/lights/",
       "destination": "/ru/map/",
       "permanent": false
+    },
+    {
+      "source": "/faq",
+      "destination": "/#faq",
+      "permanent": false
+    },
+    {
+      "source": "/faq/",
+      "destination": "/#faq",
+      "permanent": false
+    },
+    {
+      "source": "/en/faq",
+      "destination": "/en/#faq",
+      "permanent": false
+    },
+    {
+      "source": "/en/faq/",
+      "destination": "/en/#faq",
+      "permanent": false
+    },
+    {
+      "source": "/ru/faq",
+      "destination": "/ru/#faq",
+      "permanent": false
+    },
+    {
+      "source": "/ru/faq/",
+      "destination": "/ru/#faq",
+      "permanent": false
     }
   ],
   "rewrites": [

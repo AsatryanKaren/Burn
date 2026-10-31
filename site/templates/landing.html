@@ -2,6 +2,9 @@
 {% block title %}{{ t('meta.lights_title') }} · {{ brand }}{% endblock %}
 {% block description %}{{ t('lights.meta_desc') }}{% endblock %}
 {% block og_image %}og-lights-{{ lang }}.jpg{% endblock %}
+{% block head %}
+<script type="application/ld+json">{{ {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": faq_ld(faq)} | tojson }}</script>
+{% endblock %}
 {% block main %}
 {% set p0 = cfg.light_products[0].price %}
 <section class="ld-hero" aria-labelledby="ldTitle">
@@ -76,22 +79,13 @@
       <h2 class="h-section" id="faqTitle">{{ t('faq.title') }}</h2>
     </div>
     <div class="faq-list" data-reveal>
-      {% for item in faq[:6] %}
+      {% for item in faq %}
       <details class="faq-item"><summary>{{ item.q }}</summary><div class="answer"><p>{{ item.a }}</p></div></details>
       {% endfor %}
     </div>
-    <p style="margin-top:24px"><a class="link-arrow" href="{{ url('faq') }}">{{ t('faq.all') }} →</a></p>
   </div>
 </section>
 
-<section class="section final" aria-labelledby="finalTitle">
-  <div class="wrap">
-    <h2 id="finalTitle" data-reveal>{{ t('lights.final_t') }}</h2>
-    <div class="final-actions" data-reveal>
-      <a class="btn btn-fire" href="{{ url('map') }}">{{ t('landing.cta') }}<span class="price-tag">{{ price(p0) }}</span></a>
-    </div>
-  </div>
-</section>
 {% endblock %}
 {% block scripts %}
 <script src="{{ asset('js/site.js') }}" defer></script>
