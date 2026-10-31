@@ -1,23 +1,47 @@
 [
   {
     "q": "What is this?",
-    "a": "A New Year project for Armenians wherever they live. For 500 AMD you get your own place on the map of Armenia: one of 111,111 plots of 500×500 m. Every place is a little 3D room that you decorate and can change later, and anyone can step inside and send you warmth. Your place also comes with one wish: you write what you are leaving behind in 2026, in up to 120 characters, and it burns in a shared fire together with thousands of others, on our website and on our YouTube live stream. The rooms and the fire are computer animation and no real paper is burned. What is real is the moment: you, and many others, letting something go together."
+    "a": "A New Year project that brings Armenians together in one place, wherever they live. We made a digital map of Armenia with a limited number of places: 111,111, each 500×500 m. For 500 AMD you take a place and make your own New Year room on it: a little 3D room that you decorate and can change later. Anyone can open your place and look at your room. Your place also comes with one wish, which you write on a paper. On 31 December all the wishes burn together, in one day, live on YouTube and on our website. 20% of every payment goes to New Year gifts for children in Armenia who grow up without a family."
   },
   {
     "q": "How much does it cost?",
-    "a": "500 AMD, paid once. For that you get your place on the map with its room and one wish for the fire. The wish is included in the price: there is no extra payment, and papers are no longer sold separately. There are no other options and no hidden charges. From every payment, 100 AMD (20%) goes to New Year gifts for children in orphanages."
+    "a": "500 AMD, paid once. For that you get your place on the map with its room, and one wish for the 31 December fire. The wish is included in the price: there is no extra payment for it. There are no other options and no hidden charges. From every payment, 100 AMD (20%) goes to New Year gifts for children who grow up without a family."
   },
   {
-    "q": "When and how do I write my wish?",
-    "a": "Right after you buy your place, or later, whenever you like, from the \"Fire\" tab on the map. Every place has exactly one wish: once it has burned, you can't burn another one for the same place. If you saved your place before card payments opened, you can already write your wish; it goes into the fire as soon as your place is paid."
+    "q": "What do I get on the map?",
+    "a": "Your own place: one of the 111,111 places on the map of Armenia, 500×500 m each. You choose a free place and decorate your room on it: a tree, a sofa, a fireplace, a cat and more. You can change the room later at any time. If you like, you can add your name (up to 30 characters) and a few words (up to 60 characters). Anyone can tap your place, open it and look at your room."
   },
   {
-    "q": "How fast will my wish burn?",
-    "a": "If your place is paid, your wish appears in the fire on the website within minutes of writing it, and you get a page with its number, a replay of it burning and an image to share. From 20 to 31 December wishes also appear on the YouTube live stream, one after another. Your place itself appears on the map right after payment."
+    "q": "Why 25 December? And what if the map fills up?",
+    "a": "Our goal is to fill all 111,111 places before 25 December, so that as many of us as possible gather in one place for the New Year. The number of places on the current map is limited: when they are all taken, there are no free places left to take. If the project succeeds, we will extend the map with more places and announce the new plan for the extension."
+  },
+  {
+    "q": "How and when do I write my wish?",
+    "a": "Right after you take your place, or later, whenever you like before the fire on 31 December, in the \"Fire\" tab on the map. You write it once, up to 120 characters. Every place has exactly one wish, and it is included in the price. If you saved your place before card payments opened, you can already write your wish; it will burn once your place is paid."
+  },
+  {
+    "q": "When will my wish burn? When is the live stream?",
+    "a": "On 31 December. On that day all the wishes burn together in one shared fire, live on YouTube, and the fire is also shown on our website. There is no stream before 31 December. After your wish has burned, your personal page shows its number, a replay of it burning and an image to share. The rooms and the fire are computer animation: no real paper is burned."
   },
   {
     "q": "Will people see my wish?",
     "a": "Only if you allow it and it passes our check. You can choose to keep your wish private: it still burns, only its number is shown. The fire is public, so we don't show names of real people, phone numbers, links or insults; if your wish contains them, it still burns, but the text is hidden from public view. Your text is always visible to you on your personal page."
+  },
+  {
+    "q": "Am I buying real land?",
+    "a": "No. Your place is a symbolic digital marker, simply a cell of a picture. You do not acquire any land, property or territory, or any right to a real place. The borders on the map are approximate, drawn from public map data, and say nothing about any legal or political borders."
+  },
+  {
+    "q": "What if someone else takes my place?",
+    "a": "Each place can belong to only one person: first come, first served. While you pay, the place is held for you for 30 minutes. If, rarely, someone else takes it at the same moment, we offer you the nearest free place or a full refund, whichever you prefer. If you saved your place before payments opened, it is not reserved, and if it is taken by then, we offer you the nearest free one."
+  },
+  {
+    "q": "How long will my place stay on the map?",
+    "a": "Your place appears on the map right after payment and stays at least until 31 January 2027. After that we may keep the map as a read-only archive page or remove it. Anyone can tap your place and see your room, your name and words (once approved), the date, the province and the nearest town. Your email is never shown."
+  },
+  {
+    "q": "Can I choose a place in my grandparents' village, or give it as a gift?",
+    "a": "Of course. Find the village on the map, choose a free place and sign it however you like, for example \"The Petrosyan family\" or \"With love, from the grandchildren\". You can send the link and image of your place to the person you made it for. Just keep phone numbers, links and other people's private data out of your words, your name and your wish."
   },
   {
     "q": "How does payment work? Is it safe?",
@@ -29,42 +53,18 @@
   },
   {
     "q": "Where does the 20% go? Are you a charity?",
-    "a": "From every payment we set aside 20% for gifts, and on 31 December we bring New Year gifts to children in orphanages in Armenia. Afterwards we will publish on the site what was bought and where it went. To be honest: we are not a charity but a for-profit company, and you are paying for a digital service. Giving 20% to gifts is our own choice, so it is not a donation from you and it is not tax-deductible."
+    "a": "From every payment we set aside 20% for New Year gifts for children in Armenia who grow up without a family, in children's homes. We deliver the gifts from 25 to 30 December, together with bloggers trusted in Armenia, so that everyone can see where the money went. Afterwards we publish on the site what we bought and which children's homes received the gifts. To be honest: we are not a charity but a for-profit company, and you are paying for a digital service. Giving 20% to gifts is our own choice, so it is not a donation from you and it is not tax-deductible."
   },
   {
     "q": "I'm a blogger. Can I join?",
-    "a": "Yes. Fill in the form on the \"20% for gifts\" page if you would like to come with us on 31 December to deliver the gifts, film it and tell your audience. We'll contact you."
-  },
-  {
-    "q": "What do I get on the map?",
-    "a": "Light up Armenia is a New Year night map of Armenia divided into 111,111 plots of 500×500 m each. This year there are only that many places, and the map won't grow. You choose a free plot, choose how your place looks on the map, write a short message (up to 60 characters) and, if you like, sign it (up to 30 characters). Then you decorate your room: a tree, a sofa, a fireplace, a cat and more. You can change the room later at any time. Visitors can tap your place, step into your room and send you warmth."
-  },
-  {
-    "q": "Am I buying real land?",
-    "a": "No. Your place is a symbolic digital marker and a plot is simply a cell of a picture. You do not acquire any land, property or territory, or any right to a real place. The borders on the map are approximate, drawn from public map data, and say nothing about any legal or political borders."
-  },
-  {
-    "q": "What if someone else takes my plot?",
-    "a": "Each plot can belong to only one person: first come, first served. While you pay, the plot is held for you for 30 minutes. If, rarely, someone else takes it at the same moment, we offer you the nearest free plot or a full refund, whichever you prefer. If you saved your place before payments opened, the plot is not reserved, and if it is taken by then, we offer you the nearest free one."
-  },
-  {
-    "q": "How long will my place stay on the map?",
-    "a": "Your place appears on the map right after payment and stays at least until 31 January 2027. After that we may keep the map as a read-only archive page or remove it. Anyone can tap your place and see your message, your signature (once approved), the date, the province and the nearest town. Your email is never shown."
-  },
-  {
-    "q": "Can I choose a place in my grandparents' village, or give it as a gift?",
-    "a": "Of course. Find the village on the map, choose a free plot and sign it however you like, for example \"The Petrosyan family\" or \"With love, from the grandchildren\". You can send the link and image of your place to the person you made it for. Just keep phone numbers, links and other people's private data out of the message, the signature and the wish."
+    "a": "Yes, if people in Armenia trust you. Register through the form on the \"20% for gifts\" page if you would like to come with us on one of the gift delivery days, 25 to 30 December, film it and tell your audience. We'll contact you."
   },
   {
     "q": "Can I get a refund?",
-    "a": "Yes, in full, if your place didn't appear on the map, your wish didn't burn through our fault, you didn't get your page, you were charged twice or something broke technically. Write to {{company.email}} within 14 days; the money returns to the same card, usually in 5–10 business days."
-  },
-  {
-    "q": "When is the live stream?",
-    "a": "The fire is broadcast live on YouTube from 20 to 31 December 2026. The fire on our website burns every day."
+    "a": "Yes, in full, if your place didn't appear on the map, your wish didn't burn on 31 December through our fault, you didn't get your page, you were charged twice or something broke technically. Write to {{company.email}} within 14 days; the money returns to the same card, usually in 5–10 business days."
   },
   {
     "q": "What happens to my data?",
-    "a": "We keep only what we need: your wish, your place's message and signature, your room, your email if you left it, and the payment status. We never see your card number, store only a one-way hash of your IP address, don't sell data and don't use ad trackers. You can ask us to delete your text at any time by writing to {{company.email}}."
+    "a": "We keep only what we need: your wish, your room, your name and words if you added them, your email if you left it, and the payment status. We never see your card number, store only a one-way hash of your IP address, don't sell data and don't use ad trackers. You can ask us to delete your text at any time by writing to {{company.email}}."
   }
 ]

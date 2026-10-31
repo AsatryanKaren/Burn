@@ -1,6 +1,6 @@
 # Contact
 
-*Last updated: 27 October 2026*
+*Last updated: 1 November 2026*
 
 We are real people and we read every message. Write to us about anything: an order, a refund, your data or just a question.
 
@@ -17,7 +17,7 @@ We are real people and we read every message. Write to us about anything: an ord
 ## Support
 
 - **Email:** {{company.email}}
-- **Response time:** within 24 hours, including during 20–31 December.
+- **Response time:** within 24 hours, including during 25–31 December.
 - **Languages:** Armenian, English and Russian.
 
 To help us answer faster, include your **order code** or the link to your personal page. Never send us your card number, CVV or card photos.
@@ -33,7 +33,7 @@ Full rules: [Refund Policy](/en/refund/).
 ## How to delete your text or data
 
 1. Write to {{company.email}}, if possible from the email you used for the order.
-2. Include your order code and tell us what you want: delete your paper text, your light's message or signature, your email, or get a copy of your data.
+2. Include your order code and tell us what you want: delete your wish text, your place's name or words, your email, or get a copy of your data.
 3. We reply within 24 hours and confirm when it is done. The record of the payment itself is kept as long as Armenian accounting and tax law requires.
 
 More: [Privacy Policy](/en/privacy/).

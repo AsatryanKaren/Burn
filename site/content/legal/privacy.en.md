@@ -1,6 +1,6 @@
 # Privacy Policy
 
-*Last updated: 27 October 2026*
+*Last updated: 1 November 2026*
 
 This page explains what data we collect on {{domain}}, why, how long we keep it and what rights you have. We collect as little as possible. We do not sell data and we do not use advertising trackers.
 
@@ -15,8 +15,8 @@ We process personal data in line with the Law of the Republic of Armenia on Prot
 | Data | Why | Required? |
 |---|---|---|
 | Your wish text (up to 120 characters) | To burn it in the fire and, if you allowed it and it passed moderation, show it publicly | Only if you write a wish |
-| Your place: plot, how it looks on the map, your room and message (up to 60 characters) | To show your place and room on the map to visitors (the message only after it passes moderation) | Yes |
-| Your place's signature (up to 30 characters) | To show it publicly with your place (after it passes moderation) | No (optional) |
+| Your place: where it is on the map, how it looks and your room | To show your place and room on the map to visitors | Yes |
+| Your name (up to 30 characters) and a few words (up to 60 characters) on your place | To show them publicly with your place (after they pass moderation) | No (optional) |
 | Email address | To send you the link to your page and receipt, a payment link for a saved place, and the launch notification if you asked for it | No (optional) |
 | Language you chose | To show pages and emails in your language | Yes |
 | Order and payment status | To deliver the service, handle refunds and keep accounting records | Yes |
@@ -30,17 +30,17 @@ We process personal data in line with the Law of the Republic of Armenia on Prot
 
 ## Your personal page link
 
-Your personal page has a long random address that cannot be guessed. Anyone who has this link can see your paper or light. Keep the link private unless you want to share it.
+Your personal page has a long random address that cannot be guessed. Anyone who has this link can see your place, your room and your wish. Keep the link private unless you want to share it.
 
-## Lights on the map
+## Places on the map
 
-With Light up Armenia your light is public: any visitor can tap it and see its icon, colour, message, signature (if approved), the date it was lit, the province and the nearest town. The signature is public by your choice, so don't put anything in it you wouldn't want others to see, and don't include other people's private data. Your email is never shown.
+Your place on the map is public: any visitor can tap it, open your room and see your name and words (if you added them and they were approved), the date the place was taken, the province and the nearest town. Your name and words are public by your choice, so don't put anything in them you wouldn't want others to see, and don't include other people's private data. Your email is never shown.
 
-A plot is an illustrative cell of the map; it does not stand for your or anyone's real address.
+A place is an illustrative cell of the map; it does not stand for your or anyone's real address.
 
 ## Blogger applications
 
-If you are a blogger and apply through the form on the [20% for gifts](/en/gifts/) page to take part in the gift delivery on 31 December (to come along, film and tell your audience about it), we receive:
+If you are a blogger and register through the form on the [20% for gifts](/en/gifts/) page to take part in delivering the gifts on 25–30 December (to come along, film and tell your audience about it), we receive:
 
 - your name;
 - the link to your profile and the platform (for example Instagram, TikTok or YouTube);
@@ -79,8 +79,8 @@ We never sell or rent your data and never share it for advertising.
 ## How long we keep data
 
 - **Order and payment records:** as long as Armenian accounting and tax law requires.
-- **Paper texts:** you can ask us to delete your text at any time. We will delete it, but keep the record of the payment itself (amount, date, status) as the law requires.
-- **Light data** (plot, icon, colour, message, signature, email and language): kept under the same rules as other orders. You can ask us to delete your light's message or signature at any time; we will delete it, but keep the record of the payment itself as the law requires.
+- **Wish texts:** you can ask us to delete your text at any time. We will delete it, but keep the record of the payment itself (amount, date, status) as the law requires.
+- **Place data** (where it is on the map, how it looks, your room, name, words, email and language): kept under the same rules as other orders. You can ask us to delete your place's name or words at any time; we will delete it, but keep the record of the payment itself as the law requires.
 - **Blogger applications:** deleted within 6 months after the campaign ends, unless we work together.
 - **Email addresses:** kept while needed for the purposes above. An email given only for the launch notification is deleted after the 2026 season ends, or earlier if you ask.
 - **IP hashes:** kept only as long as needed for abuse protection.
@@ -89,7 +89,7 @@ We never sell or rent your data and never share it for advertising.
 
 If your text was approved and you allowed it, it may appear in the fire on the website, on the live stream and in its recordings. If you want it removed later, write to us: we will remove it from the website and, where technically possible, from stream recordings.
 
-Your light's message and signature, if approved, are shown on the map and on the light's page. We can remove them too if you ask.
+Your place's name and words, if approved, are shown on the map and on your place's page. We can remove them too if you ask.
 
 ## Your rights
 
@@ -110,7 +110,7 @@ If you think we have violated your rights, you can complain to the Personal Data
 We use only what is strictly needed for the website to work:
 
 - your **language choice**;
-- your **unsent draft** of the paper, saved in your browser's local storage so you don't lose it.
+- your **unsent draft** of the wish, saved in your browser's local storage so you don't lose it.
 
 We do not use advertising cookies or ad trackers. You can clear this data at any time in your browser settings.
 
