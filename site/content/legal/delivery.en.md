@@ -20,7 +20,7 @@ Prices are final, shown in Armenian drams (AMD). There are no subscriptions and 
 
 ## Your place: how and when it is delivered
 
-[Light up Armenia](/en/map/) is a digital map of Armenia with a limited number of places: 111,111, each 500×500 m. Our goal is to fill all of them before 25 December. When every place on the current map is taken, there are no free places left. If the project succeeds, we will extend the map with more places and announce the plan for the extension.
+[Light up Armenia](/en/map/) is a digital map of Armenia with a limited number of places: 111,111, each 500×500 m. Our goal is to fill all of them before 25 December. This is a goal, not a deadline: free places can be taken right up to the 31 December fire. When every place on the current map is taken, there are no free places left. If the project succeeds, we will extend the map with more places and announce the plan for the extension.
 
 This is a symbolic digital marker: you do not acquire any land, property or right to a real place. The borders on the map are approximate and illustrative only (see section 7 of the [Terms of Service](/en/terms/)).
 
