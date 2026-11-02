@@ -360,16 +360,6 @@
     var n = view.lights.size, total = m.total;
     $("ltCount").innerHTML = t("lights.progress", { n: A.fmt(n), total: A.fmt(total) });
     $("ltBar").style.width = Math.max(n ? 0.6 : 0, n / total * 100) + "%";
-    var counts = m.provinces.map(function () { return 0; });
-    view.lights.forEach(function (_, id) { counts[m.prov[id]]++; });
-    var rows = m.provinces.map(function (p, i) { return { name: p[lang], lit: counts[i], total: m.provCount[i], code: p.code }; });
-    rows.sort(function (a, b) { return (b.lit / b.total) - (a.lit / a.total) || b.lit - a.lit || a.total - b.total; });
-    $("board").innerHTML = rows.map(function (r, i) {
-      var pct = r.lit / r.total * 100;
-      return '<li class="' + (r.code === "yer" ? "yer" : "") + '"><span class="r">' + (i + 1) + '</span><span class="n">' + esc(r.name) + "</span>" +
-        '<span class="b" aria-hidden="true"><i style="width:' + Math.max(r.lit ? 1.5 : 0, pct).toFixed(2) + '%"></i></span>' +
-        '<span class="v">' + A.fmt(r.lit) + " / " + A.fmt(r.total) + '<small>' + esc(t("lights.left", { n: A.fmt(r.total - r.lit) })) + "</small></span></li>";
-    }).join("");
   }
   function refresh() {
     return A.api.rpc("get_map").then(function (r) {

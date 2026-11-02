@@ -12,7 +12,6 @@
     return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, sep);
   }
   function price(n) { return fmt(n) + " ֏"; }
-  function giftShare(n) { return Math.floor(n * D.giftPct / 100); }
   function get(path) {
     var node = D.t;
     path.split(".").forEach(function (k) { node = node == null ? null : node[k]; });
@@ -251,7 +250,7 @@
   if (inApp) document.documentElement.classList.add("in-app");
 
   window.APP = {
-    D: D, store: store, t: t, fmt: fmt, price: price, giftShare: giftShare, esc: esc, api: api,
+    D: D, store: store, t: t, fmt: fmt, price: price, esc: esc, api: api,
     loadStats: loadStats, paintStats: paintStats, mountScene: mountScene, toast: toast, copy: copy,
     shareStory: shareStory, shareCanvas: shareCanvas, reduceMotion: reduceMotion, inApp: inApp,
     safePaymentUrl: safePaymentUrl, postForm: postForm
