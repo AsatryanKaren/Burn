@@ -1,14 +1,14 @@
 {
-  "_comment": "Single place for everything that may change. The brand name is a placeholder until the final name is chosen.",
+  "_comment": "Single place for everything that may change.",
   "brand": {
     "name": {
-      "hy": "Ամանորյա կրակ",
-      "en": "New Year Fire",
-      "ru": "Новогодний костёр"
+      "hy": "Լուսավորիր Հայաստանը",
+      "en": "Light up Armenia",
+      "ru": "Зажги Армению"
     }
   },
-  "domain": "example.am",
-  "site_url": "https://example.am",
+  "domain": "lightarmenia.com",
+  "site_url": "https://lightarmenia.com",
   "year": 2026,
   "next_year": 2027,
   "payments_open": false,
@@ -37,7 +37,7 @@
     "legal_name": "[Company legal name]",
     "tax_id": "[Tax ID]",
     "address": "[Registered address]",
-    "email": "hello@example.am",
+    "email": "hello@lightarmenia.com",
     "phone": "[Phone number]"
   },
   "social": {

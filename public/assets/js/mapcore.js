@@ -294,7 +294,7 @@
   P.flare = function (id) { this.flares.push({ id: id, t: performance.now() }); this.start(); };
 
   P.start = function () {
-    if (this.running || !this.visible || document.hidden) return;
+    if (this.running || !this.visible || document.hidden || !this.W) return; // no size yet: resize() starts it
     this.running = true;
     var self = this;
     requestAnimationFrame(function loop(now) {

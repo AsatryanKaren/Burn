@@ -4,4 +4,4 @@ Disallow: /p/
 Disallow: /en/p/
 Disallow: /ru/p/
 Disallow: /admin/
-Sitemap: https://example.am/sitemap.xml
+Sitemap: https://lightarmenia.com/sitemap.xml
