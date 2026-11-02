@@ -733,6 +733,10 @@ body.is-app .lt-hint { display: none; }
   body.is-app .lt-ticker { left: 66px; bottom: 26px; }
   body.is-app .lt-panel { bottom: 14px; }
 }
+/* Too narrow for the tools and the status pill on one row: the pill drops below the tools. */
+@media (min-width: 980px) and (max-width: 1239px) {
+  .app-status { top: 62px; }
+}
 @media (max-width: 979px) {
   .app-dock { left: 0; right: 0; bottom: 0; border-radius: 18px 18px 0 0; justify-content: space-around; padding: 6px 4px calc(env(safe-area-inset-bottom, 0px) + 6px); border-bottom: 0; }
   .app-dock button { min-width: 0; flex: 1; padding: 7px 2px; font-size: 11px; }

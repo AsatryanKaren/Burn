@@ -44,6 +44,8 @@ Since 0013 the only product a new order can be is `light` (papers → `400 PRODU
 
 ## Current state (2026-10-27)
 
+Outdated, kept for the migration notes: see "Live state (29 Oct 2026)" at the bottom of this file.
+
 | Item | State |
 |---|---|
 | `0001_init`, `0002_payment_attempts` | applied |

@@ -109,7 +109,7 @@
       <p class="hint" id="lGift"></p>
       <p class="error" id="lErr" role="alert"></p>
       <button type="submit" class="btn btn-fire btn-block" id="lSubmit"></button>
-      <p class="hint" style="text-align:center">{{ t('burn.secure') }}</p>
+      {% if cfg.payments_open %}<p class="hint" style="text-align:center">{{ t('burn.secure') }}</p>{% endif %}
     </form>
 
     <div data-view="saved" hidden>

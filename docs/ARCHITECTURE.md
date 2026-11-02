@@ -1,6 +1,6 @@
 # Architecture
 
-A New Year ritual website: people write what they want to leave in the old year, pay a small amount, and watch their paper burn in a shared digital fire (on the site and on a YouTube live stream). Optional: a wish for the next year, kept and opened live next New Year's Eve.
+A New Year ritual website: one payment buys a place on a shared map of Armenia, with its own small 3D room and exactly one wish burned in a shared digital fire on 31 December (on the site and on a YouTube live stream). Paper products are retired since migration 0013; their contract stays below for existing orders.
 
 The brand name is **not final**. Never hard-code a brand name or domain: read it from `site/config/site.json` (`brand.*`, `domain`).
 
@@ -158,16 +158,15 @@ Header `x-admin-token` must equal secret `ADMIN_TOKEN` (≥ 32 chars, else alway
 
 | Path | Page |
 |---|---|
-| `/` | Home: hero fire scene, how it works, products, live counters, the 20% gift fund, honesty statement, FAQ preview |
-| `/burn/` | Write your paper → choose option → pay (or "payments open soon" + save paper with email) |
-| `/p/?c=CODE` | Your paper: status, burn number, replay of the burn, story card, share |
-| `/live/` | The shared fire: burns recent paid papers one by one (this page is what the YouTube stream captures) + stream embed slot |
+| `/` | Home: how it works, live counters, the 20% gift fund, honesty statement, blogger call, questions |
+| `/map/` | The map app: pick a place → room → look on the map → pay (or save with email while payments are closed); tabs for my room, fire (`/map/#fire`: the wish), warmest and how it works |
+| `/p/?c=CODE` | Your place: status, map card, edit room, link to the wish, share. Old paper orders still show their paper here |
+| `/live/` | The shared fire: burns recent paid wishes one by one (this page is what the YouTube stream captures) + stream embed slot |
 | `/gifts/` | Where the money goes: 20% gift fund, live fund total, honest for-profit statement, reports |
-| `/faq/` | Questions |
 | `/terms/`, `/refund/`, `/privacy/`, `/delivery/`, `/contact/` | Legal pages the bank requires |
 | `/404.html` | Not found |
 
-Each page exists under `/`, `/en/`, `/ru/`.
+Each page exists under `/`, `/en/`, `/ru/`. The old `/fire/`, `/burn/` and `/faq/` addresses redirect (`vercel.json`) to `/live/`, `/map/#fire` and `/#faq`.
 
 ---
 
