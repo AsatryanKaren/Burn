@@ -128,7 +128,7 @@
       history.replaceState(null, "", u.pathname + u.search + u.hash);
     } catch (e) {}
   }
-  function cellUrl(id) { return location.origin + D.urls.lights + "?cell=" + id; }
+  function cellUrl(id) { return new URL(D.urls.lights + "?cell=" + id, location.href).href; }
 
   /* ---------- selecting a plot ---------- */
   function placeHtml(id) {
@@ -166,6 +166,7 @@
     }).catch(function () {});
   }
   $("litShare").addEventListener("click", function () { shareLight(state.id); });
+  $("litCopy").addEventListener("click", function () { A.copy(cellUrl(state.id)); });
   // Step into a lit plot's room. "Next room" hops to another random lit plot.
   function visit(id, data) {
     var go = function (c) {
@@ -229,7 +230,7 @@
   function sync() {
     var product = "light", p = prices[product] || 0;
     $("lMsgCount").textContent = $("lMsg").value.length + "/60";
-    $("lGift").textContent = t("burn.of_which", { amount: A.price(A.giftShare(p)) });
+    $("lGift").textContent = t("burn.of_which");
     $("lSubmit").textContent = D.paymentsOpen ? t("lights.pay", { price: A.price(p) }) : t("lights.save");
     if (state.mode === "design" && view) view.setGhost({ id: state.id, icon: val("icon"), color: val("color"), big: product === "light_big" });
   }

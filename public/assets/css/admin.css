@@ -15,6 +15,7 @@ body.admin { overflow-x: hidden; font-size: 15px; }
 .adm-bar { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; margin-bottom: 16px; }
 .adm-bar label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--muted); }
 .adm-bar .input { padding: 9px 11px; font-size: 14px; min-width: 180px; }
+.adm-bar select.input { padding-right: 34px; background-position: right 11px center; }
 .adm-list { display: flex; flex-direction: column; gap: 10px; }
 .adm-item { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: start; border: 1px solid var(--line); border-radius: 12px; padding: 14px; background: var(--bg-3); }
 .adm-item .txt { font-family: var(--serif); font-size: 18px; overflow-wrap: anywhere; }

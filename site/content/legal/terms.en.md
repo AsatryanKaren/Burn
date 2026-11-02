@@ -1,6 +1,6 @@
 # Terms of Service
 
-*Last updated: 1 November 2026*
+*Last updated: 2 November 2026*
 
 These terms apply to the {{brand.name}} website at {{domain}} and to every order placed on it. Please read them before you pay. By placing an order you confirm that you have read and accept these terms, the [Refund Policy](/en/refund/), the [Delivery and Payment](/en/delivery/) page and the [Privacy Policy](/en/privacy/).
 
@@ -80,7 +80,7 @@ You are responsible for what you write. Do not write anything you would not want
 
 ## 7. Your place and your room
 
-[Light up Armenia](/en/map/) is a digital map of Armenia with a limited number of places: 111,111, each 500×500 m (Lake Sevan is not divided into places). Our goal is to fill all of them before 25 December. When every place on the current map is taken, there are no free places left. If the project succeeds, we will extend the map with more places and announce the plan for the extension; until then, the map has 111,111 places. For 500 AMD you choose one free place and make it yours:
+[Light up Armenia](/en/map/) is a digital map of Armenia with a limited number of places: 111,111, each 500×500 m (Lake Sevan is not divided into places). Our goal is to fill all of them before 25 December. When every place on the current map is taken, there are no free places left. For 500 AMD you choose one free place and make it yours:
 
 - you choose how your place looks on the map;
 - you decorate your room, for example with a tree, a sofa or a fireplace;

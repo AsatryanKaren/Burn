@@ -30,7 +30,7 @@
     if (busy) return;
     var body = {
       name: clean($("blName").value), link: clean($("blLink").value), platform: $("blPlatform").value,
-      audience: clean($("blAudience").value) || null, email: clean($("blEmail").value),
+      email: clean($("blEmail").value),
       phone: clean($("blPhone").value) || null, message: clean($("blMsg").value) || null,
       lang: A.D.lang, consent: $("blConsent").checked
     };

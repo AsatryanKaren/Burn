@@ -125,7 +125,7 @@
       );
       var ic = document.getElementById("lIc"); if (ic) ic.appendChild(MC.iconCanvas(icon, color, 72));
       if (!paid) { bindPay(); return; }
-      var shareUrl = location.origin + mapLink;
+      var shareUrl = new URL(mapLink, location.href).href;
       document.getElementById("lCopy").addEventListener("click", function () { A.copy(shareUrl); });
       document.getElementById("lShare").addEventListener("click", function () {
         A.api.rpc("get_map").catch(function () { return null; }).then(function (r) {

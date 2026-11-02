@@ -19,14 +19,14 @@
   },
   "meta": {
     "home_title": "Goodbye, {year}",
-    "home_desc": "A digital map of Armenia with 111,111 places. Take yours for 500 ֏, make your New Year room and burn one wish on 31 December. 20% goes to gifts for children.",
+    "home_desc": "A digital map of Armenia with 111,111 places. Take yours for 500 ֏, make your New Year room and burn one wish on 31 December. 20% will go to gifts for children.",
     "burn_title": "Write your paper",
     "paper_title": "Your place",
     "live_title": "The fire of 31 December",
-    "gifts_title": "Where the money goes",
+    "gifts_title": "20% will go to children's gifts",
     "faq_title": "Frequently asked questions",
     "notfound_title": "Page not found",
-    "lights_title": "All of Armenia in one place"
+    "lights_title": "Your place on the map of Armenia"
   },
   "hero": {
     "bye": "Goodbye,",
@@ -78,14 +78,10 @@
   },
   "gifts": {
     "kicker": "20%",
-    "title": "20% goes to children's gifts",
-    "body": "20% of every payment goes to New Year gifts for children in Armenia who grow up without a family. From 25 to 30 December we bring the gifts to them together with trusted bloggers, and afterwards we publish what we bought and where it went.",
+    "title": "20% will go to children's gifts",
+    "body": "20% of every payment will go to New Year gifts for children in Armenia who grow up without a family. From 25 to 30 December we bring the gifts to them together with trusted bloggers, and afterwards we publish what we bought and where it went.",
     "fund": "In the gift fund",
     "fund_soon": "The fund starts with the first payment",
-    "per_paper": "{amount} of every {price} goes to gifts",
-    "honest_t": "Let's be honest",
-    "honest": "We're a company, not a charity. We make money from this project and we don't hide it. The 20% isn't our business model; it's our decision. New Year is children's favourite holiday, and we want some of the warmth from our fire to reach them.",
-    "more": "How the money is split",
     "blogger_t": "Are you a blogger?",
     "blogger_d": "Trusted bloggers from Armenia can join us on 25–30 December, bring the gifts to the children and show everyone where the money went. Apply, and we'll get in touch.",
     "blogger_cta": "Apply"
@@ -144,7 +140,7 @@
     "consent": "I agree to the <a href=\"{terms}\">terms</a> and the <a href=\"{privacy}\">privacy policy</a>",
     "summary": "Summary",
     "total": "Total",
-    "of_which": "{amount} of it goes to New Year gifts for children without families",
+    "of_which": "Part of the price of your place will go to New Year gifts for children without families",
     "pay": "Pay {price}",
     "save_soon": "Save my paper",
     "secure": "You pay on the bank's secure page.",
@@ -216,26 +212,18 @@
     "num": "My number"
   },
   "gifts_page": {
-    "title": "Where the money goes",
-    "lead": "Short and honest: how every {price} is split.",
+    "title": "20% will go to children's gifts",
+    "lead": "20% of every payment will go to children's homes in Armenia, as New Year gifts for the children. We deliver the gifts from 25 to 30 December.",
     "split_t": "How {price} is split",
-    "split_gift": "New Year gifts for children without families",
-    "split_company": "The company: bank fees, servers, the live stream, taxes and our profit",
     "fund_t": "The fund right now",
     "fund_gifts": "≈ {n} gifts",
     "fund_gifts_note": "Assuming about {price} per gift",
-    "honest_t": "We're a for-profit company",
-    "honest_1": "This website is a business. You pay for a service and we make money from it.",
-    "honest_2": "The 20% isn't a donation from you and isn't a charity collection. It's our own decision to spend part of our income on children's New Year.",
-    "honest_3": "We don't say \"buy to help children\". If you take a place, take it because you want to. The children get their share either way.",
     "dec31_t": "25–30 December",
-    "dec31_d": "These are the days we bring the gifts to children who grow up without a family. Afterwards we publish what we bought and which children's homes received the gifts.",
     "bl_lead": "Are you a blogger people in Armenia trust? Come with us on 25–30 December, film the gift delivery and tell your audience. Fill in the form and we'll get in touch.",
     "bl_name": "Name",
     "bl_link": "Link to your profile",
     "bl_platform": "Platform",
     "bl_other": "Other",
-    "bl_audience": "Audience (approx.)",
     "bl_phone": "Phone (optional)",
     "bl_message": "A few words about you (optional)",
     "bl_submit": "Send application",
@@ -277,7 +265,7 @@
     "close": "Close"
   },
   "lights": {
-    "title": "All of Armenia in one place",
+    "title": "Your place on the map of Armenia",
     "meta_desc": "A digital map of Armenia with 111,111 places. Take yours, make your New Year room and burn one wish on 31 December.",
     "lead": "Armenia is divided into 111,111 plots of 500×500 m. Light yours with a tree, a glowing window, a candle or a pomegranate, and let the whole country light up by midnight.",
     "progress": "<b>{n}</b> of {total} places taken",
@@ -347,13 +335,13 @@
     "share": "Share",
     "copy": "Copy link",
     "story_t": "My place in Armenia",
-    "story_sub": "All of Armenia in one place",
+    "story_sub": "Your place on the map of Armenia",
     "left": "{n} free",
     "board_t": "Which province shines brightest",
     "how_t": "How it works",
     "s1": "Choose any free place on the map, wherever your heart says.",
     "s2": "Decorate your room and add your name if you like.",
-    "s3": "Pay once. Your place appears on the map and you can write one wish for the 31 December fire. 20% goes to gifts for children.",
+    "s3": "Pay once. Your place appears on the map and you can write one wish for the 31 December fire.",
     "only_one": "One light per plot. First come, first served.",
     "email_hint": "We'll send you the link to your place. Nothing else.",
     "map_err": "We couldn't load the places. You can still explore the map.",
@@ -368,7 +356,7 @@
     "h3_t": "Pay once, {price}",
     "also": "And to say goodbye to 2026",
     "final_t": "Let all of Armenia light up",
-    "scarce": "Only 111,111 places. Our goal is to fill them all by 25 December. If we do, the map will grow and we'll announce a new plan."
+    "scarce": "Only 111,111 places. Our goal is to fill them all by 25 December. This is only the beginning: join us, the surprises are still to come."
   },
   "room": {
     "decorate": "Decorate your room",
@@ -467,7 +455,7 @@
     "fire_go": "Now write your wish for the fire (included)"
   },
   "landing": {
-    "kicker": "New Year 2027 · {total} places",
+    "kicker": "New Year 2027",
     "cta": "Open the map",
     "cta_note": "Choose your place · {price}",
     "do_t": "What you can do",

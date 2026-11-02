@@ -58,17 +58,11 @@
       <div class="fund">
         <span class="label">{{ t('gifts.fund') }}</span>
         <span class="value" data-stat="gift_fund_amd" data-format="price">—</span>
-        <span class="sub2">{{ t('gifts.per_paper', amount=price(gift_share(p0))) }}</span>
-      </div>
-      <div class="honest">
-        <h3>{{ t('gifts.honest_t') }}</h3>
-        <p>{{ t('gifts.honest') }}</p>
       </div>
       <div class="blogger-cta">
         <div><h3>{{ t('gifts.blogger_t') }}</h3><p>{{ t('gifts.blogger_d') }}</p></div>
         <a class="btn btn-ghost" href="{{ url('gifts') }}#bloggers">{{ t('gifts.blogger_cta') }} →</a>
       </div>
-      <a class="link-arrow" href="{{ url('gifts') }}">{{ t('gifts.more') }} →</a>
     </div>
   </div>
 </section>
