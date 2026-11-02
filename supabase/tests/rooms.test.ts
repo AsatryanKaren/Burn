@@ -30,6 +30,7 @@ const lightBase = {
   text: "peace for Gyumri",
   light_icon: "pomegranate",
   light_color: "amber",
+  light_signature: "Ani",
   consent: true,
   lang: "hy",
 };

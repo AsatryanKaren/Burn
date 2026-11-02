@@ -202,8 +202,8 @@
     "message": "A few words",
     "message_ph": "May this home always be warm",
     "message_hint": "Up to 60 characters. Everyone sees it when they open your place.",
-    "signature": "Your name (optional)",
-    "signature_ph": "For example, the Petrosyan family",
+    "signature": "Your name or nickname",
+    "signature_ph": "For example, Ani",
     "pay": "Take it for {price}",
     "save": "Save my place",
     "saved_t": "Your place is saved",
@@ -233,7 +233,8 @@
       "SIGNATURE_TOO_LONG": "The signature is too long",
       "SIGNATURE_REJECTED": "We can't accept this signature",
       "TEXT_TOO_LONG": "Your words are too long: up to 60 characters",
-      "EMPTY": "Write a few words"
+      "EMPTY": "Write a few words",
+      "SIGNATURE_REQUIRED": "Add your name or nickname"
     },
     "paper_t": "This place is yours",
     "paper_line": "Your place is now on the map of Armenia.",
@@ -245,9 +246,9 @@
     "left": "{n} free",
     "how_t": "How it works",
     "s1": "Choose any free place on the map, wherever your heart says.",
-    "s2": "Decorate your room and add your name if you like.",
+    "s2": "Decorate your room and add your name or nickname.",
     "s3": "Pay once. Your place appears on the map and you can write one wish for the 31 December fire.",
-    "email_hint": "We'll send you the link to your place. Nothing else.",
+    "email_hint": "Your place is saved to this email. We'll send the link here, nothing else.",
     "map_err": "We couldn't load the places. You can still explore the map.",
     "ticker": "New place: {place}",
     "fire_cta": "Write your wish for the fire (included)",
@@ -260,12 +261,14 @@
     "h3_t": "Pay once, {price}",
     "scarce": "Only 111,111 places. Our goal is to fill them all by 25 December. This is only the beginning: join us, the surprises are still to come.",
     "soon_t": "Payments open soon",
-    "soon_d": "You'll be able to take this place soon. Until then, decorate your room and explore the map."
+    "soon_d": "You'll be able to take this place soon. Until then, decorate your room and explore the map.",
+    "email_label": "Your email",
+    "email_ph": "ani@gmail.com"
   },
   "room": {
-    "decorate_d": "Every place is a little room. Put in a tree, a sofa, a fireplace and whatever you love. Anyone who opens your place can step inside.",
+    "decorate_d": "Take a place on the map and it becomes your own New Year room. Decorate it with a tree, a sofa, a fireplace and whatever you love. Guests can step inside and send you warmth.",
     "open_editor": "Decorate the room",
-    "edit_again": "Change the room",
+    "edit_again": "Decorate the room",
     "visit": "Step inside",
     "done": "Done",
     "close": "Close",
@@ -325,8 +328,9 @@
       "party": "Party",
       "classic": "Classic"
     },
-    "edit_mine": "Edit my room",
-    "saved": "Your room is saved"
+    "edit_mine": "Decorate my room",
+    "saved": "Your room is saved",
+    "kicker_own": "Your room"
   },
   "app": {
     "tab_map": "Map",
@@ -340,7 +344,7 @@
     "top_empty": "No one has sent warmth yet. Be the first.",
     "random_room": "Step into a random room",
     "about": "About",
-    "edit": "Edit",
+    "edit": "Decorate",
     "visit": "Visit",
     "fire_t": "Your wish for the fire",
     "fire_d": "Write one wish on a paper. On 31 December all the papers burn together, live on YouTube.",
@@ -362,8 +366,10 @@
     "cta_note": "Choose your place · {price}",
     "do_t": "What you can do",
     "do1_t": "Take a place, make a room",
-    "do1_d": "Choose any free place on the map. It becomes your New Year room: decorate it and add your name if you like.",
+    "do1_d": "Choose any free place on the map. It becomes your New Year room: decorate it and add your name or nickname.",
     "do2_t": "Visit others",
-    "do2_d": "Tap any place on the map, step into other people's rooms and send them warmth."
+    "do2_d": "Tap any place on the map, step into other people's rooms and send them warmth.",
+    "mine_cta": "Enter my room",
+    "mine_note": "Your place is saved"
   }
 }

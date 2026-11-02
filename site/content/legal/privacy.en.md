@@ -1,6 +1,6 @@
 # Privacy Policy
 
-*Last updated: 1 November 2026*
+*Last updated: 2 November 2026*
 
 This page explains what data we collect on {{domain}}, why, how long we keep it and what rights you have. We collect as little as possible. We do not sell data and we do not use advertising trackers.
 
@@ -16,8 +16,8 @@ We process personal data in line with the Law of the Republic of Armenia on Prot
 |---|---|---|
 | Your wish text (up to 120 characters) | To burn it in the fire and, if you allowed it and it passed moderation, show it publicly | Only if you write a wish |
 | Your place: where it is on the map, how it looks and your room | To show your place and room on the map to visitors | Yes |
-| Your name (up to 30 characters) and a few words (up to 60 characters) on your place | To show them publicly with your place (after they pass moderation) | No (optional) |
-| Email address | To send you the link to your page and receipt, a payment link for a saved place, and the launch notification if you asked for it | No (optional) |
+| Your name or nickname (up to 30 characters) and a few words (up to 60 characters) on your place | To show them publicly with your place (after they pass moderation) | Yes |
+| Email address | To send you the link to your page and receipt, a payment link for a saved place, and the launch notification if you asked for it | Yes |
 | Language you chose | To show pages and emails in your language | Yes |
 | Order and payment status | To deliver the service, handle refunds and keep accounting records | Yes |
 | A salted hash of your IP address | To protect the service from abuse (for example, limiting how many orders can be made in a short time) | Yes |
@@ -34,7 +34,7 @@ Your personal page has a long random address that cannot be guessed. Anyone who 
 
 ## Places on the map
 
-Your place on the map is public: any visitor can tap it, open your room and see your name and words (if you added them and they were approved), the date the place was taken, the province and the nearest town. Your name and words are public by your choice, so don't put anything in them you wouldn't want others to see, and don't include other people's private data. Your email is never shown.
+Your place on the map is public: any visitor can tap it, open your room and see your name and words (once they are approved), the date the place was taken, the province and the nearest town. Your name and words are public by your choice, so don't put anything in them you wouldn't want others to see, and don't include other people's private data. Your email is never shown.
 
 A place is an illustrative cell of the map; it does not stand for your or anyone's real address.
 
@@ -68,7 +68,7 @@ We use a small number of trusted service providers, only to run the service:
 
 - **Supabase** — database and server functions. Data is stored in the European Union (Frankfurt, Germany).
 - **Vercel** — website hosting and delivery. Like any web server, it may process technical data such as your IP address in its logs.
-- **Our partner bank** — processes your card payment under its own rules and privacy policy.
+- **Ameriabank** — processes your card payment under its own rules and privacy policy.
 - **An email delivery service** — only to send the emails described above.
 - **YouTube (Google)** — hosts the live stream. If you watch the stream on YouTube or in a player embedded on our site, YouTube's own privacy policy applies and YouTube may use its own cookies.
 
@@ -101,7 +101,7 @@ You have the right to:
 - **object** to processing or **withdraw consent** at any time;
 - for EU visitors, also **restrict** processing and receive your data in a portable format.
 
-To use any of these rights, write to **{{company.email}}** from the email you used (if any) and include your order code. We reply within 24 hours and act within the time limits set by law.
+To use any of these rights, write to **{{company.email}}** from the email you used and include your order code. We reply within 24 hours and act within the time limits set by law.
 
 If you think we have violated your rights, you can complain to the Personal Data Protection Agency of the Republic of Armenia or, if you are in the EU, to the data protection authority of your country.
 

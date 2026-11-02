@@ -214,7 +214,7 @@ A second product: a night map of Armenia split into exactly **111,111 plots** of
 
 ### Edge Functions
 
-- `create-order` accepts `product: "light"` (`light_big` → `400 PRODUCT_UNAVAILABLE`) with body fields `cell_id`, `text` (message), `light_icon`, `light_color`, `light_signature` (optional), `room` (optional, see "The room"; absent or `null` = no room yet), `email`, `lang`, `consent`. Errors: `CELL_INVALID` (not an integer 0–299999, or not a map cell), `CELL_TAKEN`, `ICON_INVALID`, `COLOR_INVALID`, `SIGNATURE_TOO_LONG`, `SIGNATURE_REJECTED`, `TEXT_TOO_LONG` (for >60), `ROOM_INVALID`. For papers `room` must be absent or `null`, else `400 ROOM_NOT_ALLOWED`. `show_on_stream` is ignored for lights.
+- `create-order` accepts `product: "light"` (`light_big` → `400 PRODUCT_UNAVAILABLE`) with body fields `cell_id`, `text` (message), `light_icon`, `light_color`, `light_signature` (required: the buyer's name or nickname, 1–30), `room` (optional, see "The room"; absent or `null` = no room yet), `email` (required: it is how a buyer keeps their place), `lang`, `consent`. Errors: `SIGNATURE_REQUIRED`, `EMAIL_REQUIRED`, `CELL_INVALID` (not an integer 0–299999, or not a map cell), `CELL_TAKEN`, `ICON_INVALID`, `COLOR_INVALID`, `SIGNATURE_TOO_LONG`, `SIGNATURE_REJECTED`, `TEXT_TOO_LONG` (for >60), `ROOM_INVALID`. For papers `room` must be absent or `null`, else `400 ROOM_NOT_ALLOWED`. `show_on_stream` is ignored for lights.
 - `order-status` also returns `cell_id`, `light_icon`, `light_color`, `light_signature`, `province`, `town_index`, `room` (layout or `null`) and `fire` (the wish in the fire or `null`, 0013) for light orders.
 - `burn-wish` (below) burns the light's one wish in the fire.
 - `update-room` (below) changes a light's room.

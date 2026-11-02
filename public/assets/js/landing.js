@@ -4,6 +4,13 @@
   var A = window.APP, D = A.D, MC = window.MapCore;
   var host = document.getElementById("ltTeaser");
   if (!host || !MC) return;
+  // Someone who already has a place goes straight back to it.
+  if (Object.keys(A.store.json("myLights", {}) || {}).length) {
+    var cta = document.querySelector(".ld-banner");
+    cta.href = D.urls.lights + "#mine";
+    cta.querySelector(".ld-banner-t b").textContent = A.t("landing.mine_cta");
+    cta.querySelector(".ld-banner-t span").textContent = A.t("landing.mine_note");
+  }
   MC.loadMap(host.getAttribute("data-map")).then(function (m) {
     var wide = function () { return window.innerWidth >= 900; };
     var v = new MC.MapView(host.querySelector("canvas"), m, { lang: D.lang, labels: false, pad: 30,

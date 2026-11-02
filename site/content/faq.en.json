@@ -49,7 +49,7 @@
   },
   {
     "q": "Which cards can I use, including from abroad?",
-    "a": "Visa, Mastercard and ArCa cards accepted by our partner bank; the exact list is shown on the bank's payment page. Most foreign cards work: you are charged in AMD and your bank converts the amount, sometimes with a small fee. Cards issued in Russia generally don't work with Armenian banks; in that case a relative or friend in Armenia can pay for you using the link to your order. Idram may be added later."
+    "a": "Visa, Mastercard and ArCa cards accepted by Ameriabank; the exact list is shown on Ameriabank's payment page. Most foreign cards work: you are charged in AMD and your bank converts the amount, sometimes with a small fee. Cards issued in Russia generally don't work with Armenian banks; in that case a relative or friend in Armenia can pay for you using the link to your order."
   },
   {
     "q": "Where does the 20% go? Are you a charity?",
@@ -65,6 +65,6 @@
   },
   {
     "q": "What happens to my data?",
-    "a": "We keep only what we need: your wish, your room, your name and words if you added them, your email if you left it, and the payment status. We never see your card number, store only a one-way hash of your IP address, don't sell data and don't use ad trackers. You can ask us to delete your text at any time by writing to {{company.email}}."
+    "a": "We keep only what we need: your wish, your room, your name or nickname and words, your email, and the payment status. We never see your card number, store only a one-way hash of your IP address, don't sell data and don't use ad trackers. You can ask us to delete your text at any time by writing to {{company.email}}."
   }
 ]

@@ -20,7 +20,7 @@ We are a for-profit company registered in the Republic of Armenia. In these term
 
 {{brand.name}} is a New Year project that brings people together in one place: a digital map of Armenia with a limited number of places. On it you can buy one digital service: **a place on the map**. One payment gets you all of this:
 
-- **Your place on the map.** One free place on the [Light up Armenia](/en/map/) New Year map of Armenia, with your name and a few words if you like (see section 7).
+- **Your place on the map.** One free place on the [Light up Armenia](/en/map/) New Year map of Armenia, with your name or nickname and a few words (see section 7).
 - **Your room.** On your place you make your own New Year room: a little 3D room that you decorate and can change later at any time. Anyone can open your place and look at your room.
 - **One wish for the fire.** You write one wish (up to 120 characters), once. On 31 December 2026 all the wishes burn together, in a single day, in a shared digital fire that is broadcast live on our YouTube channel and shown on the website. There is no live stream before 31 December.
 
@@ -42,10 +42,9 @@ Prices are final and shown in Armenian drams (AMD). The price you see on the ord
 
 ## 4. Payment
 
-- You pay by bank card on the secure payment page of our partner bank. We never see, receive or store your full card number or CVV code.
+- You pay by bank card on the secure payment page of Ameriabank. We never see, receive or store your full card number or CVV code.
 - All payments are made in AMD. If your card is in another currency, your card issuer converts the amount and may charge its own fee.
 - An order counts as paid only after the bank confirms the payment to us directly.
-- Other payment methods (for example Idram) may be added later; if so, they will be shown on the order page.
 
 Details are on the [Delivery and Payment](/en/delivery/) page.
 
@@ -84,7 +83,7 @@ You are responsible for what you write. Do not write anything you would not want
 
 - you choose how your place looks on the map;
 - you decorate your room, for example with a tree, a sofa or a fireplace;
-- optionally, you add your name (up to 30 characters) and a few words (up to 60 characters).
+- you add your name or nickname (up to 30 characters), a few words (up to 60 characters) and your email.
 
 You can change your room later at any time. Anyone who taps your place can open your room, look at it and send you warmth.
 

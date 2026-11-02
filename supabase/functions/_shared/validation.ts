@@ -154,7 +154,7 @@ export interface LightOrderInput {
 export type CreateOrderInput = OrderInput | LightOrderInput;
 
 export interface OrderValidationOptions {
-  /** True when payments are disabled: we need the email to send the link at launch. */
+  /** True for new orders: the email is how a buyer keeps their place. */
   emailRequired: boolean;
 }
 
@@ -251,7 +251,7 @@ export function validateOrderInput(body: unknown, opts: OrderValidationOptions):
 }
 
 /**
- * Light fields: message 1–60, plot, icon, colour, optional signature ≤ 30,
+ * Light fields: message 1–60, plot, icon, colour, name or nickname 1–30,
  * optional room (validateRoom; absent or null = no room). show_on_stream is ignored.
  */
 function validateLightFields(
@@ -274,12 +274,10 @@ function validateLightFields(
   const light_color = parseLightColor(b.light_color);
   if (light_color === null) return fail(ErrorCode.COLOR_INVALID, "Unknown light colour.");
 
-  let light_signature: string | null = null;
-  if (!isEmptyOptional(b.light_signature)) {
-    light_signature = normalizeText(b.light_signature);
-    if (charLength(light_signature) > SIGNATURE_MAX) {
-      return fail(ErrorCode.SIGNATURE_TOO_LONG, `Signature must be at most ${SIGNATURE_MAX} characters.`);
-    }
+  const light_signature = isEmptyOptional(b.light_signature) ? "" : normalizeText(b.light_signature);
+  if (!light_signature) return fail(ErrorCode.SIGNATURE_REQUIRED, "Name or nickname is required.");
+  if (charLength(light_signature) > SIGNATURE_MAX) {
+    return fail(ErrorCode.SIGNATURE_TOO_LONG, `Signature must be at most ${SIGNATURE_MAX} characters.`);
   }
 
   let room: RoomLayout | null = null;

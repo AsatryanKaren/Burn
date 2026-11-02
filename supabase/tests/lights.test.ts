@@ -16,6 +16,7 @@ const base = {
   text: "peace for Gyumri",
   light_icon: "pomegranate",
   light_color: "amber",
+  light_signature: "Ani",
   consent: true,
   lang: "hy",
 };
@@ -53,9 +54,9 @@ test("valid light order", () => {
       lang: "hy",
     });
   }
-  const big = validateOrderInput({ ...base, product: "light_big", cell_id: "0", light_signature: "" }, opt);
+  const big = validateOrderInput({ ...base, product: "light_big", cell_id: "0" }, opt);
   assert.ok(big.ok && big.value.product === "light_big");
-  assert.ok(big.ok && "cell_id" in big.value && big.value.cell_id === 0 && big.value.light_signature === null);
+  assert.ok(big.ok && "cell_id" in big.value && big.value.cell_id === 0 && big.value.light_signature === "Ani");
 });
 
 test("light message is 1..60", () => {
@@ -121,4 +122,12 @@ test("light message moderation is the same as papers", () => {
   assert.equal(moderate({ text: "fuck 2026", light_signature: "Aram" }).decision, "rejected");
   assert.equal(moderate({ text: "for Tigran", light_signature: null }).reason, "auto:name");
   assert.equal(initialModeration(moderate({ text: "light", light_signature: "Karen" }), true), "approved");
+});
+
+test("a light needs a name or nickname and an email", () => {
+  const { light_signature: _omit, ...noName } = base;
+  assert.equal(errCode(validateOrderInput(noName, opt)), "SIGNATURE_REQUIRED");
+  assert.equal(errCode(validateOrderInput({ ...base, light_signature: "   " }, opt)), "SIGNATURE_REQUIRED");
+  assert.equal(errCode(validateOrderInput(base, { emailRequired: true })), "EMAIL_REQUIRED");
+  assert.ok(validateOrderInput({ ...base, email: "ani@mail.am" }, { emailRequired: true }).ok);
 });

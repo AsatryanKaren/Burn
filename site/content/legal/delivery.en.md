@@ -25,9 +25,9 @@ Prices are final, shown in Armenian drams (AMD). There are no subscriptions and 
 This is a symbolic digital marker: you do not acquire any land, property or right to a real place. The borders on the map are approximate and illustrative only (see section 7 of the [Terms of Service](/en/terms/)).
 
 1. **While you pay**, the place you chose is reserved for you for 30 minutes.
-2. **Right after payment** your place appears on the map and you are taken to your personal page, with a link to your place. If you left an email, we also send you the link.
+2. **Right after payment** your place appears on the map and you are taken to your personal page, with a link to your place. We also send the link to your email.
 3. **Your room** is yours to decorate. You can change it later at any time.
-4. **Any visitor** can tap your place, open your room and look at it, send you warmth, and see your name and words (if you added them and they were approved), the date, the province and the nearest town. Your email is never shown.
+4. **Any visitor** can tap your place, open your room and look at it, send you warmth, and see your name and words (once they are approved), the date, the province and the nearest town. Your email is never shown.
 
 **What counts as delivered:** your place has appeared on the map and your personal page is available.
 
@@ -57,8 +57,7 @@ You can already write your wish for a saved place. It burns on 31 December if yo
 
 ## Payment methods
 
-- **Bank cards** — Visa, Mastercard and ArCa cards, as accepted by our partner bank. The exact list is shown on the bank's payment page.
-- **Idram** may be added later. If so, it will appear on the order page.
+- **Bank cards** — Visa, Mastercard and ArCa cards, as accepted by Ameriabank. The exact list is shown on Ameriabank's payment page.
 
 ## How payment works
 
@@ -77,7 +76,7 @@ Cards issued in Russia generally do not work with Armenian banks. If you are in 
 
 ## Payment confirmation and receipt
 
-After payment you see a confirmation on your personal page and, if you left an email, receive it by email. Your bank also shows the payment in your card statement.
+After payment you see a confirmation on your personal page and receive it by email. Your bank also shows the payment in your card statement.
 
 ## Questions
 

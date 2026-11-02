@@ -67,10 +67,8 @@
   <nav class="menu-inner" aria-label="{{ t('nav.menu') }}">
     <a href="{{ url('home') }}">{{ t('app.about') }}</a>
     <a href="{{ url('map') }}">{{ t('lights.title') }}</a>
-    <a href="{{ url('map') }}#fire">{{ t('hero.c1_t') }}</a>
     <a href="{{ url('gifts') }}">{{ t('nav.gifts') }}</a>
     <a href="{{ url('live') }}">{{ t('nav.live') }}</a>
-    <a class="btn btn-fire" href="{{ url('map') }}">{{ t('landing.cta') }}</a>
     <div class="lang menu-lang" role="group" aria-label="{{ t('nav.language') }}">
       {% for l in langs %}
       <a href="{{ alternates[l] }}" hreflang="{{ l }}" lang="{{ l }}" {% if l == lang %}aria-current="true"{% endif %} data-lang-link>{{ {'hy':'Հայերեն','en':'English','ru':'Русский'}[l] }}</a>

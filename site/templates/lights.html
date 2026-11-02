@@ -101,8 +101,8 @@
       </div>
 
       <div class="field">
-        <label for="lEmail">{{ t('burn.email_label') }}</label>
-        <input class="input" id="lEmail" type="email" inputmode="email" autocomplete="email" placeholder="{{ t('burn.email_ph') }}">
+        <label for="lEmail">{{ t('lights.email_label') }}</label>
+        <input class="input" id="lEmail" type="email" inputmode="email" autocomplete="email" placeholder="{{ t('lights.email_ph') }}">
         <p class="hint">{{ t('lights.email_hint') }}</p>
       </div>
       <label class="check"><input type="checkbox" id="lConsent"><span>{{ t('burn.consent', terms=url('terms'), privacy=url('privacy')) }}</span></label>
@@ -117,7 +117,8 @@
     <div data-view="saved" hidden>
       <h2 class="h-sub">{{ t('lights.saved_t') }}</h2>
       <p class="muted" id="savedText"></p>
-      <button type="button" class="btn btn-fire" id="savedEdit">✎ {{ t('room.edit_mine') }}</button>
+      <button type="button" class="btn btn-fire btn-block" id="savedEnter">{{ t('landing.mine_cta') }} →</button>
+      <button type="button" class="btn btn-ghost" id="savedEdit">✎ {{ t('room.edit_mine') }}</button>
       <button type="button" class="btn btn-paper" id="savedFire">🔥 {{ t('app.fire_go') }}</button>
       <a class="link-arrow" id="savedLink" href="#">{{ t('lights.your_light') }} →</a>
     </div>

@@ -37,6 +37,24 @@
     json: function (k, dflt) { try { var v = store.get(k); return v ? JSON.parse(v) : dflt; } catch (e) { return dflt; } }
   };
 
+  /* ---------- the way back to my room: a header item and a menu item once a place is taken ---------- */
+  function showMyRoom() {
+    if (document.querySelector(".topbar-mine") || !Object.keys(store.json("myLights", {}) || {}).length) return;
+    var label = get("app.tab_mine"), href = D.urls.lights + "#mine";
+    document.body.classList.add("has-room");
+    var tools = document.querySelector(".topbar-inner .tools");
+    if (tools) {
+      var btn = document.createElement("a"); btn.className = "btn btn-fire btn-sm topbar-mine"; btn.href = href; btn.textContent = label;
+      tools.insertBefore(btn, tools.firstChild);
+    }
+    var menu = document.querySelector(".menu-inner");
+    if (menu && menu.children[1]) {
+      var a = document.createElement("a"); a.href = href; a.textContent = label;
+      menu.insertBefore(a, menu.children[2]);
+    }
+  }
+  document.addEventListener("DOMContentLoaded", showMyRoom);
+
   /* ---------- API ---------- */
   function withTimeout(promise, ms) {
     return new Promise(function (resolve, reject) {
@@ -250,7 +268,7 @@
   if (inApp) document.documentElement.classList.add("in-app");
 
   window.APP = {
-    D: D, store: store, t: t, fmt: fmt, price: price, esc: esc, api: api,
+    D: D, store: store, t: t, fmt: fmt, price: price, esc: esc, showMyRoom: showMyRoom, api: api,
     loadStats: loadStats, paintStats: paintStats, mountScene: mountScene, toast: toast, copy: copy,
     shareStory: shareStory, shareCanvas: shareCanvas, reduceMotion: reduceMotion, inApp: inApp,
     safePaymentUrl: safePaymentUrl, postForm: postForm

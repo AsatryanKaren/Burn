@@ -43,7 +43,7 @@ Deno.serve(browserEndpoint(["POST"], cfg.cors, async (req) => {
   const retired = checkProductNotRetired(body);
   if (!retired.ok) throw new ApiError(400, retired.code, retired.message);
 
-  const v = validateOrderInput(body, { emailRequired: disabled });
+  const v = validateOrderInput(body, { emailRequired: true });
   if (!v.ok) throw new ApiError(400, v.code, v.message);
   const input = v.value;
 

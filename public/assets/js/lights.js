@@ -43,7 +43,7 @@
     var ids = Object.keys(mine()).map(Number).filter(function (id) { return MC.isCell(m, id); });
     $("mineEmpty").hidden = ids.length > 0;
     $("mineList").innerHTML = ids.map(function (id) {
-      return row(id, '<button type="button" class="btn btn-fire btn-sm" data-act="edit">✎ ' + esc(t("app.edit")) + '</button><button type="button" class="btn btn-ghost btn-sm" data-act="visit">' + esc(t("app.visit")) + "</button>");
+      return row(id, '<button type="button" class="btn btn-ghost btn-sm" data-act="edit">✎ ' + esc(t("app.edit")) + '</button><button type="button" class="btn btn-fire btn-sm" data-act="visit">' + esc(t("app.visit")) + "</button>");
     }).join("");
   }
   function renderTop() {
@@ -63,6 +63,7 @@
     });
   });
   $("randomRoom").addEventListener("click", function () { nextRoom(); });
+  window.addEventListener("hashchange", function () { if (location.hash === "#mine") openTab("mine"); });
 
   /* ---------- the fire, inside the map: every place comes with one wish, no extra payment ---------- */
   var fForm = $("fireForm");
@@ -171,9 +172,11 @@
   function visit(id, data) {
     var go = function (c) {
       c = c || {};
+      var own = !!mine()[id];
       window.RoomUI.open({
-        mode: "view", cellId: id, layout: c.room || null, title: placeTitle(id), message: c.message || "", signature: c.signature || "",
-        warmth: c.warmth || 0, visits: c.visits || 0, onNext: nextRoom
+        mode: "view", cellId: id, layout: c.room || (mine()[id] ? loadRoom(id) : null), title: placeTitle(id), message: c.message || "", signature: c.signature || "",
+        warmth: c.warmth || 0, visits: c.visits || 0, own: own, kicker: own ? t("room.kicker_own") : null,
+        nextLabel: own ? "✎ " + t("room.edit_mine") : null, onNext: own ? function () { editMine(id, c.room); } : nextRoom
       });
     };
     if (data) go(data);
@@ -254,9 +257,10 @@
     var msg = clean($("lMsg").value), em = clean($("lEmail").value);
     if (!msg) return ["EMPTY", $("lMsg")];
     if (msg.length > 60) return ["TEXT_TOO_LONG", $("lMsg")];
+    if (!clean($("lSig").value)) return ["SIGNATURE_REQUIRED", $("lSig")];
     if (clean($("lSig").value).length > 30) return ["SIGNATURE_TOO_LONG", $("lSig")];
-    if (!em && !D.paymentsOpen) return ["EMAIL_REQUIRED", $("lEmail")];
-    if (em && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em)) return ["EMAIL_INVALID", $("lEmail")];
+    if (!em) return ["EMAIL_REQUIRED", $("lEmail")];
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em)) return ["EMAIL_INVALID", $("lEmail")];
     if (!$("lConsent").checked) return ["CONSENT_REQUIRED", $("lConsent")];
     return null;
   }
@@ -279,6 +283,7 @@
     } });
   }
   $("litEdit").addEventListener("click", function () { editMine(state.id, state.visit && state.visit.id === state.id && state.visit.raw ? state.visit.raw.room : null); });
+  $("savedEnter").addEventListener("click", function () { visit(state.savedId, state.savedData); });
   $("savedEdit").addEventListener("click", function () { editMine(state.savedId, null); });
   $("savedFire").addEventListener("click", function () { openTab("fire"); });
 
@@ -291,19 +296,20 @@
   }
   form.addEventListener("submit", function (e) {
     e.preventDefault();
-    if (!D.paymentsOpen || state.busy || !MC.isCell(m, state.id)) return;
+    if ($("lBuy").hidden || state.busy || !MC.isCell(m, state.id)) return;
     var bad = validate();
     if (bad) { $("lErr").textContent = errText(bad[0]); bad[1].focus(); return; }
     $("lErr").textContent = "";
     var body = {
       product: "light", cell_id: state.id, text: clean($("lMsg").value),
-      light_icon: val("icon"), light_color: val("color"), light_signature: clean($("lSig").value) || null,
-      email: clean($("lEmail").value) || null, lang: lang, consent: true, room: loadRoom(state.id)
+      light_icon: val("icon"), light_color: val("color"), light_signature: clean($("lSig").value),
+      email: clean($("lEmail").value), lang: lang, consent: true, room: loadRoom(state.id)
     };
     var id = state.id;
     setBusy(true);
     A.api.fn("create-order", body).then(function (res) {
-      remember(res.code); setMine(id, res.code); state.savedId = id;
+      remember(res.code); setMine(id, res.code); state.savedId = id; A.showMyRoom();
+      state.savedData = { room: body.room, message: body.text, signature: body.light_signature };
       var pay = res.payment || { mode: "disabled" };
       if ((pay.mode === "redirect" || pay.mode === "mock") && A.safePaymentUrl(pay.url)) {
         try { sessionStorage.setItem("justPaid", res.code); } catch (e) {}

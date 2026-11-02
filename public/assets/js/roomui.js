@@ -1,5 +1,5 @@
 /* The room overlay: decorate your plot's room, or step into someone else's.
-   RoomUI.open({ mode: "edit"|"view", layout, cellId, title, kicker, message, signature, warmth, visits, onDone(layout, imageUrl), onNext() })
+   RoomUI.open({ mode: "edit"|"view", layout, cellId, title, kicker, message, signature, warmth, visits, own, nextLabel, onDone(layout, imageUrl), onNext() })
    three.js and room.js are loaded only when a room is first opened. */
 (function () {
   "use strict";
@@ -106,6 +106,8 @@
     $("rmTitle").textContent = o.title || "";
     $("rmDone").hidden = !edit; $("rmDock").hidden = !edit; $("rmSel").hidden = true;
     $("rmVisit").hidden = edit; $("rmNext").hidden = !o.onNext;
+    $("rmWarm").hidden = !!o.own;
+    $("rmNext").textContent = o.nextLabel || t("room.next") + " →";
     var hasMsg = !edit && (o.message || o.signature);
     $("rmMsg").hidden = !hasMsg;
     if (hasMsg) { $("rmMsgText").textContent = o.message || ""; $("rmMsgSig").textContent = o.signature ? t("lights.lit_by", { name: o.signature }) : ""; }
