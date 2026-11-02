@@ -6,15 +6,15 @@
 
 ## What you buy
 
-There is one thing to buy, for one payment of 500 AMD.
+There is one thing to buy, for one payment of 600 AMD.
 
 | What you buy | Price | Includes |
 |---|---|---|
-| A place on the map with a room and one wish | 500 AMD | One free place of your choice on the [Light up Armenia](/en/map/) map: one of 111,111 places of 500×500 m each. Your own 3D New Year room on it, which you decorate and can change later; anyone can open your place and look at your room. If you like, your name (up to 30 characters) and a few words (up to 60 characters). One wish (up to 120 characters), written once, that burns together with all the others in a shared digital fire on 31 December, live on YouTube and on the website. Personal page, plus a story image to share. |
+| A place on the map with a room and one wish | 600 AMD | One free place of your choice on the [Light up Armenia](/en/map/) map: one of 111,111 places of 500×500 m each. Your own 3D New Year room on it, which you decorate and can change later; anyone can open your place and look at your room. If you like, your name (up to 30 characters) and a few words (up to 60 characters). One wish (up to 120 characters), written once, that burns together with all the others in a shared digital fire on 31 December, live on YouTube and on the website. Personal page, plus a story image to share. |
 
 The wish is included in the price: there is no extra payment for it. Each place has exactly one wish.
 
-The map, the rooms and the fire are computer animations; no real paper is burned. From every 500 AMD payment, 100 AMD (20%) goes to New Year gifts for children in Armenia who grow up without a family.
+The map, the rooms and the fire are computer animations; no real paper is burned. From every 600 AMD payment, 120 AMD (20%) goes to New Year gifts for children in Armenia who grow up without a family.
 
 Prices are final, shown in Armenian drams (AMD). There are no subscriptions and no hidden charges: you pay once per order.
 

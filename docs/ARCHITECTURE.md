@@ -20,17 +20,17 @@ Languages: Armenian (`hy`, default, at `/`), English (`/en/`), Russian (`/ru/`).
 ## Money rules
 
 - Every price is an integer in AMD. Prices live in `site/config/site.json` (frontend display) **and** in the `products` table (source of truth for charging). The server never trusts a price from the browser.
-- **One price (since migration 0008): everything costs 500 AMD.** Only two products are sold:
+- **One price (migration 0008, 600 AMD since 0014): everything costs 600 AMD.** Only two products are sold:
 
   | code | price | what |
   |---|---|---|
-  | `burn` | 500 | A paper burned in the fire |
-  | `light` | 500 | A light on the map ("Light up Armenia") |
+  | `burn` | 600 | A paper burned in the fire |
+  | `light` | 600 | A light on the map ("Light up Armenia") |
 
-  **Since migration 0013 only `light` can be ordered**: one payment (500 AMD) buys a plot with its room **and exactly one wish burned in the fire** (`POST burn-wish`, see "Wish in the fire"). No separate payment for burning, no second wish for the same light. Every paper product (`burn`, `burn_wish`, `gift`, `midnight`) is retired for new orders: `create-order` answers `400 PRODUCT_RETIRED`. Existing paper orders keep working (start-payment, bank callbacks, the fire feed); the `burn` row stays `active` for them.
+  **Since migration 0013 only `light` can be ordered**: one payment (600 AMD) buys a plot with its room **and exactly one wish burned in the fire** (`POST burn-wish`, see "Wish in the fire"). No separate payment for burning, no second wish for the same light. Every paper product (`burn`, `burn_wish`, `gift`, `midnight`) is retired for new orders: `create-order` answers `400 PRODUCT_RETIRED`. Existing paper orders keep working (start-payment, bank callbacks, the fire feed); the `burn` row stays `active` for them.
 
   `burn_wish`, `gift`, `midnight` and `light_big` are **no longer sold**: their rows stay in `products` with `active = false` (old orders reference them). `create-order` and `start-payment` answer `400 PRODUCT_UNAVAILABLE` for an inactive product. Their code paths (wish, recipient, big light) still exist but are unreachable while the rows are inactive.
-- **20% of every paid amount** goes to the New Year gift fund for children in Armenian orphanages (100 AMD per 500 AMD order). It is recorded per payment in `gift_ledger` at the moment the payment is confirmed, rounded down to whole AMD.
+- **20% of every paid amount** goes to the New Year gift fund for children in Armenian orphanages (120 AMD per 600 AMD order). It is recorded per payment in `gift_ledger` at the moment the payment is confirmed, rounded down to whole AMD.
 - We are a for-profit company and say so. The 20% is a choice we made, not the business model.
 
 ## Security rules (non-negotiable)
@@ -178,7 +178,7 @@ A second product: a night map of Armenia split into exactly **111,111 plots** of
 
 | code | price | what |
 |---|---|---|
-| `light` | 500 | One plot with a light |
+| `light` | 600 | One plot with a light |
 | `light_big` | — | **Not sold** (inactive since 0008). Was: same plot, a large glowing light. The code path (`big` in `get_map`/`get_cell`) stays and is always `0`/`false` for new lights. |
 
 ### Data
@@ -294,7 +294,7 @@ Frontend: call `visit` once when a room opens; show `warmth`/`visits` from `get_
 
 ### Wish in the fire (migration 0013)
 
-One payment (a `light`, 500 AMD) includes **exactly one wish burned in the shared fire** (the same fire and counter as the papers). The buyer writes it after paying — or already while the order is saved before payments open (`awaiting_launch`); such a wish is not public until the order is paid. No separate payment, no second wish for the same light.
+One payment (a `light`, 600 AMD) includes **exactly one wish burned in the shared fire** (the same fire and counter as the papers). The buyer writes it after paying — or already while the order is saved before payments open (`awaiting_launch`); such a wish is not public until the order is paid. No separate payment, no second wish for the same light.
 
 Data: `fire_wishes(order_id pk → orders, text 1–120, show_on_stream bool default true, lang, moderation pending|approved|hidden|rejected default pending, moderation_reason, burn_number int unique from burn_number_seq, created_at)`. RLS on, no policies, service role only. Service-role RPC `burn_wish(p_code, p_text, p_show, p_lang, p_moderation, p_reason)` → `{ ok: true, already, burn_number } | { ok: false, error: "ORDER_NOT_FOUND" | "ORDER_NOT_LIGHT" | "ORDER_NOT_PAID" | "INVALID_ARGS" }` (locks the order row).
 

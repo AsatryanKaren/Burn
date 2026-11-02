@@ -160,6 +160,6 @@ test("only active products are sellable (create-order, start-payment)", () => {
   assert.equal(missing.ok ? null : missing.code, "PRODUCT_UNAVAILABLE");
 });
 
-test("one price: 500 AMD gives 100 AMD to the gift fund", () => {
-  assert.equal(giftShareAmd(500), 100);
+test("one price: 600 AMD gives 120 AMD to the gift fund", () => {
+  assert.equal(giftShareAmd(600), 120);
 });

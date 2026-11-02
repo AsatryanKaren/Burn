@@ -34,9 +34,9 @@ The map, the rooms and the fire are computer animations. No physical paper is bu
 
 | What you buy | Price | What you get |
 |---|---|---|
-| A place on the map with a room and one wish | 500 AMD | The free place you chose, your own New Year room on it, and one wish that burns in the fire on 31 December. Personal page, plus a story image to share. |
+| A place on the map with a room and one wish | 600 AMD | The free place you chose, your own New Year room on it, and one wish that burns in the fire on 31 December. Personal page, plus a story image to share. |
 
-There are no other products or options. Every payment is 500 AMD, of which 100 AMD (20%) goes to the children's gift fund (see section 10).
+There are no other products or options. Every payment is 600 AMD, of which 120 AMD (20%) goes to the children's gift fund (see section 10).
 
 Prices are final and shown in Armenian drams (AMD). The price you see on the order page before payment is the price you pay. We may change prices for future orders; this does not affect orders already paid.
 
@@ -80,7 +80,7 @@ You are responsible for what you write. Do not write anything you would not want
 
 ## 7. Your place and your room
 
-[Light up Armenia](/en/map/) is a digital map of Armenia with a limited number of places: 111,111, each 500×500 m (Lake Sevan is not divided into places). Our goal is to fill all of them before 25 December. When every place on the current map is taken, there are no free places left. For 500 AMD you choose one free place and make it yours:
+[Light up Armenia](/en/map/) is a digital map of Armenia with a limited number of places: 111,111, each 500×500 m (Lake Sevan is not divided into places). Our goal is to fill all of them before 25 December. When every place on the current map is taken, there are no free places left. For 600 AMD you choose one free place and make it yours:
 
 - you choose how your place looks on the map;
 - you decorate your room, for example with a tree, a sofa or a fireplace;
@@ -119,7 +119,7 @@ You get a full refund if we fail to deliver the service (for example, your place
 
 ## 10. The 20% for children's gifts
 
-From every 500 AMD payment we set aside 100 AMD (20%) for the gift fund. With this money we buy New Year gifts for children in Armenia who grow up without a family, in children's homes, and deliver them from 25 to 30 December 2026.
+From every 600 AMD payment we set aside 120 AMD (20%) for the gift fund. With this money we buy New Year gifts for children in Armenia who grow up without a family, in children's homes, and deliver them from 25 to 30 December 2026.
 
 - This is our own decision as a company. It is **not** a charity collection, **not** a donation made by you and **not** tax-deductible. You are paying for a digital service; we choose to spend part of our revenue this way.
 - For transparency, bloggers trusted in Armenia can register through the form on the [20% for gifts](/en/gifts/) page to take part in delivering the gifts. Registering is free and is not an order.

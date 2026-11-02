@@ -43,15 +43,15 @@
       }
       if (path === "/functions/v1/create-order") {
         var code = "demo" + Math.random().toString(36).slice(2, 12);
-        store[code] = Object.assign({ code: code, status: "awaiting_launch", amount_amd: 500, created_at: new Date().toISOString() }, body);
+        store[code] = Object.assign({ code: code, status: "awaiting_launch", amount_amd: 600, created_at: new Date().toISOString() }, body);
         save();
-        return json({ code: code, amount_amd: 500, status: "awaiting_launch", payment: { mode: "disabled" } });
+        return json({ code: code, amount_amd: 600, status: "awaiting_launch", payment: { mode: "disabled" } });
       }
       if (path === "/functions/v1/order-status") {
         var c = (url.match(/code=([^&]+)/) || [])[1], ord = store[c];
         if (!ord) return json({ error: { code: "NOT_FOUND" } }, 404);
         // In the preview a saved order shows as paid, so you can see the result page.
-        return json(Object.assign({}, ord, { status: "paid", burn_number: ord.cell_id == null ? 1285 : null, gift_share_amd: 100 }));
+        return json(Object.assign({}, ord, { status: "paid", burn_number: ord.cell_id == null ? 1285 : null, gift_share_amd: 120 }));
       }
       if (path === "/functions/v1/room-warmth") {
         if (body.action === "warm") warm[body.cell_id] = (warm[body.cell_id] || 0) + 1;

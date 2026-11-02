@@ -20,6 +20,7 @@ supabase/
     0011_room_warmth.sql      room_stats + room_warmth_log, room_add_warmth/room_add_visit; get_cell gains `warmth`/`visits`, get_map gains `warm`
     0012_map_packed.sql       get_map: `lit`/`held` arrays → base64 `lit_packed`/`held_packed`; index cell_holds_open_idx
     0013_fire_wish.sql        fire_wishes (one wish in the fire per light), burn_wish, renumber trigger; get_fire_feed/get_public_stats/admin_list_orders gain wishes; admin_moderate_wish
+    0014_price_600.sql        one price: burn + light at 600 AMD
   functions/
     _shared/                  shared code (see "Code layout")
     create-order/  order-status/  start-payment/  update-room/  room-warmth/  burn-wish/  join-waitlist/  join-bloggers/
@@ -29,12 +30,12 @@ supabase/
 
 ## Products and prices
 
-One price since `0008_single_price`: **500 AMD**, 20% (100 AMD) to the gift fund.
+One price since `0008_single_price`, **600 AMD** since `0014_price_600`: 20% (120 AMD) to the gift fund.
 
 | code | price | active | notes |
 |---|---|---|---|
-| `burn` | 500 | yes (row) | a paper burned in the fire. **Retired for new orders since 0013**: `create-order` answers `400 PRODUCT_RETIRED` for every paper product. The row stays `active` so saved/pending paper orders can still be paid (`start-payment`, bank callbacks) |
-| `light` | 500 | yes | a light on the map; **includes exactly one wish burned in the fire** (`burn-wish`, 0013) — no separate payment, no second wish |
+| `burn` | 600 | yes (row) | a paper burned in the fire. **Retired for new orders since 0013**: `create-order` answers `400 PRODUCT_RETIRED` for every paper product. The row stays `active` so saved/pending paper orders can still be paid (`start-payment`, bank callbacks) |
+| `light` | 600 | yes | a light on the map; **includes exactly one wish burned in the fire** (`burn-wish`, 0013) — no separate payment, no second wish |
 | `burn_wish` | 1900 | **no** | not sold; row kept for old orders |
 | `gift` | 900 | **no** | not sold; row kept for old orders |
 | `midnight` | 2900 | **no** | not sold; row kept for old orders |
