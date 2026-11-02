@@ -815,9 +815,6 @@ body.is-app .lt-hint { display: none; }
 .ls-cap p:last-child { margin: 4px 0 0; color: var(--paper); font-size: 15px; }
 .ls-ticker { margin: 0; padding: 10px 16px 14px; min-height: 42px; font-size: 15px; color: var(--paper); opacity: 0; transform: translateY(6px); transition: opacity .4s, transform .4s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ls-ticker.on { opacity: 1; transform: none; }
-.ls-cta { display: flex; align-items: baseline; gap: 10px; justify-content: center; padding: 14px 18px; border-radius: 18px; color: #1c0e05; background: linear-gradient(180deg, #ffd27a, #ff8a3d); font-size: 17px; box-shadow: 0 18px 40px -16px rgba(255,120,40,.8); }
-.ls-cta b { font-family: var(--serif); font-size: 1.5rem; }
-.stream-mode .ls-cta { font-size: 22px; } .stream-mode .ls-cta b { font-size: 2rem; }
 /* the fire moves left to make room for the map */
 @media (min-width: 1100px) { .page-live .scene-fixed { right: 30vw; } .stream-mode .scene-fixed { right: 36vw; } }
 @media (min-width: 1100px) { .page-live .now-burning { left: 35vw; } .stream-mode .now-burning { left: 32vw; top: 38%; } .stream-mode .now-burning .label { font-size: 16px; } }
