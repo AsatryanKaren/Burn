@@ -45,7 +45,7 @@ Since 0013 the only product a new order can be is `light` (papers → `400 PRODU
 
 ## Current state (2026-10-27)
 
-Outdated, kept for the migration notes: see "Live state (29 Oct 2026)" at the bottom of this file.
+Outdated, kept for the migration notes: see "Live state (2 Nov 2026)" at the bottom of this file.
 
 | Item | State |
 |---|---|
@@ -345,9 +345,10 @@ select setval('public.burn_number_seq', 1, false);
 
 (`provider_order_num_seq` may stay where it is; gaps are fine.)
 
-## Live state (29 Oct 2026)
+## Live state (2 Nov 2026)
 
-Migrations 0003 → 0013 are applied to the live project `maqcaowpfhmqcavboszy`, in order.
+Migrations 0003 → 0014 are applied to the live project `maqcaowpfhmqcavboszy`, in order
+(0014 on 2 Nov, verified: `burn` and `light` at 600).
 0004 was applied in its compact form (`tools/cells_seed_compact.sql`: the same rows decoded
 from the map's run-length grid, small enough for the API). Verified after applying:
 111,111 rows and md5 of `string_agg(id:province:town_index order by id)` =
