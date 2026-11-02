@@ -291,7 +291,7 @@
   }
   form.addEventListener("submit", function (e) {
     e.preventDefault();
-    if (state.busy || !MC.isCell(m, state.id)) return;
+    if (!D.paymentsOpen || state.busy || !MC.isCell(m, state.id)) return;
     var bad = validate();
     if (bad) { $("lErr").textContent = errText(bad[0]); bad[1].focus(); return; }
     $("lErr").textContent = "";

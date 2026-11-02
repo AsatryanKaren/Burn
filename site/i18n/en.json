@@ -100,7 +100,8 @@
     "number": "No. {n}",
     "burned_label": "wishes in the fire",
     "room_tour": "Visiting a room",
-    "new_light": "New place"
+    "new_light": "New place",
+    "map_label": "The map of Armenia"
   },
   "faq": {
     "title": "Questions",
@@ -355,7 +356,9 @@
     "h3_t": "Pay once, {price}",
     "also": "And to say goodbye to 2026",
     "final_t": "Let all of Armenia light up",
-    "scarce": "Only 111,111 places. Our goal is to fill them all by 25 December. This is only the beginning: join us, the surprises are still to come."
+    "scarce": "Only 111,111 places. Our goal is to fill them all by 25 December. This is only the beginning: join us, the surprises are still to come.",
+    "soon_t": "Payments open soon",
+    "soon_d": "You'll be able to take this place soon. Until then, decorate your room and explore the map."
   },
   "room": {
     "decorate": "Decorate your room",

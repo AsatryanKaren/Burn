@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% block title %}{{ t('meta.lights_title') }} · {{ brand }}{% endblock %}
 {% block description %}{{ t('lights.meta_desc') }}{% endblock %}
-{% block og_image %}og-lights-{{ lang }}.jpg{% endblock %}
 {% block bodyclass %}is-app{% endblock %}
 {% block main %}
 {% set lp = cfg.light_products %}{% set p0 = lp[0].price %}
@@ -90,6 +89,7 @@
         </div>
       </fieldset>
 
+      <div id="lBuy"{% if not cfg.payments_open %} hidden{% endif %}>
       <div class="field">
         <label for="lMsg">{{ t('lights.message') }}</label>
         <textarea class="input" id="lMsg" maxlength="60" rows="2" placeholder="{{ t('lights.message_ph') }}"></textarea>
@@ -110,6 +110,8 @@
       <p class="error" id="lErr" role="alert"></p>
       <button type="submit" class="btn btn-fire btn-block" id="lSubmit"></button>
       {% if cfg.payments_open %}<p class="hint" style="text-align:center">{{ t('burn.secure') }}</p>{% endif %}
+      </div>
+      {% if not cfg.payments_open %}<div class="card lt-soon"><b>{{ t('lights.soon_t') }}</b><p>{{ t('lights.soon_d') }}</p></div>{% endif %}
     </form>
 
     <div data-view="saved" hidden>

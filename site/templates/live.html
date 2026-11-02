@@ -21,7 +21,7 @@
   </div>
   <aside class="live-side" id="liveSide" data-map="{{ asset('data/map.js') }}" data-three="{{ asset('vendor/three-r128.min.js') }}" data-room="{{ asset('js/room.js') }}" aria-label="{{ t('lights.title') }}">
     <div class="ls-card">
-      <div class="ls-head"><span class="live-pill"><span class="dot" aria-hidden="true"></span>{{ t('lights.title') }}</span><span class="ls-count"><b id="lsLit">—</b> / {{ fmt(cfg.map.total_plots) }}</span></div>
+      <div class="ls-head"><span class="live-pill"><span class="dot" aria-hidden="true"></span>{{ t('live.map_label') }}</span><span class="ls-count"><b id="lsLit">—</b> / {{ fmt(cfg.map.total_plots) }}</span></div>
       <div class="ls-stage">
         <canvas id="liveMap" aria-hidden="true"></canvas>
         <div class="ls-room" id="lsRoom" hidden><canvas id="liveRoom" aria-hidden="true"></canvas></div>

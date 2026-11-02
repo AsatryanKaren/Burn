@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% block title %}{{ t('meta.lights_title') }} · {{ brand }}{% endblock %}
 {% block description %}{{ t('lights.meta_desc') }}{% endblock %}
-{% block og_image %}og-lights-{{ lang }}.jpg{% endblock %}
 {% block head %}
 <script type="application/ld+json">{{ {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": faq_ld(faq)} | tojson }}</script>
 {% endblock %}
