@@ -118,14 +118,26 @@
       <h2 class="h-sub">{{ t('lights.saved_t') }}</h2>
       <p class="muted" id="savedText"></p>
       <button type="button" class="btn btn-fire btn-block" id="savedEnter">{{ t('landing.mine_cta') }} →</button>
-      <button type="button" class="btn btn-ghost" id="savedEdit">✎ {{ t('room.edit_mine') }}</button>
       <button type="button" class="btn btn-paper" id="savedFire">🔥 {{ t('app.fire_go') }}</button>
-      <a class="link-arrow" id="savedLink" href="#">{{ t('lights.your_light') }} →</a>
+      <div id="savedKey"></div>
+    </div>
+
+    <div data-view="hasRoom" hidden>
+      <h2 class="h-sub">{{ t('lights.own_t') }}</h2>
+      <p class="muted">{{ t('lights.own_d') }}</p>
+      <button type="button" class="btn btn-fire btn-block" id="ownEnter">{{ t('landing.mine_cta') }} →</button>
     </div>
 
     <div data-view="mine" hidden>
       <h2 class="h-sub">{{ t('app.mine_t') }}</h2>
-      <div id="mineList" class="app-list"></div>
+      <div id="mineCard" class="my-card" hidden>
+        <p class="my-place" id="mineName"></p>
+        <button type="button" class="btn btn-fire btn-block" id="myEnter">{{ t('app.my_enter') }} →</button>
+        <button type="button" class="btn btn-ghost btn-block" id="myShow">📍 {{ t('app.my_show') }}</button>
+        <button type="button" class="btn btn-ghost btn-block" id="myWish">🔥 {{ t('app.my_wish') }}</button>
+        <button type="button" class="btn btn-ghost btn-block" id="myShare">↗ {{ t('app.my_share') }}</button>
+        <div id="mineKey"></div>
+      </div>
       <div id="mineEmpty" hidden>
         <p class="muted">{{ t('app.mine_empty') }}</p>
         <button type="button" class="btn btn-fire btn-block" data-random>✦ {{ t('lights.random') }}</button>
@@ -240,5 +252,7 @@
 <script src="{{ asset('js/site.js') }}" defer></script>
 <script src="{{ asset('js/mapcore.js') }}" defer></script>
 <script src="{{ asset('js/roomui.js') }}" defer></script>
+<script src="{{ asset('vendor/qrcode-generator-1.4.4.js') }}" defer></script>
+<script src="{{ asset('js/roomkey.js') }}" defer></script>
 <script src="{{ asset('js/lights.js') }}" defer></script>
 {% endblock %}

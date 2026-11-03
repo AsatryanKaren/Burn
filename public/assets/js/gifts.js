@@ -31,13 +31,13 @@
     var body = {
       name: clean($("blName").value), link: clean($("blLink").value), platform: $("blPlatform").value,
       email: clean($("blEmail").value),
-      phone: clean($("blPhone").value) || null, message: clean($("blMsg").value) || null,
+      phone: clean($("blPhone").value) || null,
       lang: A.D.lang, consent: $("blConsent").checked
     };
     if (body.link && !/^https?:\/\//i.test(body.link)) body.link = "https://" + body.link;
     if (!body.name) return fail("NAME_REQUIRED", $("blName"));
-    if (!body.link) return fail("LINK_REQUIRED", $("blLink"));
-    if (!/^https?:\/\/[^\s.]+\.[^\s]{2,}$/i.test(body.link)) return fail("LINK_INVALID", $("blLink"));
+    if (!body.link) { body.link = null; body.platform = null; }
+    else if (!/^https?:\/\/[^\s.]+\.[^\s]{2,}$/i.test(body.link)) return fail("LINK_INVALID", $("blLink"));
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(body.email)) return fail("EMAIL_INVALID", $("blEmail"));
     if (!body.consent) return fail("CONSENT_REQUIRED", $("blConsent"));
     $("blErr").textContent = "";

@@ -115,7 +115,7 @@ export interface BloggerExportRow {
   created_at: string;
   status: string;
   name: string;
-  link: string;
+  link: string | null;
   platform: string | null;
   audience: string | null;
   email: string;

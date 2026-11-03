@@ -18,6 +18,7 @@
     try { return sessionStorage.getItem("justPaid") || (JSON.parse(localStorage.getItem("papers") || "[]")[0] || null); } catch (e) { return null; }
   }
   var code = codeFromUrl() || savedCode();
+  var result = new URLSearchParams(location.search).get("result");  // what the bank return says; the server status decides
   var privateUrl = location.origin + D.urls.paper + "?c=" + encodeURIComponent(code || "");
   function publicUrl(n) { return location.origin + D.urls.fire + (n ? "?n=" + n : ""); }
   var pollTimer = null, polls = 0, errors = 0, lastStatus = null;
@@ -100,14 +101,20 @@
   /* ---------- light orders (the map) ---------- */
   var MC = window.MapCore;
   function isLight(o) { return o && /^light/.test(o.product || ""); }
-  function lightView(o, paid) {
+  function lightView(o, paid, fromBank) {
     var mapUrl = view.getAttribute("data-map");
     return MC.loadMap(mapUrl).then(function (m) {
       var id = o.cell_id, icon = o.light_icon || "star", color = o.light_color || "amber";
+      // Opening the private link is what makes this device remember the room.
+      var mine = A.store.json("myLights", {}) || {};
+      if (MC.isCell(m, id) && mine[id] !== code) { mine[id] = code; A.store.set("myLights", JSON.stringify(mine)); A.showMyRoom(); }
+      // One place for everything: the room key goes straight to My room. Only a return from the bank stays here to confirm.
+      if (paid && !fromBank && MC.isCell(m, id)) { location.replace(D.urls.lights + "#mine"); return; }
       var place = MC.isCell(m, id) ? MC.provName(m, id, D.lang) : "";
       var town = MC.isCell(m, id) ? MC.townName(m, id, D.lang) : null;
       var mapLink = D.urls.lights + "?cell=" + encodeURIComponent(id);
       render(
+        (paid && fromBank ? '<p class="pay-ok">✓ ' + esc(t("paper.paid_ok")) + "</p>" : "") +
         '<h1 class="result-title" style="font-size:clamp(2.2rem,9vw,4rem)">' + esc(paid ? t("lights.paper_t") : t("paper.awaiting_t")) + "</h1>" +
         '<p class="result-line">' + esc(paid ? t("lights.paper_line") : t("paper.awaiting_d")) + "</p>" +
         '<div class="card" style="display:flex;gap:16px;align-items:center;max-width:460px"><span id="lIc"></span><div>' +
@@ -120,10 +127,12 @@
         (paid ? '<div class="row"><button type="button" class="btn btn-paper" id="lShare">' + esc(t("lights.share")) + "</button>" +
           '<button type="button" class="btn btn-ghost" id="lCopy">' + esc(t("lights.copy")) + "</button>" +
           '<a class="btn btn-ghost" href="' + esc(mapLink) + '">' + esc(t("lights.paper_see")) + "</a></div>" : payButton(o)) +
-        '<p><a class="btn btn-fire" href="' + esc(mapLink + "&edit=" + encodeURIComponent(code)) + '">✎ ' + esc(t("room.edit_mine")) + "</a></p>" +
-        '<p><a class="link-arrow" href="' + esc(D.urls.lights) + '#fire">🔥 ' + esc(t("lights.fire_cta")) + " →</a></p>"
+        '<p><a class="btn btn-fire" href="' + esc(D.urls.lights + "#mine") + '">' + esc(t("landing.mine_cta")) + " →</a></p>" +
+        '<p><a class="link-arrow" href="' + esc(D.urls.lights) + '#fire">🔥 ' + esc(t("lights.fire_cta")) + " →</a></p>" +
+        '<div id="lKey"></div>'
       );
       var ic = document.getElementById("lIc"); if (ic) ic.appendChild(MC.iconCanvas(icon, color, 72));
+      window.RoomKey.render(document.getElementById("lKey"), code);
       if (!paid) { bindPay(); return; }
       var shareUrl = new URL(mapLink, location.href).href;
       document.getElementById("lCopy").addEventListener("click", function () { A.copy(shareUrl); });
@@ -155,8 +164,9 @@
     errors = 0;
     if (isLight(o) && (o.status === "paid" || o.status === "awaiting_launch")) {
       clearTimeout(pollTimer);
-      try { if (sessionStorage.getItem("justPaid") === code) sessionStorage.removeItem("justPaid"); } catch (e) {}
-      lightView(o, o.status === "paid");
+      var fromBank = false;
+      try { fromBank = sessionStorage.getItem("justPaid") === code; if (fromBank) sessionStorage.removeItem("justPaid"); } catch (e) {}
+      lightView(o, o.status === "paid", fromBank || result === "success");
       if (o.status === "paid" && scene) scene.flare(0.8);
     } else if (o.status === "paid") {
       clearTimeout(pollTimer);
@@ -169,7 +179,8 @@
       if (lastStatus !== "pending") simple("paper.pending_t", "paper.pending_d", '<div id="pendingRow">' + spinnerRow() + "</div>");
       schedule();
     } else if (o.status === "failed" || o.status === "cancelled") {
-      simple("paper.failed_t", "paper.failed_d", payButton(o)); bindPay();
+      simple("paper.failed_t", "paper.failed_d", payButton(o) +
+        '<p><a class="link-arrow" href="' + esc(D.urls.lights) + '">' + esc(t("paper.failed_map")) + " →</a></p>"); bindPay();
     } else if (o.status === "awaiting_launch") {
       simple("paper.awaiting_t", "paper.awaiting_d", paperCard(o.text) + payButton(o));
       bindPay();

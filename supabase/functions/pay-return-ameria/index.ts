@@ -161,10 +161,13 @@ Deno.serve(async (req) => {
       ? evaluatePaymentDetails(details, { orderId: bankOrderId, amountAmd: order.amount_amd })
       : { paid: false as const, declined: false, reason: "UNKNOWN_ORDER_ID" };
 
+    // What the return URL says. The order page still asks the server for the real status.
+    let outcome: "success" | "failed" | undefined;
     if (verdict.paid) {
       // 3. The only place money becomes `paid`.
       const result = await confirmPayment(order.code, PROVIDER, back.paymentId, verdict.amountAmd);
       await logPaymentEvent(PROVIDER, "outcome", order.code, { PaymentID: back.paymentId, result });
+      if (result.ok) outcome = "success";
       if (!result.ok) {
         console.error("confirm_payment refused", order.code, result.error);
         if (result.error === "ORDER_PAID_BY_OTHER_PAYMENT") {
@@ -172,7 +175,7 @@ Deno.serve(async (req) => {
         }
       }
     } else {
-      if (verdict.declined) await markOrderFailed(order.code);
+      if (verdict.declined) { await markOrderFailed(order.code); outcome = "failed"; }
       await logPaymentEvent(PROVIDER, "outcome", order.code, {
         PaymentID: back.paymentId,
         result: verdict.reason,
@@ -180,7 +183,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    return redirectResponse(orderPageUrl(cfg.siteUrl, order.lang, order.code));
+    return redirectResponse(orderPageUrl(cfg.siteUrl, order.lang, order.code, outcome));
   } catch (err) {
     console.error("pay-return-ameria error", err);
     return redirectResponse(home);

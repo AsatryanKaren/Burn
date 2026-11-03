@@ -6,6 +6,7 @@ import {
   LIGHT_ICONS,
   parseCellId,
   CELL_ID_MAX,
+  ROOM_HOLDING_STATUSES,
   validateOrderInput,
 } from "../functions/_shared/validation.ts";
 import { initialModeration, moderate } from "../functions/_shared/moderation.ts";
@@ -130,4 +131,8 @@ test("a light needs a name or nickname and an email", () => {
   assert.equal(errCode(validateOrderInput({ ...base, light_signature: "   " }, opt)), "SIGNATURE_REQUIRED");
   assert.equal(errCode(validateOrderInput(base, { emailRequired: true })), "EMAIL_REQUIRED");
   assert.ok(validateOrderInput({ ...base, email: "ani@mail.am" }, { emailRequired: true }).ok);
+});
+
+test("one room per email: only paid and saved orders hold a room", () => {
+  assert.deepEqual(ROOM_HOLDING_STATUSES, ["paid", "awaiting_launch"]);
 });

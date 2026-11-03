@@ -1,4 +1,4 @@
-# Light up Armenia
+# New Year 2027 (Ամանոր 2027)
 
 A New Year ritual website for Armenia and the diaspora: one map of Armenia split into 111,111 places (500×500 m plots, this year only). 20% of every payment goes to New Year gifts for children in Armenian children's homes.
 

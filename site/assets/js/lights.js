@@ -9,9 +9,11 @@
   var m = null, view = null, state = { id: -1, mode: "hint", busy: false, cellReq: 0 }, litRows = [], heldRows = [];
 
   /* ---------- panel views ---------- */
-  var TAB_OF = { hint: "map", lit: "map", held: "map", design: "map", saved: "map", mine: "mine", fire: "fire", fireSaved: "fire", top: "top", help: "help" };
+  var TAB_OF = { hint: "map", lit: "map", held: "map", design: "map", saved: "map", hasRoom: "map", mine: "mine", fire: "fire", fireSaved: "fire", top: "top", help: "help" };
   function showView(name) {
     state.mode = name;
+    // Someone who has a place doesn't need the introduction: "closed" really hides the side panel.
+    panel.classList.toggle("away", name === "hint" && Object.keys(mine()).length > 0);
     var tab = TAB_OF[name] || "map";
     document.querySelectorAll("#dock [data-tab]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-tab") === tab)); });
     try { history.replaceState(null, "", location.pathname + location.search + (tab === "map" ? "" : "#" + tab)); } catch (e) {}
@@ -42,10 +44,21 @@
   function renderMine() {
     var ids = Object.keys(mine()).map(Number).filter(function (id) { return MC.isCell(m, id); });
     $("mineEmpty").hidden = ids.length > 0;
-    $("mineList").innerHTML = ids.map(function (id) {
-      return row(id, '<button type="button" class="btn btn-ghost btn-sm" data-act="edit">✎ ' + esc(t("app.edit")) + '</button><button type="button" class="btn btn-fire btn-sm" data-act="visit">' + esc(t("app.visit")) + "</button>");
-    }).join("");
+    $("mineCard").hidden = !ids.length;
+    $("mineKey").innerHTML = "";
+    if (!ids.length) return;
+    $("mineName").textContent = placeTitle(ids[0]);
+    window.RoomKey.render($("mineKey"), mine()[ids[0]]);
   }
+  // My room: one card, four plain actions.
+  function myId() { return Number(Object.keys(mine())[0]); }
+  $("myEnter").addEventListener("click", function () { var id = myId(); state.id = id; visit(id); });
+  $("myShow").addEventListener("click", function () {
+    var id = myId(); showView("hint"); state.id = id; view.select(id); setUrl(id);
+    view.flyToCell(id, wide() ? 30 : 26); view.flare(id);
+  });
+  $("myWish").addEventListener("click", function () { openTab("fire"); });
+  $("myShare").addEventListener("click", function () { shareLight(myId()); });
   function renderTop() {
     var warm = (state.lastMap && state.lastMap.warm) || [];
     $("topEmpty").hidden = warm.length > 0;
@@ -53,7 +66,7 @@
       return row(w[0], '<span class="app-warm">❤ ' + A.fmt(w[1]) + '</span><button type="button" class="btn btn-ghost btn-sm" data-act="visit">' + esc(t("app.visit")) + "</button>").replace('<b>', '<b><i>' + (i + 1) + "</i> ");
     }).join("");
   }
-  ["mineList", "topList"].forEach(function (lid) {
+  ["topList"].forEach(function (lid) {
     $(lid).addEventListener("click", function (e) {
       var b = e.target.closest("[data-act]"); if (!b) return;
       var id = Number(b.closest("[data-id]").getAttribute("data-id")), act = b.getAttribute("data-act");
@@ -238,6 +251,8 @@
     if (state.mode === "design" && view) view.setGhost({ id: state.id, icon: val("icon"), color: val("color"), big: product === "light_big" });
   }
   function showDesign(id) {
+    // One room per person: someone who has a place gets the way into it, not a second form.
+    if (Object.keys(mine()).length) return showView("hasRoom");
     $("dPlace").innerHTML = placeHtml(id); $("dNear").textContent = nearText(id);
     paintRoomButton(id);
     $("lErr").textContent = "";
@@ -284,7 +299,9 @@
   }
   $("litEdit").addEventListener("click", function () { editMine(state.id, state.visit && state.visit.id === state.id && state.visit.raw ? state.visit.raw.room : null); });
   $("savedEnter").addEventListener("click", function () { visit(state.savedId, state.savedData); });
-  $("savedEdit").addEventListener("click", function () { editMine(state.savedId, null); });
+  $("ownEnter").addEventListener("click", function () {
+    var id = Number(Object.keys(mine())[0]); state.id = id; visit(id);
+  });
   $("savedFire").addEventListener("click", function () { openTab("fire"); });
 
   function remember(code) {
@@ -308,7 +325,7 @@
     var id = state.id;
     setBusy(true);
     A.api.fn("create-order", body).then(function (res) {
-      remember(res.code); setMine(id, res.code); state.savedId = id; A.showMyRoom();
+      remember(res.code); state.savedId = id;
       state.savedData = { room: body.room, message: body.text, signature: body.light_signature };
       var pay = res.payment || { mode: "disabled" };
       if ((pay.mode === "redirect" || pay.mode === "mock") && A.safePaymentUrl(pay.url)) {
@@ -320,9 +337,10 @@
       } else if (pay.mode === "redirect" || pay.mode === "mock" || pay.mode === "form") {
         setBusy(false); $("lErr").textContent = errText("UNKNOWN");
       } else {
+        // No bank step (payments disabled): the place is saved right here.
+        setMine(id, res.code); A.showMyRoom(); window.RoomKey.render($("savedKey"), res.code);
         setBusy(false);
         $("savedText").innerHTML = t("lights.saved_d", { email: esc(body.email || "") });
-        $("savedLink").href = D.urls.paper + "?c=" + encodeURIComponent(res.code);
         view.flare(id);
         showView("saved"); refresh();
       }
@@ -389,7 +407,7 @@
     m = map;
     view = new MC.MapView($("map"), m, {
       interactive: true, lang: lang, pad: 18,
-      offsetX: function () { return wide() ? 400 : 0; },
+      offsetX: function () { return wide() && !panel.classList.contains("away") ? 400 : 0; },
       // On phones the bottom sheet covers the lower part: keep the chosen plot in the upper quarter.
       offsetY: function (H) { return wide() || state.mode === "hint" ? 0 : H * 0.27; },
       onTap: function (id) { if (id < 0) { if (state.mode !== "design") deselect(); return; } select(id, false); }
@@ -406,10 +424,11 @@
     $("zOut").addEventListener("click", function () { view.zoomAt(1 / 1.6, view.W / 2, view.H / 2); });
     $("zFit").addEventListener("click", function () { view.fit(false); });
     var startTab = (location.hash || "").slice(1);
-    showView("hint");
+    // On a wide screen an owner opens on their room; everyone else on the introduction.
+    if (wide() && Object.keys(mine()).length && !startTab) { renderMine(); showView("mine"); } else showView("hint");
     refresh().then(function () {
       if (["mine", "fire", "top", "help"].indexOf(startTab) >= 0 && !new URLSearchParams(location.search).get("cell")) openTab(startTab);
-      var qs = new URLSearchParams(location.search), want = parseInt(qs.get("cell"), 10), editCode = qs.get("edit");
+      var qs = new URLSearchParams(location.search), want = parseInt(qs.get("cell"), 10), editCode = qs.get("edit"), enter = qs.get("enter");
       // Coming from my personal page with "Edit my room": remember the plot as mine and drop the code from the address bar.
       if (MC.isCell(m, want) && editCode && /^[a-z0-9]{8,40}$/i.test(editCode)) {
         setMine(want, editCode);
@@ -417,6 +436,7 @@
       }
       if (MC.isCell(m, want)) setTimeout(function () {
         select(want, true);
+        if (enter && mine()[want]) visit(want);
         if (editCode && mine()[want]) A.api.rpc("get_cell", { p_cell_id: want }).then(function (c) { editMine(want, c && c.room); }, function () { editMine(want, null); });
       }, 500);
       poll();

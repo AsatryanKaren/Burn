@@ -30,7 +30,7 @@ Languages: Armenian (`hy`, default, at `/`), English (`/en/`), Russian (`/ru/`).
   **Since migration 0013 only `light` can be ordered**: one payment (600 AMD) buys a plot with its room **and exactly one wish burned in the fire** (`POST burn-wish`, see "Wish in the fire"). No separate payment for burning, no second wish for the same light. Every paper product (`burn`, `burn_wish`, `gift`, `midnight`) is retired for new orders: `create-order` answers `400 PRODUCT_RETIRED`. Existing paper orders keep working (start-payment, bank callbacks, the fire feed); the `burn` row stays `active` for them.
 
   `burn_wish`, `gift`, `midnight` and `light_big` are **no longer sold**: their rows stay in `products` with `active = false` (old orders reference them). `create-order` and `start-payment` answer `400 PRODUCT_UNAVAILABLE` for an inactive product. Their code paths (wish, recipient, big light) still exist but are unreachable while the rows are inactive.
-- **20% of every paid amount** goes to the New Year gift fund for children in Armenian orphanages (120 AMD per 600 AMD order). It is recorded per payment in `gift_ledger` at the moment the payment is confirmed, rounded down to whole AMD.
+- **20% of every paid amount** goes to the New Year gift fund for children living in children's homes in Armenia (120 AMD per 600 AMD order). It is recorded per payment in `gift_ledger` at the moment the payment is confirmed, rounded down to whole AMD.
 - We are a for-profit company and say so. The 20% is a choice we made, not the business model.
 
 ## Security rules (non-negotiable)
@@ -54,14 +54,14 @@ Languages: Armenian (`hy`, default, at `/`), English (`/en/`), Russian (`/ru/`).
   `provider_order_num bigint unique` (numeric id some banks require), `ip_hash text`, `created_at`, `paid_at`, `streamed_at`, `updated_at`.
 - `gift_ledger(id, order_id fk unique, amount_amd int, created_at)` — 20% per paid order.
 - `waitlist(id, email unique (citext or lower-unique), lang, created_at, ip_hash)`.
-- `blogger_applications(id bigserial, name 1–80, link 1–300 (http(s) URL), platform null (instagram|tiktok|youtube|facebook|telegram|other), audience null ≤40, email (lower-case), phone null ≤30, message null ≤500, lang, ip_hash, created_at, status 'new'|'contacted'|'accepted'|'declined' default 'new')` — bloggers who want to join the December 31 gift delivery (0009). Service role only.
+- `blogger_applications(id bigserial, name 1–80, link null or 1–300 (http(s) URL; optional since 0016), platform null (instagram|tiktok|youtube|facebook|telegram|other), audience null ≤40, email (lower-case), phone null ≤30, message null ≤500, lang, ip_hash, created_at, status 'new'|'contacted'|'accepted'|'declined' default 'new')` — bloggers who want to join the December 31 gift delivery (0009). Service role only.
 - `rate_limits(key text, window_start timestamptz, count int, pk(key, window_start))`.
 - `payment_events(id, provider, kind, order_code, payload jsonb, created_at)` — raw audit of every callback.
 - `burn_number_seq` sequence.
 
 ### RPCs callable by the browser (anon), all `SECURITY DEFINER`, `set search_path = public`
 
-- `get_public_stats()` → `{ papers_burned, gift_fund_amd, wishes_kept, waitlist_count, lights_lit, updated_at }`. Since 0013 `papers_burned` = paid papers + wishes in the fire of paid lights.
+- `get_public_stats()` → `{ papers_burned, gift_fund_amd` (since 0015: only gifts recorded before the last Yerevan midnight, so it moves once a day; `gift_fund_as_of` = that midnight)`, wishes_kept, waitlist_count, lights_lit, updated_at }`. Since 0013 `papers_burned` = paid papers + wishes in the fire of paid lights.
 - `get_fire_feed(after_number int default 0, max_rows int default 50)` → rows `{ burn_number, text_public (null unless show_on_stream and approved), paid_at, product }` ordered by `burn_number`, `max_rows` capped at 100. Since 0013 the rows are paid papers (`product` = the paper product) **and** wishes of paid lights (`product = "wish"`, `paid_at` = when the wish entered the fire); one shared `burn_number` sequence.
 
 ### Internal functions (service role only)
@@ -126,7 +126,7 @@ Response: `{ "ok": true }` — the same for new and already-known emails (no enu
 Rules (text fields: NFC, invisible characters dropped, newlines/tabs and repeated whitespace collapsed to one space, trimmed; lengths in characters after that):
 - `consent` must be exactly `true` → else `CONSENT_REQUIRED`.
 - `name` required, ≤ 80 → `NAME_REQUIRED`.
-- `link` required, ≤ 300 → `LINK_REQUIRED`; must be an `http://` or `https://` URL with a dotted host and no `user:password@` → `LINK_INVALID`. A link without a scheme (`instagram.com/anna`) gets `https://` prepended; other schemes (`javascript:`, `mailto:`, …) and bare handles (`@anna`) are `LINK_INVALID`.
+- `link` optional since 0016 (empty → `null`), ≤ 300; must be an `http://` or `https://` URL with a dotted host and no `user:password@` → `LINK_INVALID`. A link without a scheme (`instagram.com/anna`) gets `https://` prepended; other schemes (`javascript:`, `mailto:`, …) and bare handles (`@anna`) are `LINK_INVALID`.
 - `platform` optional: `instagram` | `tiktok` | `youtube` | `facebook` | `telegram` | `other` (case-insensitive) → else `PLATFORM_INVALID`.
 - `audience` optional free text ≤ 40 (e.g. `"25k"`; a number is accepted and stored as text).
 - `email` required → `EMAIL_REQUIRED`, valid → `EMAIL_INVALID` (stored lower-case).
@@ -214,7 +214,7 @@ A second product: a night map of Armenia split into exactly **111,111 plots** of
 
 ### Edge Functions
 
-- `create-order` accepts `product: "light"` (`light_big` → `400 PRODUCT_UNAVAILABLE`) with body fields `cell_id`, `text` (message), `light_icon`, `light_color`, `light_signature` (required: the buyer's name or nickname, 1–30), `room` (optional, see "The room"; absent or `null` = no room yet), `email` (required: it is how a buyer keeps their place), `lang`, `consent`. Errors: `SIGNATURE_REQUIRED`, `EMAIL_REQUIRED`, `CELL_INVALID` (not an integer 0–299999, or not a map cell), `CELL_TAKEN`, `ICON_INVALID`, `COLOR_INVALID`, `SIGNATURE_TOO_LONG`, `SIGNATURE_REJECTED`, `TEXT_TOO_LONG` (for >60), `ROOM_INVALID`. For papers `room` must be absent or `null`, else `400 ROOM_NOT_ALLOWED`. `show_on_stream` is ignored for lights.
+- `create-order` accepts `product: "light"` (`light_big` → `400 PRODUCT_UNAVAILABLE`) with body fields `cell_id`, `text` (message), `light_icon`, `light_color`, `light_signature` (required: the buyer's name, 1–30), `room` (optional, see "The room"; absent or `null` = no room yet), `email` (required: it is how a buyer keeps their place), `lang`, `consent`. Errors: `SIGNATURE_REQUIRED`, `EMAIL_REQUIRED`, `409 ALREADY_HAS_ROOM` (one room per email: `paid` and `awaiting_launch` orders count, abandoned payments do not), `CELL_INVALID` (not an integer 0–299999, or not a map cell), `CELL_TAKEN`, `ICON_INVALID`, `COLOR_INVALID`, `SIGNATURE_TOO_LONG`, `SIGNATURE_REJECTED`, `TEXT_TOO_LONG` (for >60), `ROOM_INVALID`. For papers `room` must be absent or `null`, else `400 ROOM_NOT_ALLOWED`. `show_on_stream` is ignored for lights.
 - `order-status` also returns `cell_id`, `light_icon`, `light_color`, `light_signature`, `province`, `town_index`, `room` (layout or `null`) and `fire` (the wish in the fire or `null`, 0013) for light orders.
 - `burn-wish` (below) burns the light's one wish in the fire.
 - `update-room` (below) changes a light's room.

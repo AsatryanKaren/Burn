@@ -2,7 +2,18 @@
 (function () {
   "use strict";
   var real = window.fetch.bind(window);
+  var root = new URL("../../", document.currentScript.src);  // the preview's top folder
+  function bankUrl(code, lang) { return new URL("preview-bank/index.html?code=" + encodeURIComponent(code) + "&lang=" + (lang || "hy"), root).href; }
   var store = (function () { try { return JSON.parse(localStorage.getItem("previewOrders") || "{}"); } catch (e) { return {}; } })();
+  // One room per email in the demo too: keep the first order for each email.
+  (function () {
+    var seen = {};
+    Object.keys(store).sort(function (a, b) { return String(store[a].created_at).localeCompare(String(store[b].created_at)); }).forEach(function (k) {
+      var e = store[k].email; if (store[k].cell_id == null || !e) return;
+      if (seen[e]) delete store[k]; else seen[e] = true;
+    });
+    try { localStorage.setItem("previewOrders", JSON.stringify(store)); } catch (e) {}
+  })();
   function save() { try { localStorage.setItem("previewOrders", JSON.stringify(store)); } catch (e) {} }
   function json(body, status) { return Promise.resolve(new Response(JSON.stringify(body), { status: status || 200, headers: { "Content-Type": "application/json" } })); }
   function hash(i) { var x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
@@ -42,16 +53,21 @@
           warmth: (warm[body.p_cell_id] || 0) + Math.floor(hash(body.p_cell_id + 9) * 140), visits: Math.floor(hash(body.p_cell_id + 11) * 900) + 20 });
       }
       if (path === "/functions/v1/create-order") {
+        if (Object.keys(store).some(function (k) { return store[k].email === body.email && (store[k].status === "paid" || store[k].status === "awaiting_launch"); })) return json({ error: { code: "ALREADY_HAS_ROOM" } }, 409);
         var code = "demo" + Math.random().toString(36).slice(2, 12);
-        store[code] = Object.assign({ code: code, status: "awaiting_launch", amount_amd: 600, created_at: new Date().toISOString() }, body);
+        store[code] = Object.assign({ code: code, status: "pending", amount_amd: 600, created_at: new Date().toISOString() }, body);
         save();
-        return json({ code: code, amount_amd: 600, status: "awaiting_launch", payment: { mode: "disabled" } });
+        return json({ code: code, amount_amd: 600, status: "pending", payment: { mode: "mock", url: bankUrl(code, body.lang) } });
+      }
+      if (path === "/functions/v1/start-payment") {
+        if (!store[body.code]) return json({ error: { code: "NOT_FOUND" } }, 404);
+        store[body.code].status = "pending"; save();
+        return json({ payment: { mode: "mock", url: bankUrl(body.code, body.lang) } });
       }
       if (path === "/functions/v1/order-status") {
         var c = (url.match(/code=([^&]+)/) || [])[1], ord = store[c];
         if (!ord) return json({ error: { code: "NOT_FOUND" } }, 404);
-        // In the preview a saved order shows as paid, so you can see the result page.
-        return json(Object.assign({}, ord, { status: "paid", burn_number: ord.cell_id == null ? 1285 : null, gift_share_amd: 120 }));
+        return json(Object.assign({}, ord, { burn_number: ord.cell_id == null ? 1285 : null, gift_share_amd: ord.status === "paid" ? 120 : null }));
       }
       if (path === "/functions/v1/room-warmth") {
         if (body.action === "warm") warm[body.cell_id] = (warm[body.cell_id] || 0) + 1;
@@ -69,6 +85,8 @@
     });
   };
   document.addEventListener("DOMContentLoaded", function () {
+    // The demo bank page is local, so let the site send buyers there.
+    var A = window.APP; if (A) { var safe = A.safePaymentUrl; A.safePaymentUrl = function (u) { try { if (new URL(u, location.href).href.indexOf(root.href + "preview-bank/") === 0) return true; } catch (e) {} return safe(u); }; }
     var b = document.createElement("div");
     b.textContent = "Preview · demo data";
     b.style.cssText = "position:fixed;right:10px;bottom:10px;z-index:200;font:500 12px system-ui;color:#1c0e05;background:#ffc46b;padding:4px 10px;border-radius:99px;opacity:.85;pointer-events:none";

@@ -1,6 +1,6 @@
 # Contact
 
-*Last updated: 1 November 2026*
+*Last updated: 3 November 2026*
 
 We are real people and we read every message. Write to us about anything: an order, a refund, your data or just a question.
 
@@ -17,24 +17,23 @@ We are real people and we read every message. Write to us about anything: an ord
 ## Support
 
 - **Email:** {{company.email}}
-- **Response time:** within 24 hours, including during 25–31 December.
 - **Languages:** Armenian, English and Russian.
 
-To help us answer faster, include your **order code** or the link to your personal page. Never send us your card number, CVV or card photos.
+To help us answer faster, include your **room key** (the link to your room). Never send us your card number, CVV or card photos.
 
 ## How to request a refund
 
 1. Write to {{company.email}} within 14 days of payment (or within 14 days of the date something should have been delivered).
-2. Include your order code, the payment date and amount, and what went wrong.
-3. We reply within 24 hours. Approved refunds go back to the same card through the bank, usually within 5–10 business days.
+2. Include your room key, the payment date and amount, and what went wrong.
+3. Approved refunds go back to the same card through the bank, usually within 5–10 business days.
 
 Full rules: [Refund Policy](/en/refund/).
 
 ## How to delete your text or data
 
 1. Write to {{company.email}}, if possible from the email you used for the order.
-2. Include your order code and tell us what you want: delete your wish text, your place's name or words, your email, or get a copy of your data.
-3. We reply within 24 hours and confirm when it is done. The record of the payment itself is kept as long as Armenian accounting and tax law requires.
+2. Include your room key and tell us what you want: delete your wish text, your place's name or words, your email, or get a copy of your data.
+3. We confirm when it is done. The record of the payment itself is kept as long as Armenian accounting and tax law requires.
 
 More: [Privacy Policy](/en/privacy/).
 

@@ -14,5 +14,6 @@ import "./md5-idram.test.ts";
 import "./moderation.test.ts";
 import "./money-codes.test.ts";
 import "./rooms.test.ts";
+import "./telegram.test.ts";
 import "./validation.test.ts";
 import "./warmth.test.ts";

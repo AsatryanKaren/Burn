@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Demo bank</title>
+<style>
+  body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #eef1f5; font: 16px/1.45 system-ui, sans-serif; color: #1d2433; }
+  .box { width: min(380px, calc(100% - 32px)); background: #fff; border-radius: 14px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,.08); }
+  .tag { display: inline-block; font-size: 12px; font-weight: 600; color: #8a5a00; background: #fff3d6; border-radius: 99px; padding: 3px 10px; }
+  h1 { font-size: 20px; margin: 12px 0 4px; }
+  .amount { font-size: 32px; font-weight: 700; margin: 8px 0 18px; }
+  button { width: 100%; padding: 13px; border: 0; border-radius: 10px; font: inherit; font-weight: 600; cursor: pointer; margin-top: 10px; }
+  .ok { background: #1f8f4e; color: #fff; } .no { background: #f1f3f6; color: #b3261e; }
+  p.note { font-size: 13px; color: #667; margin: 16px 0 0; }
+</style>
+</head>
+<body>
+<div class="box">
+  <span class="tag">PREVIEW · DEMO BANK</span>
+  <h1>Secure payment</h1>
+  <div>Order <b id="code"></b></div>
+  <div class="amount" id="amount"></div>
+  <button class="ok" id="pay">Pay</button>
+  <button class="no" id="decline">Decline (test a failed payment)</button>
+  <p class="note">This page only exists in the local preview. The real site goes to Ameriabank's page.</p>
+</div>
+<script>
+(function () {
+  var q = new URLSearchParams(location.search), code = q.get("code") || "", lang = q.get("lang") || "hy";
+  var store = {}; try { store = JSON.parse(localStorage.getItem("previewOrders") || "{}"); } catch (e) {}
+  var o = store[code];
+  document.getElementById("code").textContent = code;
+  document.getElementById("amount").textContent = o ? o.amount_amd + " ֏" : "—";
+  function finish(status, result) {
+    if (o) { o.status = status; try { localStorage.setItem("previewOrders", JSON.stringify(store)); } catch (e) {} }
+    location.href = "../" + (lang === "hy" ? "" : lang + "/") + "p/index.html?c=" + encodeURIComponent(code) + "&result=" + result;
+  }
+  document.getElementById("pay").addEventListener("click", function () { finish("paid", "success"); });
+  document.getElementById("decline").addEventListener("click", function () { finish("failed", "failed"); });
+})();
+</script>
+</body>
+</html>

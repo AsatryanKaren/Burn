@@ -4,6 +4,7 @@
 import { createClient, type SupabaseClient } from "npm:@supabase/supabase-js@2";
 import { getConfig } from "./env.ts";
 import { ApiError, ErrorCode } from "./errors.ts";
+import { ROOM_HOLDING_STATUSES } from "./validation.ts";
 import type {
   Lang,
   LightColor,
@@ -78,6 +79,14 @@ export async function findOrderByCode(code: string): Promise<OrderRow | null> {
   const { data, error } = await db().from("orders").select(ORDER_COLUMNS).eq("code", code).maybeSingle();
   if (error) throw dbError("findOrderByCode", error);
   return data as OrderRow | null;
+}
+
+/** One room per person: does this email already hold a light? */
+export async function emailHasRoom(email: string): Promise<boolean> {
+  const { data, error } = await db().from("orders").select("id").eq("email", email)
+    .in("product", ["light", "light_big"]).in("status", ROOM_HOLDING_STATUSES).limit(1);
+  if (error) throw dbError("emailHasRoom", error);
+  return (data ?? []).length > 0;
 }
 
 export async function findOrderByProviderNum(num: number): Promise<OrderRow | null> {
@@ -321,7 +330,7 @@ export async function addToWaitlist(row: { email: string; lang: Lang; ip_hash: s
 /** One blogger application (join-bloggers). Duplicate emails simply add another row. */
 export async function addBloggerApplication(row: {
   name: string;
-  link: string;
+  link: string | null;
   platform: string | null;
   audience: string | null;
   email: string;

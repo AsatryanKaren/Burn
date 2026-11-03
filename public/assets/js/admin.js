@@ -140,7 +140,7 @@
           '<td class="t">' + esc(o.text) + (o.wish_text ? '<div class="hint">wish: ' + esc(o.wish_text) + "</div>" : "") + (o.recipient_name ? '<div class="hint">for: ' + esc(o.recipient_name) + "</div>" : "") +
           (o.cell_id != null ? '<div class="hint">plot ' + esc(o.cell_id) + " · " + esc(o.light_icon) + " · " + esc(o.light_color) + (o.light_signature ? " · signed: " + esc(o.light_signature) : "") + "</div>" : "") + "</td>" +
           "<td>" + esc(o.email || "") + "</td><td>" + esc(when(o.created_at)) + "</td>" +
-          "<td>" + (o.status === "paid" ? '<button type="button" class="btn btn-ghost btn-sm" data-refund>Mark refunded</button>' : "") + "</td></tr>";
+          '<td><button type="button" class="btn btn-ghost btn-sm" data-copy>Copy link</button>' + (o.status === "paid" ? ' <button type="button" class="btn btn-ghost btn-sm" data-refund>Mark refunded</button>' : "") + "</td></tr>";
       }).join(""));
       lastId = rows.length ? rows[rows.length - 1].id : lastId;
       $("ordMore").hidden = rows.length < 100;
@@ -150,6 +150,12 @@
   $("ordMore").addEventListener("click", function () { loadOrders(false); });
   $("ordStatus").addEventListener("change", function () { loadOrders(true); });
   $("ordRows").addEventListener("click", function (e) {
+    var c = e.target.closest("[data-copy]");
+    if (c) {
+      var url = new URL(D.urls.paper + "?c=" + encodeURIComponent(c.closest("tr").getAttribute("data-code")), location.href).href;
+      navigator.clipboard.writeText(url).then(function () { c.textContent = "Copied"; });
+      return;
+    }
     var b = e.target.closest("[data-refund]"); if (!b) return;
     var tr = b.closest("tr"), code = tr.getAttribute("data-code");
     // Two-step confirm inside the page (no browser dialogs).

@@ -12,7 +12,6 @@
   </a>
   <div class="ld-shade" aria-hidden="true"></div>
   <div class="ld-inner wrap">
-    <p class="kicker">{{ t('landing.kicker', total=fmt(cfg.map.total_plots)) }}</p>
     <h1 id="ldTitle">{{ t('lights.title') }}</h1>
     <p class="lead">{{ t('lights.lead2') }}</p>
     <a class="ld-banner" href="{{ url('map') }}">
@@ -48,8 +47,7 @@
 <section class="section bg-deep" id="gifts" aria-labelledby="giftsTitle">
   <div class="wrap gift-grid">
     <div data-reveal>
-      <p class="big-pct" aria-hidden="true">20%</p>
-      <p class="kicker" style="margin-top:-6px">{{ t('gifts_page.dec31_t') }}</p>
+      <p class="kicker">{{ t('gifts_page.dec31_t') }}</p>
       <h2 class="h-section" id="giftsTitle">{{ t('gifts.title') }}</h2>
       <p class="lead" style="margin-top:16px;max-width:46ch">{{ t('gifts.body') }}</p>
     </div>
@@ -57,6 +55,7 @@
       <div class="fund">
         <span class="label">{{ t('gifts.fund') }}</span>
         <span class="value" data-stat="gift_fund_amd" data-format="price">—</span>
+        <span class="label">{{ t('gifts_page.fund_daily') }}</span>
       </div>
       <div class="blogger-cta">
         <div><h3>{{ t('gifts.blogger_t') }}</h3><p>{{ t('gifts.blogger_d') }}</p></div>

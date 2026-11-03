@@ -1,6 +1,6 @@
 # Terms of Service
 
-*Last updated: 2 November 2026*
+*Last updated: 3 November 2026*
 
 These terms apply to the {{brand.name}} website at {{domain}} and to every order placed on it. Please read them before you pay. By placing an order you confirm that you have read and accept these terms, the [Refund Policy](/en/refund/), the [Delivery and Payment](/en/delivery/) page and the [Privacy Policy](/en/privacy/).
 
@@ -20,13 +20,13 @@ We are a for-profit company registered in the Republic of Armenia. In these term
 
 {{brand.name}} is a New Year project that brings people together in one place: a digital map of Armenia with a limited number of places. On it you can buy one digital service: **a place on the map**. One payment gets you all of this:
 
-- **Your place on the map.** One free place on the [Light up Armenia](/en/map/) New Year map of Armenia, with your name or nickname and a few words (see section 7).
+- **Your place on the map.** One free place on the [{{brand.name}}](/en/map/) New Year map of Armenia, with your name and a few words (see section 7).
 - **Your room.** On your place you make your own New Year room: a little 3D room that you decorate and can change later at any time. Anyone can open your place and look at your room.
 - **One wish for the fire.** You write one wish (up to 120 characters), once. On 31 December 2026 all the wishes burn together, in a single day, in a shared digital fire that is broadcast live on our YouTube channel and shown on the website. There is no live stream before 31 December.
 
 The wish is included in the price of the place: there is no extra charge for it. Each place has exactly one wish. You can write it right after taking your place or later, in the "Fire" tab on the [map](/en/map/#fire), until the fire ends on 31 December. A wish burns only if its place is paid.
 
-After payment you get a personal page with a link to your place. Once your wish has burned, you also get its number, a replay of it burning and a story image you can download and share.
+After payment you get your room key: a private link with a QR code that opens your room on any device. You also get an image of your place that you can share.
 
 The map, the rooms and the fire are computer animations. No physical paper is burned and nothing physical is sent to you.
 
@@ -34,9 +34,9 @@ The map, the rooms and the fire are computer animations. No physical paper is bu
 
 | What you buy | Price | What you get |
 |---|---|---|
-| A place on the map with a room and one wish | 600 AMD | The free place you chose, your own New Year room on it, and one wish that burns in the fire on 31 December. Personal page, plus a story image to share. |
+| A place on the map with a room and one wish | 600 AMD | The free place you chose, your own New Year room on it, and one wish that burns in the fire on 31 December. Your room key, plus an image of your place to share. |
 
-There are no other products or options. Every payment is 600 AMD, of which 120 AMD (20%) goes to the children's gift fund (see section 10).
+There are no other products or options. Every payment is 600 AMD. Part of it goes to the children's gift fund (see section 10).
 
 Prices are final and shown in Armenian drams (AMD). The price you see on the order page before payment is the price you pay. We may change prices for future orders; this does not affect orders already paid.
 
@@ -65,8 +65,8 @@ Your wish is shown in a public fire and on a public live stream, and your place'
 How we handle content:
 
 - **When you write a text**, our system may refuse one that clearly breaks these rules. You can rewrite it; nothing extra is charged.
-- **Texts that may contain names, phone numbers or links** can be accepted but **hidden**. A hidden wish still burns and counts as delivered, but its text is never shown publicly. You still see it on your own personal page.
-- Every text is checked before it can appear publicly. Until it is checked, your wish burns without visible text.
+- **Texts that may contain names, phone numbers or links** can be accepted but **hidden**. A hidden wish still burns and counts as delivered, but its text is never shown publicly.
+- Every text is checked (automatically and, where needed, by our team) before it appears publicly. Until then, it is not shown.
 - When writing your wish, you can choose not to show its text publicly at all.
 - We may hide any text at any time if we believe it breaks these rules.
 - If, after payment, we have to refuse a wish completely because it is illegal, the wish does not burn, we refund the payment in full and the place is removed from the map.
@@ -79,11 +79,12 @@ You are responsible for what you write. Do not write anything you would not want
 
 ## 7. Your place and your room
 
-[Light up Armenia](/en/map/) is a digital map of Armenia with a limited number of places: 111,111, each 500×500 m (Lake Sevan is not divided into places). Our goal is to fill all of them before 25 December. When every place on the current map is taken, there are no free places left. For 600 AMD you choose one free place and make it yours:
+[{{brand.name}}](/en/map/) is a digital map of Armenia with a limited number of places: 111,111, each 500×500 m (Lake Sevan is not divided into places). When every place on the current map is taken, there are no free places left. For 600 AMD you choose one free place and make it yours:
 
 - you choose how your place looks on the map;
 - you decorate your room, for example with a tree, a sofa or a fireplace;
-- you add your name or nickname (up to 30 characters), a few words (up to 60 characters) and your email.
+- you add your name (up to 30 characters), a few words (up to 60 characters) and your email;
+- each person can have one place, and one email can be used for one place.
 
 You can change your room later at any time. Anyone who taps your place can open your room, look at it and send you warmth.
 
@@ -93,7 +94,6 @@ How it works:
 
 - **One place, one owner.** A place goes to whoever pays for it first. While you are paying, the place is reserved for you for 30 minutes.
 - If, rarely, someone else takes the same place at the same moment, we offer you the nearest free place or a full refund, whichever you prefer.
-- **Before payments open**, you can save your place with your email. Nothing is charged and the place is not reserved. When payments open, we email you a link. If the place you chose has been taken by then, we offer you the nearest free one. You can already write your wish for a saved place; it burns on 31 December if the place is paid by then.
 - Your place appears on the map right after payment and stays there at least until 31 January 2027. After that, we may keep the map as a read-only archive page or remove it.
 - Anyone can tap a place and see its room, its name and words (if approved), the date it was taken, the province and the nearest town. Your email is never shown.
 
@@ -106,7 +106,7 @@ How it works:
 
 The service is digital and is delivered online:
 
-- your personal page is available immediately after payment;
+- your room and your room key are available right after payment;
 - your place appears on the map right after payment;
 - on 31 December 2026 the wishes of all paid places burn together in the fire, live on YouTube and on the website's [live page](/en/live/).
 
@@ -116,19 +116,19 @@ Full details, including what happens with wishes written in the last hours of th
 
 You get a full refund if we fail to deliver the service (for example, your place did not appear on the map, or your wish did not burn through our fault), if you were charged twice, or if a technical error occurred. Because the service is delivered right away, a change of mind after your place has appeared on the map is not a reason for a refund, except where the law requires it. If someone else took your place at the same moment and you do not want the nearest free place, you get a full refund. Full rules are in the [Refund Policy](/en/refund/).
 
-## 10. The 20% for children's gifts
+## 10. Gifts for children
 
-From every 600 AMD payment we set aside 120 AMD (20%) for the gift fund. With this money we buy New Year gifts for children in Armenia who grow up without a family, in children's homes, and deliver them from 25 to 30 December 2026.
+We set aside 20% of every payment for the gift fund. With this money we buy New Year gifts for children living in residential care institutions (children's homes) in Armenia and deliver them from 25 to 30 December 2026.
 
 - This is our own decision as a company. It is **not** a charity collection, **not** a donation made by you and **not** tax-deductible. You are paying for a digital service; we choose to spend part of our revenue this way.
-- For transparency, bloggers trusted in Armenia can register through the form on the [20% for gifts](/en/gifts/) page to take part in delivering the gifts. Registering is free and is not an order.
+- For transparency, anyone, blogger or not, can apply through the form on the [Gifts for children](/en/gifts/) page to take part in delivering the gifts. Places are limited; if many people apply, we contact each applicant and give priority to those who will share it on social media. Registering is free and is not an order.
 - After the gifts are delivered, we will publish on the website what was bought and which children's homes received the gifts.
-- If a payment is refunded, its 20% share is removed from the gift fund.
+- If a payment is refunded, its share is removed from the gift fund.
 
 ## 11. Availability and our responsibility
 
 - We do our best to keep the website and the live stream running. Short interruptions can happen because of maintenance, internet problems, YouTube or other providers we do not control.
-- If the YouTube stream is interrupted, your wish still burns in the fire on the website and in your replay.
+- If the YouTube stream is interrupted, your wish still burns in the fire on the website.
 - Our total liability for any order is limited to the amount you paid for it, except where Armenian law does not allow such a limit.
 - Nothing in these terms limits the rights you have as a consumer under the Law of the Republic of Armenia on Protection of Consumer Rights.
 
@@ -146,7 +146,7 @@ We may update these terms. The date at the top always shows the latest version. 
 
 ## 15. Law and disputes
 
-These terms are governed by the laws of the Republic of Armenia. If something goes wrong, please write to us first at {{company.email}}; we reply within 24 hours and will try to solve it quickly. If we cannot agree, the dispute will be decided by the competent court of the Republic of Armenia. This does not take away any rights you have under consumer protection laws.
+These terms are governed by the laws of the Republic of Armenia. If something goes wrong, please write to us first at {{company.email}}; we will try to solve it quickly. If we cannot agree, the dispute will be decided by the competent court of the Republic of Armenia. This does not take away any rights you have under consumer protection laws.
 
 ## 16. Contact
 

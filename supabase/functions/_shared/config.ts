@@ -31,6 +31,13 @@ export interface Config {
   autoApprove: boolean;
   /** ADMIN_TOKEN; null when unset or shorter than ADMIN_TOKEN_MIN_LENGTH (admin then always 401). */
   adminToken: string | null;
+  /** TELEGRAM_BOT_TOKEN + TELEGRAM_CHAT_ID; null when either is unset (no notifications). */
+  telegram: TelegramConfig | null;
+}
+
+export interface TelegramConfig {
+  botToken: string;
+  chatId: string;
 }
 
 export const ADMIN_TOKEN_MIN_LENGTH = 32;
@@ -92,6 +99,9 @@ export function parseConfig(env: Env): Config {
     idram,
     autoApprove: (env.AUTO_APPROVE ?? "0").trim() === "1",
     adminToken: (env.ADMIN_TOKEN ?? "").length >= ADMIN_TOKEN_MIN_LENGTH ? env.ADMIN_TOKEN! : null,
+    telegram: (env.TELEGRAM_BOT_TOKEN ?? "").trim() && (env.TELEGRAM_CHAT_ID ?? "").trim()
+      ? { botToken: env.TELEGRAM_BOT_TOKEN!.trim(), chatId: env.TELEGRAM_CHAT_ID!.trim() }
+      : null,
   };
 }
 
@@ -117,9 +127,10 @@ export function providerReady(cfg: Config): boolean {
  * language lives at the root) and `${SITE_URL}/{lang}/p/{code}` for en/ru.
  * The static site serves /p/?c=CODE; vercel.json must rewrite /p/:code to it.
  */
-export function orderPageUrl(siteUrl: string, lang: Lang, code: string): string {
+export function orderPageUrl(siteUrl: string, lang: Lang, code: string, result?: "success" | "failed"): string {
   const prefix = lang === "hy" ? "" : `/${lang}`;
-  return `${trimSlash(siteUrl)}${prefix}/p/${encodeURIComponent(code)}`;
+  const tail = result ? `?result=${result}` : "";
+  return `${trimSlash(siteUrl)}${prefix}/p/${encodeURIComponent(code)}${tail}`;
 }
 
 export function mockPayUrl(functionsBase: string, code: string): string {

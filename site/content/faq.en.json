@@ -9,7 +9,7 @@
   },
   {
     "q": "What do I get on the map?",
-    "a": "Your own place: one of the 111,111 places on the map of Armenia, 500×500 m each. You choose a free place and decorate your room on it: a tree, a sofa, a fireplace, a cat and more. You can change the room later at any time. If you like, you can add your name (up to 30 characters) and a few words (up to 60 characters). Anyone can tap your place, open it and look at your room."
+    "a": "Your own place: one of the 111,111 places on the map of Armenia, 500×500 m each. You choose a free place and decorate your room on it: a tree, a sofa, a fireplace, a cat and more. You can change the room later at any time. You also add your name (up to 30 characters) and a few words (up to 60 characters). Anyone can tap your place, open it and look at your room."
   },
   {
     "q": "Why 25 December? And what if the map fills up?",
@@ -17,15 +17,15 @@
   },
   {
     "q": "How and when do I write my wish?",
-    "a": "Right after you take your place, or later, whenever you like before the fire on 31 December, in the \"Fire\" tab on the map. You write it once, up to 120 characters. Every place has exactly one wish, and it is included in the price. If you saved your place before card payments opened, you can already write your wish; it will burn once your place is paid."
+    "a": "Right after you take your place, or later, whenever you like before the fire on 31 December, in the \"Fire\" tab on the map. You write it once, up to 120 characters. Every place has exactly one wish, and it is included in the price."
   },
   {
     "q": "When will my wish burn? When is the live stream?",
-    "a": "On 31 December. On that day all the wishes burn together in one shared fire, live on YouTube, and the fire is also shown on our website. There is no stream before 31 December. After your wish has burned, your personal page shows its number, a replay of it burning and an image to share. The rooms and the fire are computer animation: no real paper is burned."
+    "a": "On 31 December. On that day all the wishes burn together in one shared fire, live on YouTube, and the fire is also shown on our website. There is no stream before 31 December. The rooms and the fire are computer animation: no real paper is burned."
   },
   {
     "q": "Will people see my wish?",
-    "a": "Only if you allow it and it passes our check. You can choose to keep your wish private: it still burns, only its number is shown. The fire is public, so we don't show names of real people, phone numbers, links or insults; if your wish contains them, it still burns, but the text is hidden from public view. Your text is always visible to you on your personal page."
+    "a": "Only if you allow it and it passes our check. You can choose to keep your wish private: it still burns, but its text is not shown. The fire is public, so we don't show names of real people, phone numbers, links or insults; if your wish contains them, it still burns, but the text is hidden from public view."
   },
   {
     "q": "Am I buying real land?",
@@ -33,15 +33,19 @@
   },
   {
     "q": "What if someone else takes my place?",
-    "a": "Each place can belong to only one person: first come, first served. While you pay, the place is held for you for 30 minutes. If, rarely, someone else takes it at the same moment, we offer you the nearest free place or a full refund, whichever you prefer. If you saved your place before payments opened, it is not reserved, and if it is taken by then, we offer you the nearest free one."
+    "a": "Each place can belong to only one person: first come, first served. While you pay, the place is held for you for 30 minutes. If, rarely, someone else takes it at the same moment, we offer you the nearest free place or a full refund, whichever you prefer."
   },
   {
     "q": "How long will my place stay on the map?",
     "a": "Your place appears on the map right after payment and stays at least until 31 January 2027. After that we may keep the map as a read-only archive page or remove it. Anyone can tap your place and see your room, your name and words (once approved), the date, the province and the nearest town. Your email is never shown."
   },
   {
-    "q": "Can I choose a place in my grandparents' village, or give it as a gift?",
-    "a": "Of course. Find the village on the map, choose a free place and sign it however you like, for example \"The Petrosyan family\" or \"With love, from the grandchildren\". You can send the link and image of your place to the person you made it for. Just keep phone numbers, links and other people's private data out of your words, your name and your wish."
+    "q": "How do I open my room on another phone?",
+    "a": "After you take your place you get your room key: a private link and a QR code. Scan it with the other phone or send the link to yourself, and your room opens. If you lose the link, write to {{company.email}} from the email you used, and we'll send it again. Everyone can have one room."
+  },
+  {
+    "q": "Can I choose a place in my grandparents' village?",
+    "a": "Of course. Find the village on the map, choose a free place and sign it however you like, for example \"The Petrosyan family\" or \"With love, from the grandchildren\". Then share your place with your family: send them its link or image. Just keep phone numbers, links and other people's private data out of your words, your name and your wish."
   },
   {
     "q": "How does payment work? Is it safe?",
@@ -49,22 +53,22 @@
   },
   {
     "q": "Which cards can I use, including from abroad?",
-    "a": "Visa, Mastercard and ArCa cards accepted by Ameriabank; the exact list is shown on Ameriabank's payment page. Most foreign cards work: you are charged in AMD and your bank converts the amount, sometimes with a small fee. Cards issued in Russia generally don't work with Armenian banks; in that case a relative or friend in Armenia can pay for you using the link to your order."
+    "a": "Visa, Mastercard and ArCa cards accepted by Ameriabank; the exact list is shown on Ameriabank's payment page. Most foreign cards work: you are charged in AMD and your bank converts the amount, sometimes with a small fee. Cards issued in Russia generally don't work with Armenian banks."
   },
   {
-    "q": "Where does the 20% go? Are you a charity?",
-    "a": "From every payment we set aside 20% for New Year gifts for children in Armenia who grow up without a family, in children's homes. We deliver the gifts from 25 to 30 December, together with bloggers trusted in Armenia, so that everyone can see where the money went. Afterwards we publish on the site what we bought and which children's homes received the gifts. We are not a charity but a for-profit company, and you are paying for a digital service. Giving 20% to gifts is our own choice, so it is not a donation from you and it is not tax-deductible."
+    "q": "How do you help children? Are you a charity?",
+    "a": "Part of every payment goes to New Year gifts for children living in children's homes in Armenia. The \"Gifts for children\" page shows how much has been collected, updated once a day. We deliver the gifts from 25 to 30 December, openly, so that everyone can see where the money went. Afterwards we publish on the site what we bought and which children's homes received the gifts. We are not a charity but a for-profit company, and you are paying for a digital service. Giving part of our revenue to gifts is our own choice, so it is not a donation from you and it is not tax-deductible."
   },
   {
-    "q": "I'm a blogger. Can I join?",
-    "a": "Yes, if people in Armenia trust you. Register through the form on the \"20% for gifts\" page if you would like to come with us on one of the gift delivery days, 25 to 30 December, film it and tell your audience. We'll contact you."
+    "q": "Can I join the gift delivery?",
+    "a": "Yes. For transparency, anyone, blogger or not, can apply through the form on the \"Gifts for children\" page to join us on 25–30 December. Places are limited: if many people apply, we'll get in touch with each of you and give priority to those who will share it on social media. We don't film or publish the children's faces."
   },
   {
     "q": "Can I get a refund?",
-    "a": "Yes, in full, if your place didn't appear on the map, your wish didn't burn on 31 December through our fault, you didn't get your page, you were charged twice or something broke technically. Write to {{company.email}} within 14 days; the money returns to the same card, usually in 5–10 business days."
+    "a": "Yes, in full, if your place didn't appear on the map, your wish didn't burn on 31 December through our fault, you couldn't get into your room, you were charged twice or something broke technically. Write to {{company.email}} within 14 days; the money returns to the same card, usually in 5–10 business days."
   },
   {
     "q": "What happens to my data?",
-    "a": "We keep only what we need: your wish, your room, your name or nickname and words, your email, and the payment status. We never see your card number, store only a one-way hash of your IP address, don't sell data and don't use ad trackers. You can ask us to delete your text at any time by writing to {{company.email}}."
+    "a": "We keep only what we need: your wish, your room, your name and words, your email, and the payment status. We never see your card number, store only a one-way hash of your IP address, don't sell data and don't use ad trackers. You can ask us to delete your text at any time by writing to {{company.email}}."
   }
 ]

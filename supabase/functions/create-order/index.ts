@@ -18,7 +18,7 @@ import {
 import { initialModeration, moderate } from "../_shared/moderation.ts";
 import { generateOrderCode } from "../_shared/codes.ts";
 import { providerReady } from "../_shared/config.ts";
-import { cancelPendingOrder, getCell, getProduct, holdCell, insertOrder, type NewOrder } from "../_shared/db.ts";
+import { cancelPendingOrder, emailHasRoom, getCell, getProduct, holdCell, insertOrder, type NewOrder } from "../_shared/db.ts";
 import { enforceRateLimit, requestIpHash } from "../_shared/ratelimit.ts";
 import { paymentInstruction, paymentMisconfiguredError } from "../_shared/payments.ts";
 
@@ -70,6 +70,9 @@ Deno.serve(browserEndpoint(["POST"], cfg.cors, async (req) => {
   const product = available.value;
 
   if (light) {
+    if (light.email && await emailHasRoom(light.email)) {
+      throw new ApiError(409, ErrorCode.ALREADY_HAS_ROOM, "This email already has a room.");
+    }
     const cell = await getCell(light.cell_id);
     if (!cell) throw new ApiError(400, ErrorCode.CELL_INVALID, "This plot is not on the map.");
     // Fast path; the authoritative check is hold_cell below.

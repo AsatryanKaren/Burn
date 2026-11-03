@@ -10,14 +10,11 @@
 
 <section class="wrap gp-sec">
   <div class="gp-panel" data-reveal>
-    <div class="split">
-      <h2 class="gp-label">{{ t('gifts_page.split_t', price=price(p0)) }}</h2>
-      <div class="split-bar" role="img" aria-label="20% / 80%"><div class="g">20%</div><div class="c">80%</div></div>
-    </div>
     <div class="gp-fund">
       <span class="gp-label">{{ t('gifts_page.fund_t') }}</span>
       <span class="gp-value" data-stat="gift_fund_amd" data-format="price">—</span>
       <span class="gp-note" id="giftCount" data-per="{{ cfg.gifts.estimated_gift_cost }}"></span>
+      <span class="gp-note">{{ t('gifts_page.fund_daily') }}</span>
     </div>
   </div>
 </section>
@@ -37,7 +34,6 @@
       </div>
       <div class="field"><label for="blEmail">{{ t('burn.email_label') }}</label><input class="input" id="blEmail" type="email" inputmode="email" autocomplete="email" placeholder="{{ t('burn.email_ph') }}"></div>
       <div class="field"><label for="blPhone">{{ t('gifts_page.bl_phone') }}</label><input class="input" id="blPhone" type="tel" inputmode="tel" maxlength="30" autocomplete="tel"></div>
-      <div class="field"><label for="blMsg">{{ t('gifts_page.bl_message') }}</label><textarea class="input" id="blMsg" rows="3" maxlength="500"></textarea></div>
       <label class="check"><input type="checkbox" id="blConsent"><span>{{ t('gifts_page.bl_consent', privacy=url('privacy')) }}</span></label>
       <p class="error" id="blErr" role="alert"></p>
       <button type="submit" class="btn btn-fire btn-block" id="blSubmit">{{ t('gifts_page.bl_submit') }}</button>

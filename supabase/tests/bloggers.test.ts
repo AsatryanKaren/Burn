@@ -68,7 +68,9 @@ test("body and consent", () => {
 test("required fields", () => {
   assert.equal(err(validateBloggerInput({ ...base, name: " ​ " })), "NAME_REQUIRED");
   assert.equal(err(validateBloggerInput({ ...base, name: 5 })), "NAME_REQUIRED");
-  assert.equal(err(validateBloggerInput({ ...base, link: "" })), "LINK_REQUIRED");
+  const noLink = validateBloggerInput({ ...base, link: "" });
+  assert.ok(noLink.ok && noLink.value.link === null);
+  assert.ok(validateBloggerInput({ ...base, link: undefined }).ok);
   assert.equal(err(validateBloggerInput({ ...base, email: undefined })), "EMAIL_REQUIRED");
   assert.equal(err(validateBloggerInput({ ...base, email: "nope@" })), "EMAIL_INVALID");
 });

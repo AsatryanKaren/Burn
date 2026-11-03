@@ -32,6 +32,8 @@ export const TEXT_MAX = 120;
 /** A light's message (orders.text for light products). */
 export const LIGHT_TEXT_MAX = 60;
 export const SIGNATURE_MAX = 30;
+/** Order statuses that mean an email already has its one room. Abandoned payments stay free to retry. */
+export const ROOM_HOLDING_STATUSES = ["paid", "awaiting_launch"];
 /**
  * Plot ids: row * 540 + col on the 540 x 537 grid of the 111,111-plot map
  * (0004_cells_seed), so every id is < 290,000. Whether the id is a plot is
@@ -251,7 +253,7 @@ export function validateOrderInput(body: unknown, opts: OrderValidationOptions):
 }
 
 /**
- * Light fields: message 1–60, plot, icon, colour, name or nickname 1–30,
+ * Light fields: message 1–60, plot, icon, colour, name 1–30,
  * optional room (validateRoom; absent or null = no room). show_on_stream is ignored.
  */
 function validateLightFields(
@@ -275,7 +277,7 @@ function validateLightFields(
   if (light_color === null) return fail(ErrorCode.COLOR_INVALID, "Unknown light colour.");
 
   const light_signature = isEmptyOptional(b.light_signature) ? "" : normalizeText(b.light_signature);
-  if (!light_signature) return fail(ErrorCode.SIGNATURE_REQUIRED, "Name or nickname is required.");
+  if (!light_signature) return fail(ErrorCode.SIGNATURE_REQUIRED, "Name is required.");
   if (charLength(light_signature) > SIGNATURE_MAX) {
     return fail(ErrorCode.SIGNATURE_TOO_LONG, `Signature must be at most ${SIGNATURE_MAX} characters.`);
   }
@@ -518,7 +520,7 @@ export const BLOGGER_LIMITS = {
 
 export interface BloggerInput {
   name: string;
-  link: string;
+  link: string | null;
   platform: BloggerPlatform | null;
   audience: string | null;
   email: string;
@@ -575,12 +577,15 @@ export function validateBloggerInput(body: unknown): Result<BloggerInput> {
   if (name === "") return fail(ErrorCode.NAME_REQUIRED, "Name is required.");
   if (charLength(name) > BLOGGER_LIMITS.name) return tooLong("name");
 
-  const rawLink = normalizeText(b.link);
-  if (rawLink === "") return fail(ErrorCode.LINK_REQUIRED, "A link to your profile is required.");
-  if (charLength(rawLink) > BLOGGER_LIMITS.link) return tooLong("link");
-  const link = normalizeProfileLink(rawLink);
-  if (link === null) return fail(ErrorCode.LINK_INVALID, "The link must be an http(s) address of your profile.");
-  if (charLength(link) > BLOGGER_LIMITS.link) return tooLong("link");
+  // The profile link is optional: anyone may apply, with or without a social page.
+  let link: string | null = null;
+  const rawLink = isEmptyOptional(b.link) ? "" : normalizeText(b.link);
+  if (rawLink !== "") {
+    if (charLength(rawLink) > BLOGGER_LIMITS.link) return tooLong("link");
+    link = normalizeProfileLink(rawLink);
+    if (link === null) return fail(ErrorCode.LINK_INVALID, "The link must be an http(s) address of your profile.");
+    if (charLength(link) > BLOGGER_LIMITS.link) return tooLong("link");
+  }
 
   let platform: BloggerPlatform | null = null;
   if (!isEmptyOptional(b.platform)) {

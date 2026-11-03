@@ -1,7 +1,7 @@
 {
   "locale": "en-US",
   "nav": {
-    "gifts": "20% for gifts",
+    "gifts": "Gifts for children",
     "live": "Live",
     "faq": "FAQ",
     "cta": "Choose a place",
@@ -13,10 +13,10 @@
     "lights": "Map"
   },
   "meta": {
-    "home_desc": "A digital map of Armenia with 111,111 places. Take yours for 600 ֏, make your New Year room and burn one wish on 31 December. 20% will go to gifts for children.",
+    "home_desc": "A digital map of Armenia with 111,111 places. Take yours for 600 ֏, make your New Year room and burn one wish on 31 December.",
     "paper_title": "Your place",
     "live_title": "The fire of 31 December",
-    "gifts_title": "20% will go to children's gifts",
+    "gifts_title": "New Year gifts for children",
     "notfound_title": "Page not found",
     "lights_title": "Your place on the map of Armenia"
   },
@@ -28,12 +28,12 @@
     "c2_cta": "Choose a place"
   },
   "gifts": {
-    "title": "20% will go to children's gifts",
-    "body": "20% of every payment will go to New Year gifts for children in Armenia who grow up without a family. From 25 to 30 December we bring the gifts to them together with trusted bloggers, and afterwards we publish what we bought and where it went.",
+    "title": "New Year gifts for children",
+    "body": "This New Year we're bringing gifts to children living in children's homes in Armenia. From 25 to 30 December we bring the gifts to them, openly, and afterwards we publish what we bought and where it went.",
     "fund": "In the gift fund",
     "fund_soon": "The fund starts with the first payment",
-    "blogger_t": "Are you a blogger?",
-    "blogger_d": "Trusted bloggers from Armenia can join us on 25–30 December, bring the gifts to the children and show everyone where the money went. Apply, and we'll get in touch.",
+    "blogger_t": "Want to join us?",
+    "blogger_d": "For transparency, anyone can apply to join the gift delivery on 25–30 December. Places are limited.",
     "blogger_cta": "Apply"
   },
   "live": {
@@ -71,7 +71,7 @@
     "email_label": "Email",
     "email_ph": "name@example.com",
     "consent": "I agree to the <a href=\"{terms}\">terms</a> and the <a href=\"{privacy}\">privacy policy</a>",
-    "of_which": "Part of the price of your place will go to New Year gifts for children without families",
+    "of_which": "Part of the price of your place will go to New Year gifts for children living in children's homes",
     "pay": "Pay {price}",
     "secure": "You pay on the bank's secure page.",
     "cards": "We accept",
@@ -114,7 +114,7 @@
     "failed_d": "No money was taken. You can try again.",
     "retry": "Try again",
     "awaiting_t": "Your place is saved",
-    "awaiting_d": "We'll email you the link as soon as payments open.",
+    "awaiting_d": "Your payment isn't confirmed yet.",
     "burned_t": "Burned",
     "burned_line": "Your wish is No. <b>{n}</b>.",
     "gift_for": "{name}, this paper was burned for you.",
@@ -125,27 +125,27 @@
     "copied": "Copied",
     "replay": "Watch again",
     "story_hint": "Save the image and post it to your story. On a phone, press and hold the image.",
-    "check_t": "Couldn't check the status"
+    "check_t": "Couldn't check the status",
+    "paid_ok": "Payment successful",
+    "failed_map": "Back to the map"
   },
   "story": {
     "bye": "My wish",
     "num": "My number"
   },
   "gifts_page": {
-    "title": "20% will go to children's gifts",
-    "lead": "20% of every payment will go to children's homes in Armenia, as New Year gifts for the children. We deliver the gifts from 25 to 30 December.",
-    "split_t": "How {price} is split",
-    "fund_t": "The fund right now",
+    "title": "New Year gifts for children",
+    "lead": "This New Year we're bringing gifts to children living in children's homes in Armenia. We deliver them from 25 to 30 December.",
+    "fund_t": "In the gift fund",
     "fund_gifts": "≈ {n} gifts",
     "fund_gifts_note": "Assuming about {price} per gift",
     "dec31_t": "25–30 December",
-    "bl_lead": "You're a blogger and you want to be part of this. Come with us on 25–30 December, film the gift delivery and tell your audience. Fill in the form and we'll get in touch.",
+    "bl_lead": "For transparency, anyone, blogger or not, can apply to join us at the gift delivery on 25–30 December. Places are limited: if many people apply, we'll get in touch with each of you and give priority to those who will share it on social media, so more people can see it.",
     "bl_name": "Name",
-    "bl_link": "Link to your profile",
+    "bl_link": "Link to your profile (optional)",
     "bl_platform": "Platform",
     "bl_other": "Other",
     "bl_phone": "Phone (optional)",
-    "bl_message": "A few words about you (optional)",
     "bl_submit": "Send application",
     "bl_done_t": "Thank you, we've got your application",
     "bl_done_d": "We'll get in touch before 25 December.",
@@ -157,7 +157,8 @@
       "TOO_LONG": "That's too long",
       "PLATFORM_INVALID": "Choose a platform",
       "PHONE_INVALID": "Check the phone number"
-    }
+    },
+    "fund_daily": "Updated once a day, at midnight"
   },
   "notfound": {
     "title": "Page not found",
@@ -202,12 +203,12 @@
     "message": "A few words",
     "message_ph": "May this home always be warm",
     "message_hint": "Up to 60 characters. Everyone sees it when they open your place.",
-    "signature": "Your name or nickname",
+    "signature": "Your name",
     "signature_ph": "For example, Ani",
-    "pay": "Take it for {price}",
+    "pay": "Buy for {price}",
     "save": "Save my place",
-    "saved_t": "Your place is saved",
-    "saved_d": "We'll email <b>{email}</b> as soon as payments open. Places stay free until they're paid for, so if this one is taken by then, we'll offer you the nearest free place.",
+    "saved_t": "Your place is ready",
+    "saved_d": "Your room is on the map. Below is your room key: keep it safe.",
     "close": "Close",
     "icons": {
       "tree": "Tree",
@@ -234,7 +235,8 @@
       "SIGNATURE_REJECTED": "We can't accept this signature",
       "TEXT_TOO_LONG": "Your words are too long: up to 60 characters",
       "EMPTY": "Write a few words",
-      "SIGNATURE_REQUIRED": "Add your name or nickname"
+      "SIGNATURE_REQUIRED": "Add your name",
+      "ALREADY_HAS_ROOM": "This email already has a room. Open your room link or write to us."
     },
     "paper_t": "This place is yours",
     "paper_line": "Your place is now on the map of Armenia.",
@@ -246,7 +248,7 @@
     "left": "{n} free",
     "how_t": "How it works",
     "s1": "Choose any free place on the map, wherever your heart says.",
-    "s2": "Decorate your room and add your name or nickname.",
+    "s2": "Decorate your room and add your name.",
     "s3": "Pay once. Your place appears on the map and you can write one wish for the 31 December fire.",
     "email_hint": "Your place is saved to this email. We'll send the link here, nothing else.",
     "map_err": "We couldn't load the places. You can still explore the map.",
@@ -254,7 +256,7 @@
     "fire_cta": "Write your wish for the fire (included)",
     "nolight": "Your place is on the map; its words are still being reviewed",
     "your_light": "Your place",
-    "gift_share": "{amount} from your place went to gifts for children.",
+    "gift_share": "Part of your place's price went to gifts for children.",
     "lead2": "We've made a digital map of Armenia with 111,111 places. Take any free place, wherever you like, make it your New Year room and visit everyone else's.",
     "h1_t": "Pick your spot",
     "h2_t": "Decorate your room",
@@ -263,7 +265,9 @@
     "soon_t": "Payments open soon",
     "soon_d": "You'll be able to take this place soon. Until then, decorate your room and explore the map.",
     "email_label": "Your email",
-    "email_ph": "ani@gmail.com"
+    "email_ph": "ani@gmail.com",
+    "own_t": "You already have a room",
+    "own_d": "Everyone can have one room. Enter yours, or tap a taken place to visit someone else's."
   },
   "room": {
     "decorate_d": "Take a place on the map and it becomes your own New Year room. Decorate it with a tree, a sofa, a fireplace and whatever you love. Guests can step inside and send you warmth.",
@@ -330,7 +334,13 @@
     },
     "edit_mine": "Decorate my room",
     "saved": "Your room is saved",
-    "kicker_own": "Your room"
+    "kicker_own": "Your room",
+    "key_t": "Your room key",
+    "key_d": "This link opens your room on any device. Save it.",
+    "key_scan": "Scan with your other phone",
+    "key_copy": "Copy link",
+    "key_share": "Send to myself",
+    "key_warn": "Anyone with this link can edit your room, so don't post it publicly."
   },
   "app": {
     "tab_map": "Map",
@@ -338,7 +348,7 @@
     "tab_fire": "Fire",
     "tab_top": "Warmest",
     "tab_help": "How",
-    "mine_t": "My rooms",
+    "mine_t": "My room",
     "mine_empty": "You don't have a place yet. Choose one and your room will appear here.",
     "top_t": "The warmest rooms",
     "top_empty": "No one has sent warmth yet. Be the first.",
@@ -358,15 +368,18 @@
     "fire_done_n": "No. {n}. It burns together with everyone's on 31 December, live.",
     "fire_wait": "It goes into the fire once your place is paid.",
     "fire_watch": "About the 31 December fire",
-    "fire_go": "Now write your wish for the fire (included)"
+    "fire_go": "Now write your wish for the fire (included)",
+    "my_enter": "Enter my room",
+    "my_show": "Show on the map",
+    "my_wish": "Write my wish",
+    "my_share": "Share"
   },
   "landing": {
-    "kicker": "New Year 2027",
     "cta": "Open the map",
     "cta_note": "Choose your place · {price}",
     "do_t": "What you can do",
     "do1_t": "Take a place, make a room",
-    "do1_d": "Choose any free place on the map. It becomes your New Year room: decorate it and add your name or nickname.",
+    "do1_d": "Choose any free place on the map. It becomes your New Year room: decorate it and add your name.",
     "do2_t": "Visit others",
     "do2_d": "Tap any place on the map, step into other people's rooms and send them warmth.",
     "mine_cta": "Enter my room",

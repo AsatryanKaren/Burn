@@ -1,4 +1,4 @@
-/* "Light up Armenia": map data, light icons, the canvas map view and the story card.
+/* The New Year map: map data, light icons, the canvas map view and the story card.
    Used by the map page, the home teaser and the personal page of a light order.
    World units are kilometres; x grows east, y grows south. Plot id = row * cols + col. */
 (function () {

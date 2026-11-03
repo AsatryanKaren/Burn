@@ -80,4 +80,6 @@ test("order page URL", () => {
   assert.equal(orderPageUrl("https://site.am/", "hy", "abc"), "https://site.am/p/abc");
   assert.equal(orderPageUrl("https://site.am", "en", "abc"), "https://site.am/en/p/abc");
   assert.equal(orderPageUrl("https://site.am", "ru", "abc"), "https://site.am/ru/p/abc");
+  assert.equal(orderPageUrl("https://site.am", "hy", "abc", "success"), "https://site.am/p/abc?result=success");
+  assert.equal(orderPageUrl("https://site.am", "en", "abc", "failed"), "https://site.am/en/p/abc?result=failed");
 });

@@ -37,6 +37,17 @@
     json: function (k, dflt) { try { var v = store.get(k); return v ? JSON.parse(v) : dflt; } catch (e) { return dflt; } }
   };
 
+  /* ---------- one room per person: a browser that remembers several keeps only the first one ---------- */
+  (function () {
+    var mine = store.json("myLights", {}) || {}, ids = Object.keys(mine);
+    if (ids.length < 2) return;
+    var order = store.json("papers", []) || [];  // newest code first
+    var age = function (id) { var i = order.indexOf(mine[id]); return i < 0 ? -1 : i; };
+    var keep = ids.reduce(function (a, b) { return age(b) > age(a) ? b : a; }), one = {};
+    one[keep] = mine[keep];
+    store.set("myLights", JSON.stringify(one));
+  })();
+
   /* ---------- the way back to my room: a header item and a menu item once a place is taken ---------- */
   function showMyRoom() {
     if (document.querySelector(".topbar-mine") || !Object.keys(store.json("myLights", {}) || {}).length) return;

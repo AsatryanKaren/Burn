@@ -7,6 +7,8 @@
 // docs/BACKEND.md). Same answer for new and already-known emails (no
 // enumeration); a repeated email just adds another row.
 // Rate limit: 5 per IP hash per hour -> 429 RATE_LIMITED.
+// After the row is saved, the application is also sent to the team's Telegram
+// chat (TELEGRAM_BOT_TOKEN + TELEGRAM_CHAT_ID); a Telegram failure is only logged.
 
 import { getConfig } from "../_shared/env.ts";
 import { browserEndpoint, jsonResponse, readJson } from "../_shared/http.ts";
@@ -14,6 +16,7 @@ import { ApiError } from "../_shared/errors.ts";
 import { validateBloggerInput } from "../_shared/validation.ts";
 import { addBloggerApplication } from "../_shared/db.ts";
 import { enforceRateLimit, requestIpHash } from "../_shared/ratelimit.ts";
+import { bloggerMessage, sendTelegram } from "../_shared/telegram.ts";
 
 const cfg = getConfig();
 
@@ -26,5 +29,6 @@ Deno.serve(browserEndpoint(["POST"], cfg.cors, async (req) => {
   await enforceRateLimit("bloggers", ipHash);
 
   await addBloggerApplication({ ...v.value, ip_hash: ipHash });
+  if (cfg.telegram) await sendTelegram(cfg.telegram, bloggerMessage(v.value));
   return jsonResponse({ ok: true });
 }));

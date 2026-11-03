@@ -35,7 +35,7 @@ Deno.serve(async (req) => {
       await logNeedsRefund(PROVIDER, order.code, `mock-${order.code}`, order.amount_amd, { reason: result.error });
     }
 
-    return redirectResponse(orderPageUrl(cfg.siteUrl, order.lang, order.code));
+    return redirectResponse(orderPageUrl(cfg.siteUrl, order.lang, order.code, result.ok ? "success" : undefined));
   } catch (err) {
     if (err instanceof ApiError) return errorResponse(err);
     console.error("pay-mock error", err);

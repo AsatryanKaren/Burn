@@ -21,6 +21,8 @@ supabase/
     0012_map_packed.sql       get_map: `lit`/`held` arrays → base64 `lit_packed`/`held_packed`; index cell_holds_open_idx
     0013_fire_wish.sql        fire_wishes (one wish in the fire per light), burn_wish, renumber trigger; get_fire_feed/get_public_stats/admin_list_orders gain wishes; admin_moderate_wish
     0014_price_600.sql        one price: burn + light at 600 AMD
+    0015_daily_gift_fund.sql  get_public_stats: the public gift fund total moves once a day (Yerevan midnight)
+    0016_blogger_link_optional.sql  blogger_applications.link can be null: anyone may apply
   functions/
     _shared/                  shared code (see "Code layout")
     create-order/  order-status/  start-payment/  update-room/  room-warmth/  burn-wish/  join-waitlist/  join-bloggers/
@@ -168,6 +170,7 @@ supabase secrets set --project-ref maqcaowpfhmqcavboszy \
 | `IP_HASH_SALT` | derived from the service-role key | set a real one; changing it only resets rate-limit counters |
 | `AUTO_APPROVE` | `0` | only `1` stores clean texts as `approved` at creation; otherwise they are `pending` until approved in admin (papers and light messages/signatures alike). The blocklist still rejects, contact data/names still hide. |
 | `ADMIN_TOKEN` | unset → admin always 401 | must be ≥ 32 chars; rotate by setting a new value |
+| `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` | unset → no notifications | `join-bloggers` sends each new application to this chat after saving it; a Telegram failure is only logged (the row is still saved). Token from @BotFather; chat id from `getUpdates` after you message the bot. |
 | `AMERIA_CLIENT_ID`, `AMERIA_USERNAME`, `AMERIA_PASSWORD`, `AMERIA_API_BASE` | — | all four required for `ameria`; test base `https://servicestest.ameriabank.am/VPOS` |
 | `IDRAM_ACCOUNT_ID`, `IDRAM_SECRET_KEY` | — | required for `idram` |
 | `IDRAM_ACTION_URL` | `https://banking.idram.am/Payment/GetPayment` | override only if Idram says so |
@@ -201,14 +204,14 @@ All JSON errors are `{ "error": { "code", "message" } }`. Browser endpoints also
 
 | Function | Codes |
 |---|---|
-| `create-order` | 400 `PRODUCT_RETIRED` (any paper product: `burn`, `burn_wish`, `gift`, `midnight`; checked right after the body is parsed, since 0013), `INVALID_JSON`, `CONSENT_REQUIRED`, `INVALID_PRODUCT`, `SIGNATURE_REQUIRED` and `EMAIL_REQUIRED` (a name or nickname and an email are required on every new order), `TEXT_REQUIRED`, `TEXT_TOO_LONG` (>120 papers, >60 lights), `WISH_REQUIRED`, `WISH_TOO_LONG`, `WISH_NOT_ALLOWED`, `RECIPIENT_REQUIRED`, `RECIPIENT_TOO_LONG`, `RECIPIENT_NOT_ALLOWED`, `EMAIL_REQUIRED` (only while payments are disabled), `EMAIL_INVALID`, `TEXT_REJECTED`, `PRODUCT_UNAVAILABLE`, `ROOM_NOT_ALLOWED` (a paper with a `room`); lights also 400 `CELL_INVALID`, `ICON_INVALID`, `COLOR_INVALID`, `SIGNATURE_TOO_LONG`, `SIGNATURE_REJECTED`, `ROOM_INVALID`, 409 `CELL_TAKEN`; 429 `RATE_LIMITED`; 502 `PAYMENT_UNAVAILABLE` (bank did not answer InitPayment; order marked failed); 503 `PAYMENT_MISCONFIGURED` |
+| `create-order` | 400 `PRODUCT_RETIRED` (any paper product: `burn`, `burn_wish`, `gift`, `midnight`; checked right after the body is parsed, since 0013), `INVALID_JSON`, `CONSENT_REQUIRED`, `INVALID_PRODUCT`, `SIGNATURE_REQUIRED` and `EMAIL_REQUIRED` (a name and an email are required on every new order), 409 `ALREADY_HAS_ROOM` (one room per email, checked before payment; not a database constraint, so `confirm_payment` can never fail after a real charge), `TEXT_REQUIRED`, `TEXT_TOO_LONG` (>120 papers, >60 lights), `WISH_REQUIRED`, `WISH_TOO_LONG`, `WISH_NOT_ALLOWED`, `RECIPIENT_REQUIRED`, `RECIPIENT_TOO_LONG`, `RECIPIENT_NOT_ALLOWED`, `EMAIL_REQUIRED` (only while payments are disabled), `EMAIL_INVALID`, `TEXT_REJECTED`, `PRODUCT_UNAVAILABLE`, `ROOM_NOT_ALLOWED` (a paper with a `room`); lights also 400 `CELL_INVALID`, `ICON_INVALID`, `COLOR_INVALID`, `SIGNATURE_TOO_LONG`, `SIGNATURE_REJECTED`, `ROOM_INVALID`, 409 `CELL_TAKEN`; 429 `RATE_LIMITED`; 502 `PAYMENT_UNAVAILABLE` (bank did not answer InitPayment; order marked failed); 503 `PAYMENT_MISCONFIGURED` |
 | `order-status` | 404 `NOT_FOUND` (also for malformed codes); 429 `RATE_LIMITED` (120 / 10 min) |
 | `update-room` | 400 `INVALID_JSON`, `ROOM_INVALID`; 404 `NOT_FOUND` (unknown or malformed code); 409 `ORDER_NOT_EDITABLE` (not a light, or status not `awaiting_launch`/`pending`/`paid`); 429 `RATE_LIMITED` (60 / hour). Contract: `docs/ARCHITECTURE.md` "The room" |
 | `room-warmth` | 400 `INVALID_JSON`, `CELL_INVALID`, `ACTION_INVALID`; 404 `NOT_LIT` (no such plot or not lit); 429 `RATE_LIMITED` (`warm` only, 30 / hour; `visit` over 300 / hour answers `200 {ok:true}` with no counts). Contract: `docs/ARCHITECTURE.md` "Warmth and visits" |
 | `burn-wish` | 400 `INVALID_JSON`, `CODE_INVALID`, `TEXT_REQUIRED`, `TEXT_TOO_LONG` (> 120), `TEXT_REJECTED`; 404 `ORDER_NOT_FOUND`; 409 `ORDER_NOT_LIGHT`, `ORDER_NOT_PAID`; 429 `RATE_LIMITED` (20 / hour per IP hash, 10 / hour per order code). Contract: `docs/ARCHITECTURE.md` "Wish in the fire" |
 | `start-payment` | 400 `INVALID_JSON`, `PRODUCT_UNAVAILABLE` (product no longer sold); 404 `NOT_FOUND`; 409 `ALREADY_PAID`, `ORDER_NOT_PAYABLE` (cancelled/refunded), `CELL_TAKEN` (lights); 429 `RATE_LIMITED`; 502 `PAYMENT_UNAVAILABLE`; 503 `PAYMENT_MISCONFIGURED` |
 | `join-waitlist` | 400 `INVALID_JSON`, `EMAIL_REQUIRED`, `EMAIL_INVALID`; 429 `RATE_LIMITED`. Same `{ok:true}` for new and known emails |
-| `join-bloggers` | 400 `INVALID_JSON`, `CONSENT_REQUIRED`, `NAME_REQUIRED`, `LINK_REQUIRED`, `LINK_INVALID`, `PLATFORM_INVALID`, `EMAIL_REQUIRED`, `EMAIL_INVALID`, `PHONE_INVALID`, `TOO_LONG` (+ `field`: `name`/`link`/`audience`/`email`/`phone`/`message`); 429 `RATE_LIMITED` (5 / hour). Same `{ok:true}` for new and known emails. Contract: `docs/ARCHITECTURE.md` "POST join-bloggers" |
+| `join-bloggers` | 400 `INVALID_JSON`, `CONSENT_REQUIRED`, `NAME_REQUIRED`, `LINK_INVALID` (the link is optional since 0016), `PLATFORM_INVALID`, `EMAIL_REQUIRED`, `EMAIL_INVALID`, `PHONE_INVALID`, `TOO_LONG` (+ `field`: `name`/`link`/`audience`/`email`/`phone`/`message`); 429 `RATE_LIMITED` (5 / hour). Same `{ok:true}` for new and known emails. Contract: `docs/ARCHITECTURE.md` "POST join-bloggers" |
 | `admin` | 401 `UNAUTHORIZED`; 429 `RATE_LIMITED` (failed attempts); 400 `INVALID_JSON`, `INVALID_REQUEST`; 404 `NOT_FOUND` (also `moderate_wish` on an order without a wish); 409 `ORDER_NOT_PAID` (refund of an unpaid order) |
 | `pay-mock` | 404 `NOT_FOUND` (provider not `mock`, or unknown code), 405; success = 302 |
 | `pay-return-ameria` | 302 (order page, or `${SITE_URL}/` when the order can't be identified); 413 (query or body > 8 KB); 429 (rate limit) |

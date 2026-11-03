@@ -1,6 +1,6 @@
 # Privacy Policy
 
-*Last updated: 2 November 2026*
+*Last updated: 3 November 2026*
 
 This page explains what data we collect on {{domain}}, why, how long we keep it and what rights you have. We collect as little as possible. We do not sell data and we do not use advertising trackers.
 
@@ -16,9 +16,9 @@ We process personal data in line with the Law of the Republic of Armenia on Prot
 |---|---|---|
 | Your wish text (up to 120 characters) | To burn it in the fire and, if you allowed it and it passed moderation, show it publicly | Only if you write a wish |
 | Your place: where it is on the map, how it looks and your room | To show your place and room on the map to visitors | Yes |
-| Your name or nickname (up to 30 characters) and a few words (up to 60 characters) on your place | To show them publicly with your place (after they pass moderation) | Yes |
-| Email address | To send you the link to your page and receipt, a payment link for a saved place, and the launch notification if you asked for it | Yes |
-| Language you chose | To show pages and emails in your language | Yes |
+| Your name (up to 30 characters) and a few words (up to 60 characters) on your place | To show them publicly with your place (after they pass moderation) | Yes |
+| Email address | So that each person has one room, to send you your room key again if you lose it, and to contact you about your order | Yes |
+| Language you chose | To show pages in your language | Yes |
 | Order and payment status | To deliver the service, handle refunds and keep accounting records | Yes |
 | A salted hash of your IP address | To protect the service from abuse (for example, limiting how many orders can be made in a short time) | Yes |
 
@@ -26,11 +26,11 @@ We process personal data in line with the Law of the Republic of Armenia on Prot
 
 - **Card data.** You enter your card details only on the bank's own secure payment page. We never see or store your full card number or CVV. The bank sends us a payment confirmation, which may include technical details such as a masked card number (for example, only the last four digits).
 - **Your raw IP address.** We store only a one-way salted hash of it, which cannot be turned back into the address.
-- **Account or password.** There is no registration. Your order code (the link to your personal page) is your key.
+- **Account or password.** There is no registration. Your room key (a private link) is your key.
 
-## Your personal page link
+## Your room key
 
-Your personal page has a long random address that cannot be guessed. Anyone who has this link can see your place, your room and your wish. Keep the link private unless you want to share it.
+Your room key is a link with a long random code that cannot be guessed. Anyone who has this link can open your room, change it and write its wish. Keep it private.
 
 ## Places on the map
 
@@ -38,15 +38,14 @@ Your place on the map is public: any visitor can tap it, open your room and see 
 
 A place is an illustrative cell of the map; it does not stand for your or anyone's real address.
 
-## Blogger applications
+## Applications to join the gift delivery
 
-If you are a blogger and register through the form on the [20% for gifts](/en/gifts/) page to take part in delivering the gifts on 25–30 December (to come along, film and tell your audience about it), we receive:
+If you apply through the form on the [Gifts for children](/en/gifts/) page to take part in delivering the gifts on 25–30 December (to come along and, if you like, share it on social media), we receive:
 
 - your name;
-- the link to your profile and the platform (for example Instagram, TikTok or YouTube);
-- the size of your audience;
+- the platform (for example Instagram, TikTok or YouTube) and, optionally, the link to your profile;
 - your email address;
-- optionally, your phone number and a message;
+- optionally, your phone number;
 - the language you chose.
 
 **Why:** only to contact you about the gift delivery and agree on your participation. We do not use this data for advertising or newsletters.
@@ -60,7 +59,7 @@ If you are a blogger and register through the form on the [20% for gifts](/en/gi
 - **To provide the service you ordered** (place, room, wish, page, email with the link).
 - **To meet legal obligations**, such as accounting and tax records of payments.
 - **Our legitimate interest** in keeping the service safe from abuse and spam (IP hash, moderation).
-- **Your consent**, for the launch notification and for handling a blogger application. You can withdraw it at any time.
+- **Your consent**, for handling an application to join the gift delivery. You can withdraw it at any time.
 
 ## Who else processes the data
 
@@ -69,7 +68,8 @@ We use a small number of trusted service providers, only to run the service:
 - **Supabase** — database and server functions. Data is stored in the European Union (Frankfurt, Germany).
 - **Vercel** — website hosting and delivery. Like any web server, it may process technical data such as your IP address in its logs.
 - **Ameriabank** — processes your card payment under its own rules and privacy policy.
-- **An email delivery service** — only to send the emails described above.
+- **Our email provider** — only to receive your messages and answer them.
+- **Telegram** — only our team's private chat, where we receive applications to join the gift delivery.
 - **YouTube (Google)** — hosts the live stream. If you watch the stream on YouTube or in a player embedded on our site, YouTube's own privacy policy applies and YouTube may use its own cookies.
 
 Some of these providers may process data outside Armenia and the EU. In such cases we rely on the protections offered by these providers, such as standard contractual clauses.
@@ -81,8 +81,8 @@ We never sell or rent your data and never share it for advertising.
 - **Order and payment records:** as long as Armenian accounting and tax law requires.
 - **Wish texts:** you can ask us to delete your text at any time. We will delete it, but keep the record of the payment itself (amount, date, status) as the law requires.
 - **Place data** (where it is on the map, how it looks, your room, name, words, email and language): kept under the same rules as other orders. You can ask us to delete your place's name or words at any time; we will delete it, but keep the record of the payment itself as the law requires.
-- **Blogger applications:** deleted within 6 months after the campaign ends, unless we work together.
-- **Email addresses:** kept while needed for the purposes above. An email given only for the launch notification is deleted after the 2026 season ends, or earlier if you ask.
+- **Applications to join the gift delivery:** deleted within 6 months after the campaign ends, unless we work together.
+- **Email addresses:** kept while needed for the purposes above.
 - **IP hashes:** kept only as long as needed for abuse protection.
 
 ## Public content
@@ -101,18 +101,20 @@ You have the right to:
 - **object** to processing or **withdraw consent** at any time;
 - for EU visitors, also **restrict** processing and receive your data in a portable format.
 
-To use any of these rights, write to **{{company.email}}** from the email you used and include your order code. We reply within 24 hours and act within the time limits set by law.
+To use any of these rights, write to **{{company.email}}** from the email you used and include your room key. We act within the time limits set by law.
 
 If you think we have violated your rights, you can complain to the Personal Data Protection Agency of the Republic of Armenia or, if you are in the EU, to the data protection authority of your country.
 
 ## Cookies and local storage
 
-We use only what is strictly needed for the website to work:
+We do not use cookies. In your browser's local storage we keep only what the website needs to work:
 
 - your **language choice**;
-- your **unsent draft** of the wish, saved in your browser's local storage so you don't lose it.
+- your **room key**, so this device opens your room without asking again;
+- the **sound** on/off setting;
+- your **unsent drafts**, so you don't lose them.
 
-We do not use advertising cookies or ad trackers. You can clear this data at any time in your browser settings.
+We do not use ad trackers. If you clear this data, this device will no longer remember your room: open your room key again. You can clear this data at any time in your browser settings.
 
 ## Children
 
