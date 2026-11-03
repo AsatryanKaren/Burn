@@ -15,7 +15,7 @@
     <span class="live-pill" style="align-self:flex-start"><span class="dot" aria-hidden="true"></span>{{ t('live.page_title') }}</span>
     <h1>{{ t('final.title') }}</h1>
     <div class="live-stats">
-      <span><b data-stat="papers_burned">—</b>{{ t('live.burned_label') }}</span>
+      <span><b data-stat="papers_burned">—</b><span id="burnedLabel" data-before="{{ t('live.waiting_label') }}">{{ t('live.burned_label') }}</span></span>
       <span><b data-stat="gift_fund_amd" data-format="price">—</b>{{ t('gifts.fund') }}</span>
     </div>
   </div>
@@ -30,7 +30,7 @@
       <p class="ls-ticker" id="lsTicker"></p>
     </div>
   </aside>
-  <div class="now-burning" id="now" aria-live="polite">
+  <div class="now-burning" id="now" aria-live="polite" data-fire="{{ cfg.stream.start }}">
     <div class="label" id="nowLabel">{{ t('live.waiting') }}</div>
     <div class="num" id="nowNum"></div>
     <div class="txt" id="nowTxt"></div>

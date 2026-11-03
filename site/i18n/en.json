@@ -49,7 +49,9 @@
     "burned_label": "wishes in the fire",
     "room_tour": "Visiting a room",
     "new_light": "New place",
-    "map_label": "The map of Armenia"
+    "map_label": "The map of Armenia",
+    "before": "The fire is lit on 31 December",
+    "waiting_label": "wishes waiting for the fire"
   },
   "faq": {
     "title": "Questions"

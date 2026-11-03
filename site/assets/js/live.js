@@ -1,4 +1,5 @@
-/* Live page: the shared fire burns everyone's papers one by one. ?stream=1 hides the page chrome for the YouTube capture. */
+/* Live page: on 31 December the shared fire burns everyone's wishes one by one; before that it only waits.
+   ?stream=1 hides the page chrome for the YouTube capture. */
 (function () {
   "use strict";
   var A = window.APP, t = A.t, esc = A.esc;
@@ -45,12 +46,25 @@
     A.loadStats(true).then(A.paintStats);
   }
 
+  // All wishes burn together on the fire day (Yerevan date, cfg.stream.start). Before it the
+  // fire only waits: no wish burns early. ?fire=1 rehearses the fire day (stream tests).
+  var fireDate = document.getElementById("now").getAttribute("data-fire") || "";
+  var yerevanToday = new Date(Date.now() + 4 * 3600 * 1000).toISOString().slice(0, 10);
+  if (yerevanToday < fireDate && params.get("fire") !== "1") {
+    nowLabel.textContent = t("live.before");
+    var lbl = document.getElementById("burnedLabel");
+    if (lbl) lbl.textContent = lbl.getAttribute("data-before");
+    (function stats() { A.loadStats(true).then(A.paintStats); setTimeout(stats, 30000); })();
+    return;
+  }
+
   // Start a few papers back so the fire isn't empty on arrival.
   // Never replay the whole history: wait until the current total is known.
   (function start(attempt) {
     A.loadStats(attempt > 0).then(function (s) {
       if (!s) { setTimeout(function () { start(attempt + 1); }, Math.min(30000, 3000 * (attempt + 1))); return; }
-      lastNumber = Math.max(0, (s.papers_burned || 0) - 4);
+      // The YouTube capture (?stream=1) burns every wish from the first; visitors join near the newest.
+      lastNumber = streamMode ? 0 : Math.max(0, (s.papers_burned || 0) - 4);
       poll();
     });
   })(0);

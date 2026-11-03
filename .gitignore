@@ -5,3 +5,7 @@ __pycache__/
 *.pyc
 .env
 .env.*
+
+# Local tool state (never commit)
+.claude/settings.local.json
+supabase/.temp/
