@@ -16,6 +16,14 @@
       <span class="gp-note" id="giftCount" data-per="{{ cfg.gifts.estimated_gift_cost }}"></span>
       <span class="gp-note">{{ t('gifts_page.fund_daily') }}</span>
     </div>
+    <figure class="gp-viz" aria-hidden="true"><!-- decoration only, not a count -->
+      <svg width="0" height="0" style="position:absolute"><symbol id="gpBox" viewBox="0 0 24 24">
+        <path d="M12 7.2C10.6 4.4 7.6 3.7 7 5.3c-.5 1.5 2.2 2 5 1.9zm0 0c1.4-2.8 4.4-3.5 5-1.9.5 1.5-2.2 2-5 1.9z" fill="none" stroke="var(--rib)" stroke-width="1.6" stroke-linejoin="round"/>
+        <rect x="3.5" y="11" width="17" height="10" rx="1.2" fill="currentColor"/><rect x="2.5" y="7.6" width="19" height="4.2" rx="1" fill="currentColor"/>
+        <rect x="10.9" y="7.6" width="2.2" height="13.4" fill="var(--rib)"/>
+      </symbol></svg>
+      <div class="gp-boxes">{% for i in range(30) %}<svg style="animation-delay:{{ i * 40 }}ms"><use href="#gpBox"/></svg>{% endfor %}</div>
+    </figure>
   </div>
 </section>
 
