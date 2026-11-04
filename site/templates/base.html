@@ -107,11 +107,11 @@
     </nav>
     <div class="footer-col footer-company">
       <h2>{{ t('footer.company') }}</h2>
-      <p>{{ cfg.company.legal_name }}<br>{{ t('footer.tax_id') }}: {{ cfg.company.tax_id }}<br>{{ cfg.company.address }}<br><span class="selectable">{{ cfg.company.email }}</span><br><span class="selectable">{{ cfg.company.phone }}</span></p>
+      <p>{{ company.legal_name }}<br>{{ t('footer.tax_id') }}: {{ company.tax_id }}<br>{{ company.address }}<br><span class="selectable">{{ company.email }}</span><br><span class="selectable">{{ company.phone }}</span></p>
     </div>
   </div>
   <div class="wrap footer-bottom">
-    <span>© {{ cfg.year }} {{ cfg.company.legal_name }}. {{ t('footer.rights') }}</span>
+    <span>© {{ cfg.year }} {{ company.legal_name }}. {{ t('footer.rights') }}</span>
     <span>{{ t('footer.made') }}</span>
   </div>
 </footer>

@@ -34,11 +34,20 @@
     "estimated_gift_cost": 10000
   },
   "company": {
-    "legal_name": "[Company legal name]",
-    "tax_id": "[Tax ID]",
-    "address": "[Registered address]",
+    "legal_name": {
+      "hy": "Անհատ ձեռնարկատեր Արտուշ Հակոբյան",
+      "en": "Individual Entrepreneur Artush Hakobyan",
+      "ru": "Индивидуальный предприниматель Артуш Акопян"
+    },
+    "reg_number": "269.1494935",
+    "tax_id": "79083908",
+    "address": {
+      "hy": "0074, ք. Երևան, Շենգավիթ, Արշակունյաց պող., տ. 286",
+      "en": "286 Arshakunyats Ave, Shengavit, Yerevan 0074, Armenia",
+      "ru": "0074, г. Ереван, Шенгавит, пр. Аршакуняц, д. 286"
+    },
     "email": "hello@lightarmenia.com",
-    "phone": "[Phone number]"
+    "phone": "+374 93 306 020"
   },
   "social": {
     "instagram": null,

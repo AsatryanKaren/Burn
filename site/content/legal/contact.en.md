@@ -4,11 +4,12 @@
 
 We are real people and we read every message. Write to us about anything: an order, a refund, your data or just a question.
 
-## Company details
+## Seller details
 
 - **Service:** {{brand.name}}
 - **Website:** {{domain}}
-- **Company:** {{company.legal_name}}
+- **Seller:** {{company.legal_name}}
+- **State registration number:** {{company.reg_number}}
 - **Taxpayer ID (TIN):** {{company.tax_id}}
 - **Address:** {{company.address}}
 - **Email:** {{company.email}}

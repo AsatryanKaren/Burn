@@ -82,8 +82,13 @@ def page_url(page: str, lang: str) -> str:
     return prefix + (slug + "/" if slug else "")
 
 
+def company_for(lang: str) -> dict:
+    """Seller details; a value may be one string or one per language."""
+    return {k: (v[lang] if isinstance(v, dict) else v) for k, v in CONFIG["company"].items()}
+
+
 def fill_placeholders(text: str, lang: str) -> str:
-    company = CONFIG["company"]
+    company = company_for(lang)
 
     def rep(m: re.Match) -> str:
         key = m.group(1).strip()
@@ -128,7 +133,7 @@ def make_env(lang: str, hashes: dict) -> Environment:
         return val
 
     env.globals.update(
-        t=t, cfg=cfg, lang=lang, langs=LANGS, s=s,
+        t=t, cfg=cfg, lang=lang, langs=LANGS, s=s, company=company_for(lang),
         url=lambda page, l=lang: page_url(page, l),
         price=lambda n: price(n, lang), fmt=lambda n: fmt_int(n, lang), gift_share=gift_share,
         asset=lambda rel: f"/assets/{rel}?v={hashes.get(rel, '0')}",
@@ -177,6 +182,7 @@ def build() -> None:
         env = make_env(lang, hashes)
         faq_path = ROOT / "content" / f"faq.{lang}.json"
         faq = json.loads(faq_path.read_text(encoding="utf-8")) if faq_path.exists() else []
+        faq = [{"q": fill_placeholders(i["q"], lang), "a": fill_placeholders(i["a"], lang)} for i in faq]
         if not faq:
             missing_content.append(faq_path.name)
         for page, (tpl, slug) in PAGES.items():

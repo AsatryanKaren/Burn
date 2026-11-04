@@ -8,13 +8,14 @@ These terms apply to the {{brand.name}} website at {{domain}} and to every order
 
 The service is provided by:
 
-- **Company:** {{company.legal_name}}
+- **Seller:** {{company.legal_name}}
+- **State registration number:** {{company.reg_number}}
 - **Taxpayer ID (TIN):** {{company.tax_id}}
 - **Address:** {{company.address}}
 - **Email:** {{company.email}}
 - **Phone:** {{company.phone}}
 
-We are a for-profit company registered in the Republic of Armenia. In these terms, "we" and "us" mean {{company.legal_name}}, and "you" means the person who places an order.
+We are an individual entrepreneur registered in the Republic of Armenia. In these terms, "we" and "us" mean {{company.legal_name}}, and "you" means the person who places an order.
 
 ## 2. What the service is
 
@@ -120,7 +121,7 @@ You get a full refund if we fail to deliver the service (for example, your place
 
 We set aside 20% of every payment for the gift fund. With this money we buy New Year gifts for children living in residential care institutions (children's homes) in Armenia and deliver them from 25 to 30 December 2026.
 
-- This is our own decision as a company. It is **not** a charity collection, **not** a donation made by you and **not** tax-deductible. You are paying for a digital service; we choose to spend part of our revenue this way.
+- This is our own decision. It is **not** a charity collection, **not** a donation made by you and **not** tax-deductible. You are paying for a digital service; we choose to spend part of our revenue this way.
 - For transparency, anyone, blogger or not, can apply through the form on the [Gifts for children](/en/gifts/) page to take part in delivering the gifts. Places are limited; if many people apply, we contact each applicant and give priority to those who will share it on social media. Registering is free and is not an order.
 - After the gifts are delivered, we will publish on the website what was bought and which children's homes received the gifts.
 - If a payment is refunded, its share is removed from the gift fund.
