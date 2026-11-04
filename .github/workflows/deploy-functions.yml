@@ -35,6 +35,7 @@ jobs:
           fi
       - name: Deploy all functions
         # verify_jwt per function comes from supabase/config.toml (all false: each function checks its own input).
-        run: supabase functions deploy --project-ref "$PROJECT_REF" --use-api
+        # --yes: CI can't answer the CLI's confirmation prompt.
+        run: supabase functions deploy --remote="$PROJECT_REF" --use-api --yes
       - name: List deployed functions
-        run: supabase functions list --project-ref "$PROJECT_REF"
+        run: supabase functions list --remote="$PROJECT_REF"
