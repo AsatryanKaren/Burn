@@ -5,6 +5,7 @@
   var $ = function (id) { return document.getElementById(id); };
   var stage = $("stage"), panel = $("panel"), form = $("designForm");
   var lang = D.lang, wide = function () { return window.innerWidth >= 980; };
+  var PHONE_CELL = 16; // plot size in px after flying to it on a phone: close enough to see icons, not lost
   var prices = {}; (D.lightProducts || []).forEach(function (p) { prices[p.code] = p.price; });
   var m = null, view = null, state = { id: -1, mode: "hint", busy: false, cellReq: 0 }, litRows = [], heldRows = [];
 
@@ -55,7 +56,7 @@
   $("myEnter").addEventListener("click", function () { var id = myId(); state.id = id; visit(id); });
   $("myShow").addEventListener("click", function () {
     var id = myId(); showView("hint"); state.id = id; view.select(id); setUrl(id);
-    view.flyToCell(id, wide() ? 30 : 26); view.flare(id);
+    view.flyToCell(id, wide() ? 30 : PHONE_CELL); view.flare(id);
   });
   $("myWish").addEventListener("click", function () { openTab("fire"); });
   $("myShare").addEventListener("click", function () { shareLight(myId()); });
@@ -71,7 +72,7 @@
       var b = e.target.closest("[data-act]"); if (!b) return;
       var id = Number(b.closest("[data-id]").getAttribute("data-id")), act = b.getAttribute("data-act");
       if (act === "edit") return editMine(id, null);
-      if (act === "visit") { state.id = id; view.select(id); view.flyToCell(id, 26); return visit(id); }
+      if (act === "visit") { state.id = id; view.select(id); view.flyToCell(id, wide() ? 26 : PHONE_CELL); return visit(id); }
       select(id, true);
     });
   });
@@ -132,6 +133,9 @@
   });
 
   function deselect() {
+    // On a phone, closing the sheet returns the map to where it was before the tap.
+    var back = state.back; state.back = null;
+    if (back && view && !wide()) view.flyTo(back, 700);
     state.id = -1; if (view) { view.select(-1); view.setGhost(null); }
     showView("hint"); setUrl(-1);
   }
@@ -151,16 +155,18 @@
   function nearText(id) { var tn = MC.townName(m, id, lang); return tn ? t("lights.near", { town: tn }) : ""; }
   function select(id, fly) {
     if (!MC.isCell(m, id)) return;
+    if (!wide() && state.mode === "hint") state.back = { s: view.view.s, x: view.view.x, y: view.view.y };
     state.id = id; view.select(id); setUrl(id);
     if (!wide()) {
       var r = stage.getBoundingClientRect();
       if (r.top < 40 || r.top > innerHeight * 0.3) window.scrollTo({ top: scrollY + r.top - 64, behavior: A.reduceMotion ? "auto" : "smooth" });
     }
-    if (fly || !wide()) view.flyToCell(id, wide() ? 30 : 26);
     var lit = view.lights.get(id);
-    if (lit) return showLit(id, lit);
-    if (view.held.has(id)) { $("heldPlace").innerHTML = placeHtml(id); return showView("held"); }
-    showDesign(id);
+    if (lit) showLit(id, lit);
+    else if (view.held.has(id)) { $("heldPlace").innerHTML = placeHtml(id); showView("held"); }
+    else showDesign(id);
+    // After the sheet is open, so the plot lands above it on a phone.
+    if (fly || !wide()) view.flyToCell(id, wide() ? 30 : PHONE_CELL);
   }
   function showLit(id, L) {
     var req = ++state.cellReq;

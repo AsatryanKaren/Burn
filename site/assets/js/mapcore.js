@@ -269,8 +269,10 @@
     var v = this.view, s = Math.max(this.minS(), Math.min(this.maxS(), v.s * f));
     var w = this.toWorld(sx, sy);
     v.s = s; v.x = sx - w[0] * s; v.y = sy - w[1] * s;
-    this.anim = null; this.clamp(); this.dirty = true; this.start();
+    this.anim = null; this.clamp(); this.moved();
   };
+  // The view moved: frames reuse the last composed picture until it settles (see frame()).
+  P.moved = function () { this.dirty = true; this.lastMove = performance.now(); this.start(); };
   P.setLights = function (lit, held, animateNew) {
     var now = performance.now(), next = new Map(), fresh = [], self = this, initial = this.lights.size === 0 && !this.loadedOnce, many = (lit || []).length > 2500;
     (lit || []).forEach(function (r) {
@@ -301,7 +303,7 @@
       if (!self.visible || document.hidden) { self.running = false; return; }
       if (self.anim) {
         var k = Math.min(1, (now - self.anim.t0) / self.anim.dur);
-        self.anim.step(k); self.dirty = true;
+        self.anim.step(k); self.dirty = true; self.lastMove = now;
         if (k >= 1) self.anim = null;
       }
       // Twinkling alone runs at ~30 fps to save battery; movement runs at full rate.
@@ -309,6 +311,18 @@
       requestAnimationFrame(loop);
     });
   };
+
+  // The warm glow around the border, blurred once in world space: a live shadowBlur on every redraw is slow on phones.
+  function landGlow(m) {
+    if (m.glow) return m.glow;
+    var ppk = 2, pad = 40, c = document.createElement("canvas");
+    c.width = Math.ceil((m.width_km + pad * 2) * ppk); c.height = Math.ceil((m.height_km + pad * 2) * ppk);
+    var g = c.getContext("2d");
+    g.translate(pad * ppk, pad * ppk); g.scale(ppk, ppk);
+    g.shadowColor = "rgba(255,160,70,.22)"; g.shadowBlur = 22 * ppk;
+    g.fillStyle = "#0b1226"; g.fill(m.outlinePath, "evenodd");
+    return (m.glow = { c: c, pad: pad, ppk: ppk });
+  }
 
   P.drawStatic = function () {
     var ctx = this.static.getContext("2d"), m = this.m, v = this.view, d = DPR(), cpx = m.cell_km * v.s;
@@ -323,12 +337,11 @@
     ctx.globalAlpha = 1;
     // land
     ctx.setTransform(d * v.s, 0, 0, d * v.s, d * v.x, d * v.y);
-    ctx.save();
-    ctx.shadowColor = "rgba(255,160,70,.22)"; ctx.shadowBlur = 40 * d;
+    var G = landGlow(m);
+    ctx.drawImage(G.c, -G.pad, -G.pad, G.c.width / G.ppk, G.c.height / G.ppk);
     var lg = ctx.createLinearGradient(0, 0, 0, m.height_km);
     lg.addColorStop(0, "#111b36"); lg.addColorStop(1, "#0b1226");
     ctx.fillStyle = lg; ctx.fill(m.outlinePath, "evenodd");
-    ctx.restore();
     // relief: soft vignette inside the border
     ctx.save(); ctx.clip(m.outlinePath);
     var rg = ctx.createRadialGradient(m.width_km * 0.45, m.height_km * 0.45, 10, m.width_km * 0.5, m.height_km * 0.5, m.width_km * 0.75);
@@ -434,7 +447,7 @@
       });
     }
     this.lightsDirty = popping;
-    this.composedAt = now;
+    this.composedAt = now; this.layerView = { s: v.s, x: v.x, y: v.y };
   };
 
   P.buildBulk = function () {
@@ -454,11 +467,20 @@
   };
 
   P.frame = function (now) {
-    if (this.dirty || this.lightsDirty || !this.layer) this.compose(now);
-    var ctx = this.ctx, m = this.m, v = this.view, d = DPR(), t = (now - this.t0) / 1000;
+    var ctx = this.ctx, m = this.m, v = this.view, d = DPR(), t = (now - this.t0) / 1000, LV = this.layerView;
+    // While panning, pinching or flying, stretch the last composed picture instead of redrawing the whole
+    // map every frame (too slow on phones); redraw properly when the view rests, or every 300 ms meanwhile.
+    var moving = this.dirty && LV && this.layer && this.layer.width === this.c.width && this.layer.height === this.c.height &&
+      (this.anim || now - (this.lastMove || 0) < 150) && now - this.composedAt < 300;
+    if (!moving && (this.dirty || this.lightsDirty || !this.layer)) this.compose(now);
     var cpx = m.cell_km * v.s, self = this;
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.clearRect(0, 0, this.c.width, this.c.height);
+    if (moving) {
+      var k = v.s / LV.s;
+      ctx.fillStyle = "#03050c"; ctx.fillRect(0, 0, this.c.width, this.c.height);
+      ctx.setTransform(k, 0, 0, k, (v.x - LV.x * k) * d, (v.y - LV.y * k) * d);
+    }
     ctx.drawImage(this.layer, 0, 0);
     ctx.setTransform(d, 0, 0, d, 0, 0);
 
@@ -558,7 +580,7 @@
       } else if (down) {
         var dx = p[0] - down.last[0], dy = p[1] - down.last[1];
         down.moved += Math.abs(dx) + Math.abs(dy); down.last = p;
-        if (down.moved > 6) { self.view.x += dx; self.view.y += dy; self.clamp(); self.dirty = true; c.style.cursor = "grabbing"; self.start(); }
+        if (down.moved > 6) { self.view.x += dx; self.view.y += dy; self.clamp(); c.style.cursor = "grabbing"; self.moved(); }
       }
     });
     function up(e) {
@@ -589,7 +611,7 @@
       else if (k === "ArrowLeft") self.view.x += step; else if (k === "ArrowRight") self.view.x -= step;
       else if (k === "ArrowUp") self.view.y += step; else if (k === "ArrowDown") self.view.y -= step;
       else return;
-      e.preventDefault(); self.clamp(); self.dirty = true; self.start();
+      e.preventDefault(); self.clamp(); self.moved();
     });
   };
 
