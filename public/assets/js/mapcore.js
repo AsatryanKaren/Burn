@@ -614,6 +614,8 @@
       if (!pts.has(e.pointerId)) return;
       pts.delete(e.pointerId);
       if (pts.size < 2) pinch = null;
+      // One finger left after a pinch: pan from where it is now, not from where the gesture began.
+      if (pts.size === 1 && down) down.last = pts.values().next().value;
       if (pts.size === 0 && down) {
         if (down.moved <= 6 && performance.now() - down.t < 600 && self.o.onTap) {
           var id = self.cellAt(down.p[0], down.p[1]);
