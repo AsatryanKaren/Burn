@@ -40,7 +40,7 @@ for f in OUT.rglob("*.html"):
     s = re.sub(r'(<script id="site-data" type="application/json">)(.*?)(</script>)', fix_data, s, flags=re.S)
     # The preview always shows the whole flow, even while the real site says "payments open soon".
     s = s.replace('<div id="lBuy" hidden>', '<div id="lBuy">')
-    s = re.sub(r'<div class="card lt-soon">.*?</div>', '', s, flags=re.S)
+    s = re.sub(r'<div class="card lt-soon"[^>]*>.*?</div>', '', s, flags=re.S)
     mock = '<script src="' + rel(page_dir, "/assets/js/mock-api.js") + "?v=" + mockv + '"></script>\n'
     s = s.replace('<script id="site-data"', mock + '<script id="site-data"', 1)
     f.write_text(s, encoding="utf-8")

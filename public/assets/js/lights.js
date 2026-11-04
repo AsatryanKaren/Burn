@@ -253,7 +253,7 @@
     var product = "light", p = prices[product] || 0;
     $("lMsgCount").textContent = $("lMsg").value.length + "/60";
     $("lGift").textContent = t("burn.of_which");
-    $("lSubmit").textContent = D.paymentsOpen ? t("lights.pay", { price: A.price(p) }) : t("lights.save");
+    $("lSubmit").textContent = state.demo ? t("lights.demo_submit") : D.paymentsOpen ? t("lights.pay", { price: A.price(p) }) : t("lights.save");
     if (state.mode === "design" && view) view.setGhost({ id: state.id, icon: val("icon"), color: val("color"), big: product === "light_big" });
   }
   function showDesign(id) {
@@ -266,6 +266,14 @@
     if (wide()) setTimeout(function () { try { form.querySelector('input[name="icon"]:checked').focus({ preventScroll: true }); } catch (e) {} }, 50);
   }
   form.addEventListener("change", function (e) { if (e.target.name === "color") recolorIcons(); sync(); });
+  // Demo while payments are closed (demo.js): open the rest of the form and finish without paying.
+  if ($("demoBtn")) {
+    if (!window.DemoMode) $("demoBtn").hidden = true;
+    $("demoBtn").addEventListener("click", function () {
+      state.demo = true; $("lBuy").hidden = false; $("ltSoon").hidden = true; sync();
+      try { $("lMsg").focus({ preventScroll: false }); } catch (e) {}
+    });
+  }
   form.addEventListener("input", sync);
 
   function errText(code) {
@@ -328,13 +336,19 @@
       light_icon: val("icon"), light_color: val("color"), light_signature: clean($("lSig").value),
       email: clean($("lEmail").value), lang: lang, consent: true, room: loadRoom(state.id)
     };
+    if (state.demo) body.demo = true;
     var id = state.id;
     setBusy(true);
     A.api.fn("create-order", body).then(function (res) {
       remember(res.code); state.savedId = id;
       state.savedData = { room: body.room, message: body.text, signature: body.light_signature };
       var pay = res.payment || { mode: "disabled" };
-      if ((pay.mode === "redirect" || pay.mode === "mock") && A.safePaymentUrl(pay.url)) {
+      if (pay.mode === "demo") {
+        // As after the bank: the order page confirms the payment, then the room is yours (on this device only).
+        setMine(id, res.code);
+        try { sessionStorage.setItem("justPaid", res.code); } catch (e) {}
+        location.href = D.urls.paper + "?c=" + encodeURIComponent(res.code) + "&result=success";
+      } else if ((pay.mode === "redirect" || pay.mode === "mock") && A.safePaymentUrl(pay.url)) {
         try { sessionStorage.setItem("justPaid", res.code); } catch (e) {}
         location.href = pay.url;
       } else if (pay.mode === "form" && A.safePaymentUrl(pay.action)) {

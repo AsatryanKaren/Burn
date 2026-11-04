@@ -474,6 +474,13 @@ select.input, select.input:focus { -webkit-appearance: none; appearance: none; p
 .lt-soon { display: flex; flex-direction: column; gap: 6px; border-color: rgba(255,196,107,.35); }
 .lt-soon b { font-family: var(--serif); font-size: 1.2rem; color: var(--flame); }
 .lt-soon p { margin: 0; color: var(--muted); font-size: 14.5px; }
+.lt-soon .btn { margin-top: 8px; }
+.lt-soon .lt-demo-note { font-size: 12.5px; }
+.demo-bar { position: fixed; right: 12px; top: calc(env(safe-area-inset-top, 0px) + 176px); z-index: 300;
+  display: flex; align-items: center; gap: 8px; max-width: calc(100% - 24px); padding: 5px 5px 5px 12px; border-radius: 99px;
+  background: #ffc46b; color: #1c0e05; font: 500 13px/1.3 var(--sans); box-shadow: 0 8px 24px -8px rgba(0,0,0,.6); }
+@media (min-width: 980px) { .demo-bar { top: 124px; right: 440px; } } /* clear of the map's side panel */
+.demo-bar button { flex: none; border: 0; border-radius: 99px; padding: 5px 10px; background: rgba(28,14,5,.12); color: inherit; font: 600 12px var(--sans); cursor: pointer; }
 
 .lt-badge { width: 110px; height: 110px; border-radius: 22px; display: grid; place-items: center; background: radial-gradient(circle, rgba(255,196,107,.12), rgba(0,0,0,0) 70%); border: 1px solid var(--line); }
 .lt-msg { margin: 0; font-family: var(--serif); font-size: 1.3rem; line-height: 1.4; color: var(--paper); }

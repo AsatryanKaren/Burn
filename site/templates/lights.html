@@ -111,7 +111,9 @@
       <button type="submit" class="btn btn-fire btn-block" id="lSubmit"></button>
       {% if cfg.payments_open %}<p class="hint" style="text-align:center">{{ t('burn.secure') }}</p>{% endif %}
       </div>
-      {% if not cfg.payments_open %}<div class="card lt-soon"><b>{{ t('lights.soon_t') }}</b><p>{{ t('lights.soon_d') }}</p></div>{% endif %}
+      {% if not cfg.payments_open %}<div class="card lt-soon" id="ltSoon"><b>{{ t('lights.soon_t') }}</b><p>{{ t('lights.soon_d') }}</p>
+        <button type="button" class="btn btn-ghost btn-block" id="demoBtn">{{ t('lights.demo_btn') }}</button>
+        <p class="lt-demo-note">{{ t('lights.demo_note') }}</p></div>{% endif %}
     </form>
 
     <div data-view="saved" hidden>

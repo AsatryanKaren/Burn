@@ -4,6 +4,15 @@
 
   var el = document.getElementById("site-data");
   var D = el ? JSON.parse(el.textContent) : { t: {}, urls: {}, lang: "hy" };
+  // Once payments open, demo.js is gone: forget any demo room this device still remembers.
+  if (!window.DemoMode) {
+    try {
+      var demoMine = JSON.parse(localStorage.getItem("myLights") || "{}") || {}, hadDemo = false;
+      Object.keys(demoMine).forEach(function (id) { if (/^demo/.test(demoMine[id])) { delete demoMine[id]; hadDemo = true; } });
+      if (hadDemo) localStorage.setItem("myLights", JSON.stringify(demoMine));
+      localStorage.removeItem("demoOrders");
+    } catch (e) {}
+  }
   var reduceMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 
   /* ---------- formatting & strings ---------- */
