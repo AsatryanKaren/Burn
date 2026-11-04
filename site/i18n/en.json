@@ -135,6 +135,12 @@
     "bye": "My wish",
     "num": "My number"
   },
+  "community": {
+    "kicker": "Telegram channel",
+    "title": "Stay in touch with us",
+    "body": "Our Telegram channel is for community news: where we are, what we're planning and what we're preparing next. Join and be the first to know.",
+    "cta": "Join the channel"
+  },
   "gifts_page": {
     "title": "New Year gifts for children",
     "lead": "This New Year we're bringing gifts to children living in children's homes in Armenia. We deliver them from 25 to 30 December.",

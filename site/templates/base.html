@@ -96,6 +96,7 @@
       <a href="{{ url('live') }}">{{ t('nav.live') }}</a>
       <a href="{{ url('gifts') }}">{{ t('nav.gifts') }}</a>
       <a href="{{ url('faq') }}">{{ t('nav.faq') }}</a>
+      {% if cfg.social.telegram %}<a href="{{ cfg.social.telegram }}" target="_blank" rel="noopener">{{ t('community.kicker') }}</a>{% endif %}
     </nav>
     <nav class="footer-col" aria-label="{{ t('footer.legal') }}">
       <h2>{{ t('footer.legal') }}</h2>

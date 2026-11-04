@@ -1,0 +1,14 @@
+{# Telegram channel banner; shown only when cfg.social.telegram is set. #}
+{% if cfg.social.telegram %}
+<section class="wrap tg-sec" aria-labelledby="tgTitle">
+  <div class="tg-band" data-reveal>
+    <span class="tg-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M21.4 4.2 2.9 11.3c-1 .4-1 1.8.1 2.1l4.6 1.4 1.8 5.6c.3.9 1.4 1.1 2 .4l2.6-2.7 4.7 3.5c.8.6 1.9.1 2.1-.8l3-14.9c.2-1.1-.9-2-1.9-1.6zM9.9 14.6l-.5 4-1.4-4.6 9.7-6.6-7.8 7.2z" fill="currentColor"/></svg></span>
+    <div class="tg-text">
+      <p class="kicker">{{ t('community.kicker') }}</p>
+      <h2 id="tgTitle">{{ t('community.title') }}</h2>
+      <p>{{ t('community.body') }}</p>
+    </div>
+    <a class="btn btn-fire tg-btn" href="{{ cfg.social.telegram }}" target="_blank" rel="noopener">{{ t('community.cta') }} →</a>
+  </div>
+</section>
+{% endif %}
