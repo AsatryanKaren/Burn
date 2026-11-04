@@ -174,10 +174,11 @@
       g.fillStyle = sky; g.fillRect(0, 0, W, H);
       g.fillStyle = "#fff"; for (var s = 0; s < 40; s++) { g.globalAlpha = 0.3 + 0.7 * ((s * 37) % 10) / 10; g.fillRect((s * 71) % W, (s * 43) % 150, 1.4, 1.4); }
       g.globalAlpha = 1;
-      g.fillStyle = "#f6efd8"; g.beginPath(); g.arc(196, 52, 15, 0, 7); g.fill();
-      g.fillStyle = "#4b5679"; g.beginPath(); g.moveTo(-10, 300); g.lineTo(96, 150); g.lineTo(140, 200); g.lineTo(170, 182); g.lineTo(270, 290); g.lineTo(270, 330); g.lineTo(-10, 330); g.fill();
-      g.fillStyle = "#e9eefc"; g.beginPath(); g.moveTo(66, 192); g.lineTo(96, 150); g.lineTo(126, 186); g.lineTo(112, 180); g.lineTo(100, 192); g.lineTo(86, 182); g.fill();
-      g.beginPath(); g.moveTo(156, 196); g.lineTo(170, 182); g.lineTo(186, 198); g.lineTo(176, 196); g.fill();
+      g.fillStyle = "#f6efd8"; g.beginPath(); g.arc(60, 56, 15, 0, 7); g.fill();
+      // Small Sis on the left, tall Masis on the right.
+      g.fillStyle = "#4b5679"; g.beginPath(); g.moveTo(-10, 300); g.lineTo(58, 214); g.lineTo(102, 250); g.lineTo(176, 112); g.lineTo(270, 280); g.lineTo(270, 330); g.lineTo(-10, 330); g.fill();
+      g.fillStyle = "#e9eefc"; g.beginPath(); g.moveTo(140, 168); g.lineTo(176, 112); g.lineTo(212, 168); g.lineTo(198, 160); g.lineTo(186, 174); g.lineTo(172, 160); g.lineTo(156, 172); g.fill();
+      g.beginPath(); g.moveTo(44, 232); g.lineTo(58, 214); g.lineTo(76, 230); g.lineTo(66, 226); g.fill();
       g.fillStyle = "#1a2140"; g.fillRect(0, 285, W, 40);
       g.fillStyle = "#ffd27a"; [[30, 292], [62, 296], [120, 290], [180, 295], [220, 291]].forEach(function (p) { g.fillRect(p[0], p[1], 3, 3); });
       g.fillStyle = "#fff";
@@ -200,7 +201,7 @@
       }
       if (t.mode === 2) { // snowy Ararat
         var sk = g.createLinearGradient(0, 0, 0, H); sk.addColorStop(0, "#0d1a40"); sk.addColorStop(1, "#33406b"); g.fillStyle = sk; g.fillRect(0, 0, W, H);
-        g.fillStyle = "#e9eefc"; g.beginPath(); g.moveTo(20, 130); g.lineTo(110, 50); g.lineTo(150, 90); g.lineTo(175, 75); g.lineTo(250, 130); g.fill();
+        g.fillStyle = "#e9eefc"; g.beginPath(); g.moveTo(6, 130); g.lineTo(66, 92); g.lineTo(98, 108); g.lineTo(162, 40); g.lineTo(250, 130); g.fill();
         g.fillStyle = "#fff"; for (var q = 0; q < 40; q++) { g.fillRect((q * 53 + time * 20) % W, (q * 29 + time * 30) % H, 2, 2); }
         t.needsUpdate = true; return;
       }

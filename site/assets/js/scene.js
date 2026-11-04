@@ -20,14 +20,14 @@
   var V_SCREEN = "varying vec2 vUv; void main(){ vUv=uv; gl_Position=vec4(position.xy,0.0,1.0); }";
   var V_OBJ = "varying vec2 vUv; void main(){ vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }";
 
-  // Static night: sky, stars, moon, Ararat (Masis left, Sis right, as seen from Yerevan), plain with village lights.
+  // Static night: sky, stars, moon, Ararat (Sis left, Masis right), plain with village lights.
   var F_BG = [
     "uniform vec2 uRes; uniform float uPR; uniform float uHorizon; uniform float uMX; uniform float uMH; uniform float uSX; uniform float uSH;",
     "uniform vec3 uMoon;",
     NOISE,
-    "float hM(float x){ float d=(x-uMX)/(uMH*2.4); d*= d<0.0?0.72:1.0;",
+    "float hM(float x){ float d=(x-uMX)/(uMH*2.4); d*= d>0.0?0.72:1.0;",
     "  float h=uMH*exp(-pow(abs(d)*2.6,1.4));",
-    "  h+=uMH*0.035*exp(-pow((x-(uMX+uMH*0.3))/(uMH*0.2),2.0));",
+    "  h+=uMH*0.035*exp(-pow((x-(uMX-uMH*0.3))/(uMH*0.2),2.0));",
     "  return h; }",
     "float hS(float x){ float d=abs(x-uSX)/(uSH*1.75); float r=sqrt(d*d+0.0025)-0.05; return uSH*pow(max(0.0,1.0-r),1.25); }",
     "float heightAt(float x){ float a=hM(x); float b=hS(x); float k=uMH*0.1; float hh=max(k-abs(a-b),0.0)/k; float h=max(a,b)+hh*hh*k*0.25;",
@@ -72,7 +72,7 @@
     "      float gul=fbm(vec2(x*0.045+y*0.006,y*0.02)); float ridged=1.0-abs(gul*2.0-1.0);",
     "      vec3 rock=mix(vec3(0.03,0.037,0.062),vec3(0.07,0.08,0.115),light*0.75+ridged*0.25);",
     "      float fing=pow(fbm(vec2(x*0.045,3.0)),2.2)*uMH*0.3+pow(fbm(vec2(x*0.11,9.0)),3.0)*uMH*0.12;",
-    "      float snowLine=uMH*0.7+(fbm(vec2(x*0.015,2.0))-0.5)*uMH*0.14-fing+(fbm(vec2(x,y)*0.07)-0.5)*uMH*0.05;",
+    "      float snowLine=uMH*0.55+(fbm(vec2(x*0.015,2.0))-0.5)*uMH*0.14-fing+(fbm(vec2(x,y)*0.07)-0.5)*uMH*0.05;",
     "      float sn=smoothstep(snowLine-1.5,snowLine+5.0,y);",
     "      sn*=1.0-0.35*smoothstep(0.62,0.75,fbm(vec2(x*0.035,y*0.06)+5.0));",
     "      vec3 snow=vec3(0.3,0.345,0.45)*(0.45+0.7*light)*(0.85+0.15*fbm3(vec2(x,y)*0.15));",
@@ -393,9 +393,10 @@
       L.fh = Math.min(L.fw * 1.7, H * (wide ? 0.4 : 0.3));
       L.baseY = L.horizon * 0.42;
       L.mH = wide ? Math.min(H * 0.3, W * 0.2) : Math.min(W * 0.42, H * 0.24);
-      L.mX = wide ? (center ? W * 0.3 : W * 0.5) : W * 0.24;
-      L.sX = wide ? L.mX + L.mH * 2.3 : W * 0.86;
-      L.sH = L.mH * 0.6;
+      // Sis stands on Masis's left shoulder, clearly lower (3896 m vs 5137 m).
+      L.sX = wide ? (center ? W * 0.12 : W * 0.3) : W * 0.12;
+      L.mX = L.sX + L.mH * 1.6;
+      L.sH = L.mH * 0.7;
       L.moonX = wide ? W * 0.84 : -200; L.moonY = H * 0.82; L.moonR = wide ? 11 : 9;
     }
 
