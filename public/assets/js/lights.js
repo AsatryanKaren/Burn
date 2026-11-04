@@ -424,6 +424,10 @@
     sel.addEventListener("change", function () {
       if (sel.value === "") return;
       var tw = m.towns[+sel.value];
+      // Close any open sheet (without flying back) so the town isn't hidden under it,
+      // and reset the picker so the same town can be chosen again.
+      state.back = null; if (state.mode !== "hint") deselect();
+      sel.value = ""; sel.blur();
       view.flyTo(view.target(tw.x, tw.y, 12), 1100);
     });
     $("zIn").addEventListener("click", function () { view.zoomAt(1.6, view.W / 2, view.H / 2); });

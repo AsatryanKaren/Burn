@@ -288,7 +288,7 @@
     var ids = Array.from(next.keys()), sp = [];
     for (var k = 0; k < Math.min(160, ids.length); k++) sp.push(ids[Math.floor(hash(k * 13.7 + ids.length) * ids.length)]);
     this.sparks = sp;
-    this.lightsDirty = true; this.bulkDirty = true; this.loadedOnce = true; this.start();
+    this.lightsDirty = true; this.bulkDirty = true; this.underDirty = true; this.loadedOnce = true; this.start();
     return fresh;
   };
   P.select = function (id) { this.sel = id; this.start(); };
@@ -466,6 +466,29 @@
     this.bulk = { c: c, ppk: ppk }; this.bulkDirty = false;
   };
 
+  // The whole country at low resolution (land, borders, lights), shown at the edges while the view moves.
+  P.buildUnder = function () {
+    var m = this.m, ppk = 3, G = landGlow(m), pad = G.pad, c = this.under ? this.under.c : document.createElement("canvas");
+    var W = Math.ceil((m.width_km + pad * 2) * ppk), H = Math.ceil((m.height_km + pad * 2) * ppk);
+    if (c.width !== W || c.height !== H) { c.width = W; c.height = H; }
+    var g = c.getContext("2d");
+    g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, W, H);
+    g.setTransform(ppk, 0, 0, ppk, pad * ppk, pad * ppk);
+    g.drawImage(G.c, -pad, -pad, G.c.width / G.ppk, G.c.height / G.ppk);
+    var lg = g.createLinearGradient(0, 0, 0, m.height_km);
+    lg.addColorStop(0, "#111b36"); lg.addColorStop(1, "#0b1226");
+    g.fillStyle = lg; g.fill(m.outlinePath, "evenodd");
+    g.lineJoin = "round"; g.strokeStyle = "rgba(243,236,224,.13)"; g.lineWidth = 1 / ppk;
+    m.provPaths.forEach(function (p) { g.stroke(p); });
+    g.fillStyle = "#06132a"; g.fill(m.sevanPath);
+    g.strokeStyle = "rgba(233,199,123,.6)"; g.lineWidth = 1.3 / ppk; g.stroke(m.outlinePath);
+    if (this.bulkDirty || !this.bulk) this.buildBulk();
+    g.globalCompositeOperation = "lighter";
+    g.drawImage(this.bulk.c, 0, 0, this.bulk.c.width / this.bulk.ppk, this.bulk.c.height / this.bulk.ppk);
+    g.globalCompositeOperation = "source-over";
+    this.under = { c: c, ppk: ppk, pad: pad }; this.underDirty = false;
+  };
+
   P.frame = function (now) {
     var ctx = this.ctx, m = this.m, v = this.view, d = DPR(), t = (now - this.t0) / 1000, LV = this.layerView;
     // While panning, pinching or flying, stretch the last composed picture instead of redrawing the whole
@@ -477,8 +500,12 @@
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.clearRect(0, 0, this.c.width, this.c.height);
     if (moving) {
-      var k = v.s / LV.s;
-      ctx.fillStyle = "#03050c"; ctx.fillRect(0, 0, this.c.width, this.c.height);
+      // Under the stretched picture, a small whole-map bitmap fills whatever the picture doesn't cover.
+      if (!this.under || this.underDirty) this.buildUnder();
+      var U = this.under, us = d * v.s / U.ppk, k = v.s / LV.s;
+      ctx.fillStyle = "#060a18"; ctx.fillRect(0, 0, this.c.width, this.c.height);
+      ctx.setTransform(us, 0, 0, us, d * (v.x - U.pad * v.s), d * (v.y - U.pad * v.s));
+      ctx.drawImage(U.c, 0, 0);
       ctx.setTransform(k, 0, 0, k, (v.x - LV.x * k) * d, (v.y - LV.y * k) * d);
     }
     ctx.drawImage(this.layer, 0, 0);
