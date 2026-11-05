@@ -15,7 +15,12 @@ import { getConfig } from "../_shared/env.ts";
 import { redirectResponse, textResponse } from "../_shared/http.ts";
 import { orderPageUrl } from "../_shared/config.ts";
 import { isValidOrderCode } from "../_shared/codes.ts";
-import { evaluatePaymentDetails, parseBackUrlParams } from "../_shared/ameria.ts";
+import {
+  evaluatePaymentDetails,
+  parseBackUrlParams,
+  parseConfirmPaymentResponse,
+  type PaymentDetailsVerdict,
+} from "../_shared/ameria.ts";
 import {
   ameriaOrderIdsForOrder,
   confirmPayment,
@@ -27,7 +32,7 @@ import {
   type OrderRow,
   orderCodeForAmeriaOrderId,
 } from "../_shared/db.ts";
-import { ameriaPaymentDetails, sanitizeForLog } from "../_shared/payments.ts";
+import { ameriaConfirmPayment, ameriaPaymentDetails, sanitizeForLog } from "../_shared/payments.ts";
 import {
   BodyTooLargeError,
   CALLBACK_MAX_BODY_BYTES,
@@ -157,9 +162,37 @@ Deno.serve(async (req) => {
     const known = bankOrderId === order.provider_order_num ||
       (await ameriaOrderIdsForOrder(order.code)).includes(bankOrderId);
 
-    const verdict = known
-      ? evaluatePaymentDetails(details, { orderId: bankOrderId, amountAmd: order.amount_amd })
-      : { paid: false as const, declined: false, reason: "UNKNOWN_ORDER_ID" };
+    const expected = { orderId: bankOrderId, amountAmd: order.amount_amd };
+    let verdict: PaymentDetailsVerdict = known
+      ? evaluatePaymentDetails(details, expected)
+      : { paid: false, declined: false, reason: "UNKNOWN_ORDER_ID" };
+
+    // Two-stage terminal: the amount is only blocked. Charge it, then ask again.
+    // An order that is already paid (by another payment) is left blocked; the bank releases it.
+    if (!verdict.paid && verdict.needsConfirm && order.status !== "paid") {
+      try {
+        const confirm = await ameriaConfirmPayment(cfg.ameria, back.paymentId, order.amount_amd);
+        const c = parseConfirmPaymentResponse(confirm);
+        await logPaymentEvent(PROVIDER, "confirm", order.code, {
+          PaymentID: back.paymentId,
+          response: await sanitizeForLog(cfg, confirm),
+        });
+        if (c.ok) {
+          details = (await ameriaPaymentDetails(cfg.ameria, back.paymentId)) as Record<string, unknown>;
+          await logPaymentEvent(PROVIDER, "details", order.code, {
+            PaymentID: back.paymentId,
+            details: await sanitizeForLog(cfg, details),
+          });
+          verdict = evaluatePaymentDetails(details, expected);
+        }
+      } catch (err) {
+        console.error("ConfirmPayment failed", err);
+        await logPaymentEvent(PROVIDER, "confirm_error", order.code, {
+          PaymentID: back.paymentId,
+          error: String(err).slice(0, 300),
+        });
+      }
+    }
 
     // What the return URL says. The order page still asks the server for the real status.
     let outcome: "success" | "failed" | undefined;

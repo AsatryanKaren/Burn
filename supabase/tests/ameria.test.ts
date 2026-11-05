@@ -2,11 +2,15 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
   ameriaLanguage,
+  buildCancelPaymentRequest,
+  buildConfirmPaymentRequest,
   buildGetPaymentDetailsRequest,
   buildInitPaymentRequest,
   buildPaymentPageUrl,
+  buildRefundPaymentRequest,
   evaluatePaymentDetails,
   parseBackUrlParams,
+  parseConfirmPaymentResponse,
   parseInitPaymentResponse,
 } from "../functions/_shared/ameria.ts";
 
@@ -36,6 +40,7 @@ test("InitPayment request", () => {
     Currency: "051",
     BackURL: "https://ref.supabase.co/functions/v1/pay-return-ameria",
     Opaque: "abcdefghjk012345",
+    Timeout: 1200,
   });
   assert.throws(() => buildInitPaymentRequest(creds, { orderId: 1.5, amountAmd: 500, description: "", backUrl: "", opaque: "" }));
   assert.throws(() => buildInitPaymentRequest(creds, { orderId: 1, amountAmd: 0, description: "", backUrl: "", opaque: "" }));
@@ -93,9 +98,12 @@ test("payment details: refusals", () => {
   assert.equal(evaluatePaymentDetails({ ...paid, DepositedAmount: 0 }, expected).paid, false);
   assert.equal(evaluatePaymentDetails({ ...paid, OrderID: "100002" }, expected).paid, false);
   assert.equal(evaluatePaymentDetails({ ...paid, Currency: "840" }, expected).paid, false);
-  // two-stage "approved" is not paid
-  const approved = evaluatePaymentDetails({ ...paid, OrderStatus: 1 }, expected);
-  assert.deepEqual(approved, { paid: false, declined: false, reason: "ORDER_STATUS_1" });
+  // void is final
+  const voided = evaluatePaymentDetails({ ...paid, OrderStatus: 3 }, expected);
+  assert.equal(!voided.paid && voided.declined, true);
+  // refunded is not paid, but never marks the order failed
+  const refunded = evaluatePaymentDetails({ ...paid, OrderStatus: 4 }, expected);
+  assert.equal(!refunded.paid && refunded.declined, false);
   // declined
   const declined = evaluatePaymentDetails({ ...paid, ResponseCode: "0116", OrderStatus: 6 }, expected);
   assert.equal(declined.paid, false);
@@ -104,4 +112,41 @@ test("payment details: refusals", () => {
   const inProgress = evaluatePaymentDetails({ ...paid, ResponseCode: "", OrderStatus: 5 }, expected);
   assert.equal(!inProgress.paid && inProgress.declined, false);
   assert.equal(evaluatePaymentDetails(null, expected).paid, false);
+});
+
+test("two-stage: approved needs ConfirmPayment, never counts as paid", () => {
+  const blocked = { ...paid, OrderStatus: 1, DepositedAmount: 0 };
+  assert.deepEqual(evaluatePaymentDetails(blocked, expected), {
+    paid: false, declined: false, reason: "ORDER_STATUS_1", needsConfirm: true,
+  });
+  assert.equal(evaluatePaymentDetails({ ...blocked, ApprovedAmount: 5 }, expected).paid, false);
+  assert.equal("needsConfirm" in evaluatePaymentDetails({ ...blocked, ApprovedAmount: 5 }, expected), false);
+  assert.equal("needsConfirm" in evaluatePaymentDetails({ ...blocked, Amount: 5 }, expected), false);
+  assert.equal("needsConfirm" in evaluatePaymentDetails({ ...blocked, OrderID: "9" }, expected), false);
+  // a non-"00" code while blocked is not a final failure
+  const odd = evaluatePaymentDetails({ ...blocked, ResponseCode: "0-9000" }, expected);
+  assert.equal(!odd.paid && odd.declined, false);
+});
+
+test("ConfirmPayment request and response", () => {
+  assert.deepEqual(buildConfirmPaymentRequest(creds, "pid-123", 500), {
+    url: "https://servicestest.ameriabank.am/VPOS/api/VPOS/ConfirmPayment",
+    body: { PaymentID: "pid-123", Username: "user", Password: "pass", Amount: 500 },
+  });
+  assert.throws(() => buildConfirmPaymentRequest(creds, "pid-123", 0));
+  assert.deepEqual(parseConfirmPaymentResponse({ ResponseCode: "00", ResponseMessage: "OK" }), { ok: true, responseCode: "00", message: "OK" });
+  assert.equal(parseConfirmPaymentResponse({ ResponseCode: "0-2012" }).ok, false);
+  assert.equal(parseConfirmPaymentResponse(null).ok, false);
+});
+
+test("RefundPayment and CancelPayment requests", () => {
+  assert.deepEqual(buildRefundPaymentRequest(creds, "pid-123", 10), {
+    url: "https://servicestest.ameriabank.am/VPOS/api/VPOS/RefundPayment",
+    body: { PaymentID: "pid-123", Username: "user", Password: "pass", Amount: 10 },
+  });
+  assert.throws(() => buildRefundPaymentRequest(creds, "pid-123", 2.5));
+  assert.deepEqual(buildCancelPaymentRequest(creds, "pid-123"), {
+    url: "https://servicestest.ameriabank.am/VPOS/api/VPOS/CancelPayment",
+    body: { PaymentID: "pid-123", Username: "user", Password: "pass" },
+  });
 });

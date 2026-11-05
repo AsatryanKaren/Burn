@@ -11,6 +11,7 @@ import type { Lang, PaymentInstruction } from "./types.ts";
 import { ApiError, ErrorCode } from "./errors.ts";
 import {
   type AmeriaCredentials,
+  buildConfirmPaymentRequest,
   buildGetPaymentDetailsRequest,
   buildInitPaymentRequest,
   buildPaymentPageUrl,
@@ -119,6 +120,11 @@ async function ameriaInit(cfg: Config, creds: AmeriaCredentials, order: PayableO
 
 export async function ameriaPaymentDetails(creds: AmeriaCredentials, paymentId: string): Promise<unknown> {
   return postJson(buildGetPaymentDetailsRequest(creds, paymentId));
+}
+
+/** Two-stage terminals: charges the blocked amount. Returns the raw response. */
+export async function ameriaConfirmPayment(creds: AmeriaCredentials, paymentId: string, amountAmd: number): Promise<unknown> {
+  return postJson(buildConfirmPaymentRequest(creds, paymentId, amountAmd));
 }
 
 export function paymentUnavailableError(): ApiError {
