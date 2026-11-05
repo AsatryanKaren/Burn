@@ -236,31 +236,32 @@
   function shareStory(scene, number, pageUrl) {
     return shareCanvas(storyImage(scene, number), "story-" + number + ".png", pageUrl);
   }
-  // Share an image through the system sheet when files are supported, otherwise show it to save.
+  // Show the image first; from there the system share sheet (when it takes files), saving, or closing.
   function shareCanvas(canvas, name, pageUrl) {
     return new Promise(function (resolve) {
       canvas.toBlob(function (blob) {
         var file = blob ? new File([blob], name, { type: "image/png" }) : null;
-        if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
-          navigator.share({ files: [file], url: pageUrl }).then(function () { resolve("shared"); }, function () { resolve(openModal(canvas)); });
-        } else {
-          resolve(openModal(canvas));
-        }
+        var canShare = !!(file && navigator.canShare && navigator.canShare({ files: [file] }));
+        resolve(openModal(canvas, blob, name, canShare ? function () { return navigator.share({ files: [file], url: pageUrl }); } : null));
       }, "image/png");
     });
   }
-  function openModal(canvas) {
+  function openModal(canvas, blob, name, share) {
     var m = document.createElement("div");
     m.className = "modal"; m.setAttribute("role", "dialog"); m.setAttribute("aria-modal", "true");
-    var url = canvas.toDataURL("image/jpeg", 0.92);
-    m.innerHTML = '<img alt="">' + '<p>' + esc(t("paper.story_hint")) + '</p><div class="row"><button type="button" class="btn btn-ghost" data-close>' + esc(t("common.close")) + "</button></div>";
-    m.querySelector("img").src = url;
-    var close = function () { m.remove(); document.removeEventListener("keydown", onKey); };
+    var href = blob ? URL.createObjectURL(blob) : canvas.toDataURL("image/jpeg", 0.92);
+    m.innerHTML = '<img alt="">' + (share ? "" : "<p>" + esc(t("paper.story_hint")) + "</p>") + '<div class="row">' +
+      (share ? '<button type="button" class="btn btn-fire" data-share>' + esc(t("common.share")) + "</button>" : "") +
+      '<a class="btn btn-ghost" data-save download="' + esc(name || "image.png") + '">' + esc(t("common.save_image")) + "</a>" +
+      '<button type="button" class="btn btn-ghost" data-close>' + esc(t("common.close")) + "</button></div>";
+    m.querySelector("img").src = href; m.querySelector("[data-save]").href = href;
+    var close = function () { m.remove(); document.removeEventListener("keydown", onKey); if (blob) setTimeout(function () { URL.revokeObjectURL(href); }, 1000); };
     var onKey = function (e) { if (e.key === "Escape") close(); };
     m.addEventListener("click", function (e) { if (e.target === m || e.target.hasAttribute("data-close")) close(); });
+    if (share) m.querySelector("[data-share]").addEventListener("click", function () { share().then(close, function () {}); });
     document.addEventListener("keydown", onKey);
     document.body.appendChild(m);
-    m.querySelector("[data-close]").focus();
+    m.querySelector(share ? "[data-share]" : "[data-close]").focus();
     return "modal";
   }
 

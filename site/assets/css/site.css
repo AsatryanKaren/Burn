@@ -340,8 +340,10 @@ select.input, select.input:focus { -webkit-appearance: none; appearance: none; p
 @media (max-width: 899px) {
   .live-head { right: var(--page-r); max-width: none; }
   .live-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 6px; font-size: 13px; }
-  .live-stats span { min-width: 0; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: rgba(5,8,18,.55); }
-  .live-stats b { font-size: clamp(20px, 6vw, 26px); white-space: nowrap; }
+  .live-stats > span { min-width: 0; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: rgba(5,8,18,.55); line-height: 1.35; overflow-wrap: anywhere; }
+  .live-stats > span > span { display: block; }
+  .live-stats b { font-size: clamp(20px, 6vw, 26px); white-space: nowrap; margin-bottom: 2px; }
+  .live-stats b.muted { font-family: var(--sans); font-size: 14px; font-weight: 500; line-height: 1.3; white-space: normal; color: var(--text); }
 }
 .now-burning { position: absolute; left: 50%; top: 42%; transform: translate(-50%, -50%); text-align: center; width: min(560px, 90vw); }
 .now-burning .label { font-size: 13px; color: var(--muted); }
@@ -476,7 +478,7 @@ select.input, select.input:focus { -webkit-appearance: none; appearance: none; p
 .lt-soon p { margin: 0; color: var(--muted); font-size: 14.5px; }
 .lt-soon .btn { margin-top: 8px; }
 .lt-soon .lt-demo-note { font-size: 12.5px; }
-.demo-bar { position: fixed; right: 12px; top: calc(env(safe-area-inset-top, 0px) + 176px); z-index: 300;
+.demo-bar { position: fixed; right: 12px; top: calc(env(safe-area-inset-top, 0px) + 76px); z-index: 38; /* above the page, under the menu (39), header (40) and pop-ups */
   display: flex; align-items: center; gap: 8px; max-width: calc(100% - 24px); padding: 5px 5px 5px 12px; border-radius: 99px;
   background: #ffc46b; color: #1c0e05; font: 500 13px/1.3 var(--sans); box-shadow: 0 8px 24px -8px rgba(0,0,0,.6); }
 @media (min-width: 980px) { .demo-bar { top: 124px; right: 440px; } } /* clear of the map's side panel */
@@ -524,6 +526,9 @@ select.input, select.input:focus { -webkit-appearance: none; appearance: none; p
 
 .rm { position: fixed; inset: 0; z-index: 90; background: radial-gradient(110% 80% at 50% 35%, #18234d 0%, #070a16 60%, #03050c 100%); overflow: hidden; }
 .rm[hidden] { display: none !important; }
+/* Dragging furniture must not select text or open the iOS callout. */
+.rm, .rm canvas { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; }
+.rm input, .rm textarea { -webkit-user-select: text; user-select: text; }
 .rm > canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; }
 .rm.is-edit > canvas { height: calc(100% - var(--dock-h, 200px)); }
 .rm-loading { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; }

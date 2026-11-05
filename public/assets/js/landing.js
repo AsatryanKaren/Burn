@@ -8,7 +8,7 @@
   if (Object.keys(A.store.json("myLights", {}) || {}).length) {
     var cta = document.querySelector(".ld-banner");
     cta.href = D.urls.lights + "#mine";
-    cta.querySelector(".ld-banner-t b").textContent = A.t("landing.mine_cta");
+    cta.querySelector(".ld-banner-t b").textContent = A.t("app.tab_mine"); // opens My room (its actions), not the room itself
     cta.querySelector(".ld-banner-t span").textContent = A.t("landing.mine_note");
   }
   MC.loadMap(host.getAttribute("data-map")).then(function (m) {

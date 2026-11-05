@@ -253,7 +253,7 @@
     var product = "light", p = prices[product] || 0;
     $("lMsgCount").textContent = $("lMsg").value.length + "/60";
     $("lGift").textContent = t("burn.of_which");
-    $("lSubmit").textContent = state.demo ? t("lights.demo_submit") : D.paymentsOpen ? t("lights.pay", { price: A.price(p) }) : t("lights.save");
+    $("lSubmit").textContent = D.paymentsOpen || state.demo ? t("lights.pay", { price: A.price(p) }) : t("lights.save");
     if (state.mode === "design" && view) view.setGhost({ id: state.id, icon: val("icon"), color: val("color"), big: product === "light_big" });
   }
   function showDesign(id) {
@@ -271,7 +271,6 @@
     if (!window.DemoMode) $("demoBtn").hidden = true;
     $("demoBtn").addEventListener("click", function () {
       state.demo = true; $("lBuy").hidden = false; $("ltSoon").hidden = true; sync();
-      try { $("lMsg").focus({ preventScroll: false }); } catch (e) {}
     });
   }
   form.addEventListener("input", sync);

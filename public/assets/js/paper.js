@@ -127,7 +127,7 @@
         (paid ? '<div class="row"><button type="button" class="btn btn-paper" id="lShare">' + esc(t("lights.share")) + "</button>" +
           '<button type="button" class="btn btn-ghost" id="lCopy">' + esc(t("lights.copy")) + "</button>" +
           '<a class="btn btn-ghost" href="' + esc(mapLink) + '">' + esc(t("lights.paper_see")) + "</a></div>" : payButton(o)) +
-        '<p><a class="btn btn-fire" href="' + esc(D.urls.lights + "#mine") + '">' + esc(t("landing.mine_cta")) + " →</a></p>" +
+        '<p><a class="btn btn-fire" href="' + esc(D.urls.lights + "#mine") + '">' + esc(t("app.tab_mine")) + " →</a></p>" +
         '<p><a class="link-arrow" href="' + esc(D.urls.lights) + '#fire">🔥 ' + esc(t("lights.fire_cta")) + " →</a></p>" +
         '<div id="lKey"></div>'
       );
