@@ -251,7 +251,7 @@ body.is-app .topbar-inner { padding-left: var(--gutter); padding-right: var(--gu
 .footer-about p { color: var(--muted); max-width: 34ch; margin: 12px 0; }
 .footer-company p { color: var(--muted); margin: 0; line-height: 1.8; }
 .cards { display: flex; gap: 6px; flex-wrap: wrap; }
-.card-badge { font-size: 11px; font-weight: 600; letter-spacing: .04em; border: 1px solid var(--line-2); border-radius: 5px; padding: 4px 8px; color: var(--text); background: rgba(255,255,255,.04); }
+.pay-logo { width: 48px; height: 30px; display: block; border-radius: 4px; }
 .footer-bottom { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--line); color: var(--dim); font-size: 13px; }
 
 /* ---------- page shells ---------- */
