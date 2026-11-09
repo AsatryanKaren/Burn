@@ -29,7 +29,7 @@
   function t(path, vars) {
     var s = get(path);
     if (typeof s !== "string") return s == null ? path : s;
-    var v = Object.assign({ year: D.year, next: D.next, pct: D.pct, share: D.share }, vars || {});
+    var v = Object.assign({ year: D.year, next: D.next, pct: D.pct }, vars || {});
     return s.replace(/\{(\w+)\}/g, function (m, k) { return v[k] != null ? v[k] : m; });
   }
   function esc(s) {

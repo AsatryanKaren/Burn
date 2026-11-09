@@ -122,7 +122,6 @@ def make_env(lang: str, hashes: dict) -> Environment:
         "start": int(cfg["stream"]["start"][-2:]), "end": int(cfg["stream"]["end"][-2:]),
         "price": price(cfg["products"][0]["price"], lang),
         "amount": price(gift_share(cfg["products"][0]["price"]), lang),
-        "share": price(gift_share(cfg["products"][0]["price"]), lang),
     }
 
     def t(key: str, **kw):
@@ -151,7 +150,6 @@ def js_payload(lang: str, page: str) -> str:
         "lang": lang, "page": page, "locale": s["locale"],
         "year": CONFIG["year"], "next": CONFIG["next_year"],
         "pct": CONFIG["gift_share_percent"],
-        "share": price(gift_share(CONFIG["products"][0]["price"]), lang),
         "brand": CONFIG["brand"]["name"][lang],
         "paymentsOpen": CONFIG["payments_open"],
         "showCounterFrom": CONFIG["show_counter_from"],
