@@ -8,13 +8,14 @@ import {
   ORDER_CODE_ALPHABET,
 } from "../functions/_shared/codes.ts";
 
-test("gift share is floor(20%)", () => {
-  assert.equal(giftShareAmd(500), 100);
-  assert.equal(giftShareAmd(1900), 380);
-  assert.equal(giftShareAmd(900), 180);
-  assert.equal(giftShareAmd(2900), 580);
-  assert.equal(giftShareAmd(999), 199);
-  assert.equal(giftShareAmd(4), 0);
+test("gift share is floor(35%)", () => {
+  assert.equal(giftShareAmd(500), 175);
+  assert.equal(giftShareAmd(1900), 665);
+  assert.equal(giftShareAmd(900), 315);
+  assert.equal(giftShareAmd(2900), 1015);
+  assert.equal(giftShareAmd(999), 349);
+  assert.equal(giftShareAmd(4), 1);
+  assert.equal(giftShareAmd(2), 0);
   assert.equal(giftShareAmd(0), 0);
   assert.throws(() => giftShareAmd(1.5));
   assert.throws(() => giftShareAmd(-1));

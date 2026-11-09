@@ -1,10 +1,10 @@
 // Money rules. Pure module.
 //
-// 20% of every paid amount goes to the gift fund, rounded down to whole AMD.
+// 35% of every paid amount goes to the gift fund, rounded down to whole AMD.
 // The database (confirm_payment) computes the same value for gift_ledger;
 // this helper is used for display (order-status) and tests.
 
-export const GIFT_SHARE_PERCENT = 20;
+export const GIFT_SHARE_PERCENT = 35;
 
 export function giftShareAmd(amountAmd: number): number {
   if (!Number.isSafeInteger(amountAmd) || amountAmd < 0) {

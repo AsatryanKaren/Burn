@@ -71,7 +71,7 @@
     var cards = [
       ["Papers burned", fmt(s.papers_burned)],
       ["Revenue", fmt(s.revenue_amd) + " ֏"],
-      ["Gift fund (20%)", fmt(s.gift_fund_amd) + " ֏"],
+      ["Gift fund (35%)", fmt(s.gift_fund_amd) + " ֏"],
       ["Waiting for review", fmt(s.pending_moderation)],
       ["Saved before launch", fmt(by.awaiting_launch)],
       ["Pending payment", fmt(by.pending)],

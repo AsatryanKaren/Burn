@@ -162,6 +162,16 @@ test("only active products are sellable (create-order, start-payment)", () => {
   assert.equal(missing.ok ? null : missing.code, "PRODUCT_UNAVAILABLE");
 });
 
-test("one price: 600 AMD gives 120 AMD to the gift fund", () => {
-  assert.equal(giftShareAmd(600), 120);
+test("one price: 600 AMD gives 210 AMD to the gift fund", () => {
+  assert.equal(giftShareAmd(600), 210);
+});
+
+test("migration 0017: confirm_payment books the same share as GIFT_SHARE_PERCENT, site.json agrees", async () => {
+  const { readFileSync } = await import("node:fs");
+  const { GIFT_SHARE_PERCENT } = await import("../functions/_shared/money.ts");
+  const sql = readFileSync(new URL("../migrations/0017_gift_share_35.sql", import.meta.url), "utf8");
+  const site = JSON.parse(readFileSync(new URL("../../site/config/site.json", import.meta.url), "utf8"));
+  assert.match(sql, new RegExp(`v_gift\\s*:=\\s*\\(v_order\\.amount_amd \\* ${GIFT_SHARE_PERCENT}\\) / 100`));
+  assert.equal(site.gift_share_percent, GIFT_SHARE_PERCENT);
+  assert.match(sql, /grant execute on function public\.confirm_payment\(text, text, text, integer\) to service_role/);
 });

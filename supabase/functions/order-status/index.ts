@@ -24,7 +24,7 @@ Deno.serve(browserEndpoint(["GET"], cfg.cors, async (req) => {
   if (!order) throw new ApiError(404, ErrorCode.NOT_FOUND, "Order not found.");
 
   // Paid: the amount actually recorded in gift_ledger. Not paid yet: the
-  // share this order will contribute (same floor(20%) rule).
+  // share this order will contribute (same floor(35%) rule).
   const ledger = order.status === "paid" ? await getGiftShare(order.id) : null;
 
   // Lights: the plot and the design (the message is `text`).

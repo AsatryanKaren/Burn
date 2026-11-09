@@ -67,7 +67,7 @@
       if (path === "/functions/v1/order-status") {
         var c = (url.match(/code=([^&]+)/) || [])[1], ord = store[c];
         if (!ord) return json({ error: { code: "NOT_FOUND" } }, 404);
-        return json(Object.assign({}, ord, { burn_number: ord.cell_id == null ? 1285 : null, gift_share_amd: ord.status === "paid" ? 120 : null }));
+        return json(Object.assign({}, ord, { burn_number: ord.cell_id == null ? 1285 : null, gift_share_amd: ord.status === "paid" ? 210 : null }));
       }
       if (path === "/functions/v1/room-warmth") {
         if (body.action === "warm") warm[body.cell_id] = (warm[body.cell_id] || 0) + 1;

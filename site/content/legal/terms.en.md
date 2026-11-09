@@ -119,7 +119,7 @@ You get a full refund if we fail to deliver the service (for example, your place
 
 ## 10. Gifts for children
 
-We set aside 20% of every payment for the gift fund. With this money we buy New Year gifts for children living in residential care institutions (children's homes) in Armenia and deliver them from 25 to 30 December 2026.
+We set aside 35% of every payment for the gift fund. With this money we buy New Year gifts for children living in residential care institutions (children's homes) in Armenia and deliver them from 25 to 30 December 2026.
 
 - This is our own decision. It is **not** a charity collection, **not** a donation made by you and **not** tax-deductible. You are paying for a digital service; we choose to spend part of our revenue this way.
 - For transparency, anyone, blogger or not, can apply through the form on the [Gifts for children](/en/gifts/) page to take part in delivering the gifts. Places are limited; if many people apply, we contact each applicant and give priority to those who will share it on social media. Registering is free and is not an order.
