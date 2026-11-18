@@ -35,6 +35,10 @@ PAGES = {
     "home": ("landing.html", ""),
     "map": ("lights.html", "map"),
     "paper": ("paper.html", "p"),
+    # Where the bank sends the buyer back (via /payment/return/ on the server).
+    "pay_success": ("paper.html", "payment/success"),
+    "pay_failed": ("paper.html", "payment/failed"),
+    "pay_pending": ("paper.html", "payment/pending"),
     "live": ("live.html", "live"),
     "gifts": ("gifts.html", "gifts"),
     "terms": ("legal.html", "terms"),
@@ -44,6 +48,7 @@ PAGES = {
     "contact": ("legal.html", "contact"),
 }
 LEGAL = ["terms", "refund", "privacy", "delivery", "contact"]
+PRIVATE = ["paper", "pay_success", "pay_failed", "pay_pending"]  # pages behind a private order code
 
 
 def lookup(strings: dict, key: str):
@@ -157,7 +162,7 @@ def js_payload(lang: str, page: str) -> str:
         "lightProducts": CONFIG["light_products"],
         "supabase": CONFIG["supabase"],
         "urls": {**{k: page_url(k, lang) for k in PAGES}, **{k: page_url(k, lang) for k in ("lights", "fire", "burn", "faq")}},
-        "t": {k: s[k] for k in ("hero", "burn", "paper", "story", "live", "gifts", "gifts_page", "nav", "common", "lights", "room", "app", "landing")},
+        "t": {k: s[k] for k in ("hero", "burn", "paper", "payment", "story", "live", "gifts", "gifts_page", "nav", "common", "lights", "room", "app", "landing")},
     }
     # Escape so the JSON can't break out of the <script> element.
     return json.dumps(payload, ensure_ascii=False).replace("</", "<\\/")
@@ -217,7 +222,7 @@ def build() -> None:
     base = CONFIG["site_url"].rstrip("/")
     urls = []
     for page in PAGES:
-        if page == "paper":
+        if page in PRIVATE:
             continue
         for lang in LANGS:
             alts = "".join(
@@ -227,7 +232,7 @@ def build() -> None:
         '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" '
         'xmlns:xhtml="http://www.w3.org/1999/xhtml">' + "".join(urls) + "</urlset>\n", encoding="utf-8")
     (OUT / "robots.txt").write_text(
-        f"User-agent: *\nAllow: /\nDisallow: /p/\nDisallow: /en/p/\nDisallow: /ru/p/\nDisallow: /admin/\nSitemap: {base}/sitemap.xml\n",
+        f"User-agent: *\nAllow: /\nDisallow: /p/\nDisallow: /en/p/\nDisallow: /ru/p/\nDisallow: /payment/\nDisallow: /en/payment/\nDisallow: /ru/payment/\nDisallow: /admin/\nSitemap: {base}/sitemap.xml\n",
         encoding="utf-8")
     manifest = {
         "name": CONFIG["brand"]["name"][DEFAULT], "short_name": CONFIG["brand"]["name"][DEFAULT],

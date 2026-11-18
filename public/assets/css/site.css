@@ -727,3 +727,26 @@ body.is-app .lt-hint { display: none; }
 /* scarcity line: the map has a fixed number of places this year */
 .ld-scarce, .lt-scarce { margin: .6rem 0 0; font-size: .92rem; color: var(--gold, #e9c77b); max-width: 34rem; }
 .lt-scarce { padding: .55rem .75rem; border: 1px solid rgba(233,199,123,.3); border-radius: 12px; background: rgba(233,199,123,.06); }
+
+/* Payment result card (/payment/success|failed|pending/) */
+.pay-state { display: flex; align-items: center; gap: 16px; width: 100%; max-width: 520px; box-sizing: border-box; padding: 16px 20px 16px 16px; border-radius: 18px; border: 1px solid var(--line-2); background: rgba(10, 15, 30, .55); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+.pay-state-icon { flex: none; width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; }
+.pay-state-icon svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.pay-state-t { margin: 0; font-family: var(--serif); font-weight: 600; font-size: clamp(1.3rem, 5vw, 1.65rem); line-height: 1.2; }
+.pay-state-d { margin: 4px 0 0; font-size: 15px; line-height: 1.45; color: var(--muted); }
+.pay-state-ok { border-color: rgba(159, 220, 171, .4); background: linear-gradient(135deg, rgba(46, 160, 90, .2), rgba(10, 15, 30, .55) 70%); }
+.pay-state-ok .pay-state-icon { color: #0d2615; background: var(--ok); box-shadow: 0 0 0 6px rgba(159, 220, 171, .16), 0 0 28px rgba(159, 220, 171, .35); animation: pay-pop .5s var(--ease) both; }
+.pay-state-ok .pay-state-icon path { stroke-dasharray: 24; stroke-dashoffset: 24; animation: pay-draw .45s .3s ease-out forwards; }
+.pay-state-fail { border-color: rgba(255, 155, 122, .4); background: linear-gradient(135deg, rgba(200, 70, 50, .2), rgba(10, 15, 30, .55) 70%); }
+.pay-state-fail .pay-state-icon { color: #2b0f08; background: var(--danger); box-shadow: 0 0 0 6px rgba(255, 155, 122, .16); animation: pay-pop .5s var(--ease) both; }
+.pay-state-wait { border-color: rgba(255, 196, 107, .35); background: linear-gradient(135deg, rgba(255, 170, 60, .14), rgba(10, 15, 30, .55) 70%); }
+.pay-state-wait .pay-state-icon { background: rgba(255, 196, 107, .12); }
+.pay-state-wait .spinner { width: 24px; height: 24px; border-width: 2.5px; border-color: rgba(255, 196, 107, .25); border-top-color: var(--flame); }
+.pay-help { margin: 0; font-size: 14px; }
+.pay-help .link-arrow { color: var(--muted); }
+@keyframes pay-pop { from { transform: scale(.55); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes pay-draw { to { stroke-dashoffset: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .pay-state-ok .pay-state-icon, .pay-state-fail .pay-state-icon { animation: none; }
+  .pay-state-ok .pay-state-icon path { animation: none; stroke-dashoffset: 0; }
+}

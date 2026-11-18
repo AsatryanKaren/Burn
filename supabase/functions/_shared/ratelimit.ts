@@ -17,7 +17,9 @@ export const LIMITS = {
   burnWish: { limit: 20, windowSeconds: 3600 },
   burnWishCode: { limit: 10, windowSeconds: 3600 },
   // Bank-facing endpoints (per caller IP hash).
-  ameriaReturn: { limit: 60, windowSeconds: 600 },
+  // Buyers reach pay-return-ameria through the lightarmenia.com pass-through
+  // (vercel.json), so many of them share a few proxy addresses: keep this roomy.
+  ameriaReturn: { limit: 600, windowSeconds: 600 },
   idramCallback: { limit: 60, windowSeconds: 600 },
 } as const;
 

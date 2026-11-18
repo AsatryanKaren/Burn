@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}{{ t('meta.paper_title') }} · {{ brand }}{% endblock %}
+{% block title %}{{ t('meta.' ~ page ~ '_title') if page.startswith('pay_') else t('meta.paper_title') }} · {{ brand }}{% endblock %}
 {% block head %}<meta name="robots" content="noindex">{% endblock %}
 {% block sound %}
 <button type="button" class="icon-btn" id="soundBtn" aria-pressed="false" aria-label="{{ t('nav.sound_on') }}" data-label-on="{{ t('nav.sound_off') }}" data-label-off="{{ t('nav.sound_on') }}">

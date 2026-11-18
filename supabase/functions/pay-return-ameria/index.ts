@@ -2,10 +2,12 @@
 //
 // The query string (orderID, paymentID, resposneCode, opaque) is untrusted.
 // We ask the bank server-to-server (GetPaymentDetails) and only then call
-// confirm_payment. Always ends with a 302 to the buyer's order page (or to
-// the site root when the order can't be identified).
+// confirm_payment. Always ends with a 302 to the buyer's result page
+// (/payment/success|failed|pending/?c=CODE), or to the site root when the
+// order can't be identified. The bank reaches us at
+// https://lightarmenia.com/payment/return/, which vercel.json passes through.
 //
-// Hardening: body / query capped at 8 KB (413), 60 requests per caller IP
+// Hardening: body / query capped at 8 KB (413), 600 requests per caller IP
 // hash per 10 minutes (429), only whitelisted keys (orderID, paymentID,
 // resposneCode/responseCode, opaque; values cut to 200 chars) are logged, and
 // the bank is asked only when `opaque` is an existing order code or `orderID`
@@ -13,7 +15,7 @@
 
 import { getConfig } from "../_shared/env.ts";
 import { redirectResponse, textResponse } from "../_shared/http.ts";
-import { orderPageUrl } from "../_shared/config.ts";
+import { orderPageUrl, type PaymentResult } from "../_shared/config.ts";
 import { isValidOrderCode } from "../_shared/codes.ts";
 import {
   evaluatePaymentDetails,
@@ -117,7 +119,7 @@ Deno.serve(async (req) => {
     await logPaymentEvent(PROVIDER, "return", hinted, await sanitizeForLog(cfg, whitelistCallbackFields(Object.fromEntries(params))));
 
     const hintedOrder = hinted ? await findOrderByCode(hinted) : null;
-    const fallbackUrl = hintedOrder ? orderPageUrl(cfg.siteUrl, hintedOrder.lang, hintedOrder.code) : home;
+    const fallbackUrl = hintedOrder ? orderPageUrl(cfg.siteUrl, hintedOrder.lang, hintedOrder.code, "pending") : home;
 
     if (!cfg.ameria) {
       console.error("pay-return-ameria called but AMERIA_* secrets are not set");
@@ -194,8 +196,9 @@ Deno.serve(async (req) => {
       }
     }
 
-    // What the return URL says. The order page still asks the server for the real status.
-    let outcome: "success" | "failed" | undefined;
+    // Which result page to show. The page still asks the server for the real status,
+    // and a pending page switches by itself once the order is paid or failed.
+    let outcome: PaymentResult = "pending";
     if (verdict.paid) {
       // 3. The only place money becomes `paid`.
       const result = await confirmPayment(order.code, PROVIDER, back.paymentId, verdict.amountAmd);

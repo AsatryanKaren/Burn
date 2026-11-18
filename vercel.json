@@ -139,6 +139,14 @@
   ],
   "rewrites": [
     {
+      "source": "/payment/return",
+      "destination": "https://maqcaowpfhmqcavboszy.supabase.co/functions/v1/pay-return-ameria"
+    },
+    {
+      "source": "/payment/return/",
+      "destination": "https://maqcaowpfhmqcavboszy.supabase.co/functions/v1/pay-return-ameria"
+    },
+    {
       "source": "/p/:code([a-z0-9]{8,40})",
       "destination": "/p/index.html"
     },
@@ -204,7 +212,7 @@
       ]
     },
     {
-      "source": "/(p|en/p|ru/p)/(.*)",
+      "source": "/(p|en/p|ru/p|payment|en/payment|ru/payment)/(.*)",
       "headers": [
         {
           "key": "X-Robots-Tag",

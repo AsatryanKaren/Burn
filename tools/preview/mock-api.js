@@ -66,7 +66,11 @@
       }
       if (path === "/functions/v1/order-status") {
         var c = (url.match(/code=([^&]+)/) || [])[1], ord = store[c];
+        // Sample orders for opening a result page directly: /payment/<result>/?c=preview…
+        var res = !ord && /^preview/.test(c || "") && (location.pathname.match(/\/payment\/(success|failed|pending)\//) || [])[1];
+        if (res) ord = store[c] = { code: c, status: { success: "paid", failed: "failed", pending: "pending" }[res], amount_amd: 600, product: "burn", text: "Թող 2027-ը խաղաղ լինի", created_at: new Date().toISOString() };
         if (!ord) return json({ error: { code: "NOT_FOUND" } }, 404);
+        if (ord.status === "pending" && ord.approveAt && Date.now() >= ord.approveAt) { ord.status = "paid"; ord.approveAt = null; save(); }
         return json(Object.assign({}, ord, { burn_number: ord.cell_id == null ? 1285 : null, gift_share_amd: ord.status === "paid" ? 210 : null }));
       }
       if (path === "/functions/v1/room-warmth") {

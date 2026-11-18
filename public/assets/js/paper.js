@@ -1,4 +1,7 @@
 /* Personal paper page: status, the burn on return from the bank, number, story card, share.
+   Also the payment result pages (/payment/success|failed|pending/?c=CODE), where the bank
+   return lands. Their address is only a hint: the status always comes from the server, and
+   the address follows it (a pending page turns into success or failed by itself).
    The order code in the URL is private (it opens this page). Shared links never contain it,
    except for "For a friend" papers, whose page is meant for the friend. */
 (function () {
@@ -18,10 +21,47 @@
     try { return sessionStorage.getItem("justPaid") || (JSON.parse(localStorage.getItem("papers") || "[]")[0] || null); } catch (e) { return null; }
   }
   var code = codeFromUrl() || savedCode();
-  var result = new URLSearchParams(location.search).get("result");  // what the bank return says; the server status decides
+  var PAY_PAGES = { pay_success: "success", pay_failed: "failed", pay_pending: "pending" };
+  var payPage = PAY_PAGES[D.page] || null;  // which result page this is, or null on /p/
+  // What the bank return says (old /p/?result= links too); the server status decides.
+  var result = payPage || new URLSearchParams(location.search).get("result");
   var privateUrl = location.origin + D.urls.paper + "?c=" + encodeURIComponent(code || "");
   function publicUrl(n) { return location.origin + D.urls.fire + (n ? "?n=" + n : ""); }
   var pollTimer = null, polls = 0, errors = 0, lastStatus = null;
+
+  // Switching language keeps the order code.
+  if (code) document.querySelectorAll("[data-lang-link]").forEach(function (a) {
+    a.setAttribute("href", a.getAttribute("href").split("?")[0] + "?c=" + encodeURIComponent(code));
+  });
+
+  /* ---------- payment result pages ---------- */
+  var PAY_TITLE = { success: "payment.ok_t", failed: "paper.failed_t", pending: "paper.pending_t" };
+  // Keeps the address, the tab title and the language links in step with the real status.
+  function syncPayPage(status) {
+    if (!payPage) return;
+    var want = status === "paid" ? "success" : status === "failed" || status === "cancelled" ? "failed" : status === "pending" ? "pending" : null;
+    if (!want || want === payPage) return;
+    try { history.replaceState(null, "", D.urls["pay_" + want] + "?c=" + encodeURIComponent(code)); } catch (e) {}
+    document.querySelectorAll("[data-lang-link]").forEach(function (a) {
+      a.setAttribute("href", a.getAttribute("href").replace("/payment/" + payPage + "/", "/payment/" + want + "/"));
+    });
+    document.title = t(PAY_TITLE[want]) + " · " + D.brand;
+    payPage = result = want;
+  }
+  var ICON_OK = '<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+  var ICON_FAIL = '<svg viewBox="0 0 24 24"><path d="M7.5 7.5l9 9M16.5 7.5l-9 9"/></svg>';
+  // The status card at the top of a result: "ok", "fail" or "wait".
+  function statusHead(kind, o) {
+    var title = kind === "ok" ? t("payment.ok_t") : kind === "fail" ? t("paper.failed_t") : t("paper.pending_t");
+    var line = kind === "ok" ? (o && o.amount_amd ? t("payment.ok_d", { amount: A.price(o.amount_amd) }) : "")
+      : kind === "fail" ? t("paper.failed_d") : t("paper.pending_d");
+    return '<div class="pay-state pay-state-' + kind + '">' +
+      '<span class="pay-state-icon" aria-hidden="true">' + (kind === "ok" ? ICON_OK : kind === "fail" ? ICON_FAIL : '<span class="spinner"></span>') + "</span>" +
+      '<div><p class="pay-state-t">' + esc(title) + "</p>" + (line ? '<p class="pay-state-d">' + esc(line) + "</p>" : "") + "</div></div>";
+  }
+  function helpLink() {
+    return '<p class="pay-help"><a class="link-arrow" href="' + esc(D.urls.contact) + '">' + esc(t("payment.help")) + " →</a></p>";
+  }
 
   function msg(key, fallbackKey) {
     var v = A.t(key);
@@ -70,6 +110,7 @@
     if (o.gift_share_amd) lines.push(esc(t("paper.gift_share", { amount: A.price(o.gift_share_amd) })));
     var isGift = !!o.recipient_name;
     render(
+      (payPage === "success" ? statusHead("ok", o) : "") +
       '<h1 class="result-title">' + esc(t("paper.burned_t")) + "</h1>" +
       '<p class="result-line">' + t("paper.burned_line", { n: "<span class=\"nw\">" + A.fmt(o.burn_number) + "</span>" }) + "</p>" +
       paperCard(o.text) +
@@ -114,7 +155,7 @@
       var town = MC.isCell(m, id) ? MC.townName(m, id, D.lang) : null;
       var mapLink = D.urls.lights + "?cell=" + encodeURIComponent(id);
       render(
-        (paid && fromBank ? '<p class="pay-ok">✓ ' + esc(t("paper.paid_ok")) + "</p>" : "") +
+        (paid && fromBank ? statusHead("ok", o) : "") +
         '<h1 class="result-title" style="font-size:clamp(2.2rem,9vw,4rem)">' + esc(paid ? t("lights.paper_t") : t("paper.awaiting_t")) + "</h1>" +
         '<p class="result-line">' + esc(paid ? t("lights.paper_line") : t("paper.awaiting_d")) + "</p>" +
         '<div class="card" style="display:flex;gap:16px;align-items:center;max-width:460px"><span id="lIc"></span><div>' +
@@ -162,6 +203,7 @@
 
   function handle(o) {
     errors = 0;
+    syncPayPage(o.status);
     if (isLight(o) && (o.status === "paid" || o.status === "awaiting_launch")) {
       clearTimeout(pollTimer);
       var fromBank = false;
@@ -176,11 +218,16 @@
       A.loadStats(true);
     } else if (o.status === "pending") {
       // Render once; later polls only keep the spinner going (no re-render, no repeated announcements).
-      if (lastStatus !== "pending") simple("paper.pending_t", "paper.pending_d", '<div id="pendingRow">' + spinnerRow() + "</div>");
+      if (lastStatus !== "pending") {
+        if (payPage) { if (!view.querySelector(".pay-state-wait")) render(statusHead("wait") + '<div id="pendingRow"></div>'); }
+        else simple("paper.pending_t", "paper.pending_d", '<div id="pendingRow">' + spinnerRow() + "</div>");
+      }
       schedule();
     } else if (o.status === "failed" || o.status === "cancelled") {
-      simple("paper.failed_t", "paper.failed_d", payButton(o) +
-        '<p><a class="link-arrow" href="' + esc(D.urls.lights) + '">' + esc(t("paper.failed_map")) + " →</a></p>"); bindPay();
+      var back = '<p><a class="link-arrow" href="' + esc(D.urls.lights) + '">' + esc(t("paper.failed_map")) + " →</a></p>";
+      if (payPage) render(statusHead("fail") + payButton(o) + back + helpLink());
+      else simple("paper.failed_t", "paper.failed_d", payButton(o) + back);
+      bindPay();
     } else if (o.status === "awaiting_launch") {
       simple("paper.awaiting_t", "paper.awaiting_d", paperCard(o.text) + payButton(o));
       bindPay();
@@ -197,7 +244,7 @@
       // A network blip or rate limit is not a failed payment: keep checking quietly while waiting for the bank.
       errors++;
       if (lastStatus === "pending" || lastStatus === null && errors < 4) {
-        if (lastStatus === null) simple("paper.pending_t", "paper.pending_d", '<div id="pendingRow">' + spinnerRow() + "</div>");
+        if (lastStatus === null && !payPage) simple("paper.pending_t", "paper.pending_d", '<div id="pendingRow">' + spinnerRow() + "</div>");
         lastStatus = lastStatus || "pending";
         schedule();
         return;
@@ -206,5 +253,7 @@
       document.getElementById("retry").addEventListener("click", function () { errors = 0; load(); });
     });
   }
+  // Never show a result before the server confirms it.
+  if (code && payPage) render(statusHead("wait") + '<div id="pendingRow"></div>');
   load();
 })();

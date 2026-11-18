@@ -1,7 +1,8 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { corsHeaders, isOriginAllowed, parseCorsConfig } from "../functions/_shared/cors.ts";
-import { orderPageUrl, parseConfig, parseProvider, providerReady } from "../functions/_shared/config.ts";
+import { readFileSync } from "node:fs";
+import { ameriaBackUrl, orderPageUrl, parseConfig, parseProvider, providerReady } from "../functions/_shared/config.ts";
 
 test("empty ALLOWED_ORIGINS means SITE_URL only, never *", () => {
   const cfg = parseCorsConfig({ ALLOWED_ORIGINS: "", SITE_URL: "https://real.am" });
@@ -80,6 +81,24 @@ test("order page URL", () => {
   assert.equal(orderPageUrl("https://site.am/", "hy", "abc"), "https://site.am/p/abc");
   assert.equal(orderPageUrl("https://site.am", "en", "abc"), "https://site.am/en/p/abc");
   assert.equal(orderPageUrl("https://site.am", "ru", "abc"), "https://site.am/ru/p/abc");
-  assert.equal(orderPageUrl("https://site.am", "hy", "abc", "success"), "https://site.am/p/abc?result=success");
-  assert.equal(orderPageUrl("https://site.am", "en", "abc", "failed"), "https://site.am/en/p/abc?result=failed");
+});
+
+test("after the bank the buyer lands on a result page on our domain", () => {
+  assert.equal(orderPageUrl("https://site.am/", "hy", "abc", "success"), "https://site.am/payment/success/?c=abc");
+  assert.equal(orderPageUrl("https://site.am", "en", "abc", "failed"), "https://site.am/en/payment/failed/?c=abc");
+  assert.equal(orderPageUrl("https://site.am", "ru", "abc", "pending"), "https://site.am/ru/payment/pending/?c=abc");
+  assert.equal(ameriaBackUrl("https://lightarmenia.com/"), "https://lightarmenia.com/payment/return/");
+});
+
+test("vercel.json passes /payment/return/ to pay-return-ameria and keeps result pages private", () => {
+  const v = JSON.parse(readFileSync(new URL("../../vercel.json", import.meta.url), "utf8"));
+  const site = JSON.parse(readFileSync(new URL("../../site/config/site.json", import.meta.url), "utf8"));
+  const fn = `${site.supabase.url}/functions/v1/pay-return-ameria`;
+  for (const source of ["/payment/return", "/payment/return/"]) {
+    assert.equal(v.rewrites.find((r: { source: string }) => r.source === source)?.destination, fn, source);
+  }
+  const priv = v.headers.find((h: { source: string }) => h.source.includes("payment"));
+  const keys = Object.fromEntries(priv.headers.map((h: { key: string; value: string }) => [h.key, h.value]));
+  assert.equal(keys["X-Robots-Tag"], "noindex");
+  assert.equal(keys["Referrer-Policy"], "no-referrer");
 });

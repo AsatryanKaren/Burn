@@ -122,23 +122,33 @@ export function providerReady(cfg: Config): boolean {
 // URLs
 // ---------------------------------------------------------------------------
 
+export type PaymentResult = "success" | "failed" | "pending";
+
 /**
  * The buyer's order page: `${SITE_URL}/p/{code}` for Armenian (the default
  * language lives at the root) and `${SITE_URL}/{lang}/p/{code}` for en/ru.
  * The static site serves /p/?c=CODE; vercel.json must rewrite /p/:code to it.
+ *
+ * After the bank, the buyer lands on a result page instead:
+ * `${SITE_URL}/payment/{success|failed|pending}/?c={code}`. The page still asks
+ * the server for the real status (anyone can type a result URL).
  */
-export function orderPageUrl(siteUrl: string, lang: Lang, code: string, result?: "success" | "failed"): string {
+export function orderPageUrl(siteUrl: string, lang: Lang, code: string, result?: PaymentResult): string {
   const prefix = lang === "hy" ? "" : `/${lang}`;
-  const tail = result ? `?result=${result}` : "";
-  return `${trimSlash(siteUrl)}${prefix}/p/${encodeURIComponent(code)}${tail}`;
+  if (result) return `${trimSlash(siteUrl)}${prefix}/payment/${result}/?c=${encodeURIComponent(code)}`;
+  return `${trimSlash(siteUrl)}${prefix}/p/${encodeURIComponent(code)}`;
 }
 
 export function mockPayUrl(functionsBase: string, code: string): string {
   return `${functionsBase}/pay-mock?code=${encodeURIComponent(code)}`;
 }
 
-export function ameriaBackUrl(functionsBase: string): string {
-  return `${functionsBase}/pay-return-ameria`;
+/**
+ * Ameriabank BackURL, on our own domain: vercel.json passes
+ * /payment/return/ through to the pay-return-ameria function.
+ */
+export function ameriaBackUrl(siteUrl: string): string {
+  return `${trimSlash(siteUrl)}/payment/return/`;
 }
 
 /** Text shown on the bank page. Brand-neutral on purpose. */

@@ -18,7 +18,10 @@
     "live_title": "The fire of 31 December",
     "gifts_title": "New Year gifts for children",
     "notfound_title": "Page not found",
-    "lights_title": "Your place on the map of Armenia"
+    "lights_title": "Your place on the map of Armenia",
+    "pay_success_title": "Payment successful",
+    "pay_failed_title": "Payment failed",
+    "pay_pending_title": "Checking your payment"
   },
   "hero": {
     "counter": "<b>{n}</b> wishes are already waiting for the fire",
@@ -130,6 +133,11 @@
     "check_t": "Couldn't check the status",
     "paid_ok": "Payment successful",
     "failed_map": "Back to the map"
+  },
+  "payment": {
+    "ok_t": "Payment successful",
+    "ok_d": "{amount} paid. Thank you!",
+    "help": "Something wrong? Contact us"
   },
   "story": {
     "bye": "My wish",

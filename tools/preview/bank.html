@@ -23,6 +23,7 @@
   <div class="amount" id="amount"></div>
   <button class="ok" id="pay">Pay</button>
   <button class="no" id="decline">Decline (test a failed payment)</button>
+  <button class="no" id="slow" style="color:#8a5a00">Bank still processing (approves after 6 s)</button>
   <p class="note">This page only exists in the local preview. The real site goes to Ameriabank's page.</p>
 </div>
 <script>
@@ -32,12 +33,14 @@
   var o = store[code];
   document.getElementById("code").textContent = code;
   document.getElementById("amount").textContent = o ? o.amount_amd + " ֏" : "—";
-  function finish(status, result) {
-    if (o) { o.status = status; try { localStorage.setItem("previewOrders", JSON.stringify(store)); } catch (e) {} }
-    location.href = "../" + (lang === "hy" ? "" : lang + "/") + "p/index.html?c=" + encodeURIComponent(code) + "&result=" + result;
+  // Like the real return: the bank goes back through the server, which sends the buyer to /payment/<result>/.
+  function finish(status, result, approveAt) {
+    if (o) { o.status = status; o.approveAt = approveAt || null; try { localStorage.setItem("previewOrders", JSON.stringify(store)); } catch (e) {} }
+    location.href = "../" + (lang === "hy" ? "" : lang + "/") + "payment/" + result + "/index.html?c=" + encodeURIComponent(code);
   }
   document.getElementById("pay").addEventListener("click", function () { finish("paid", "success"); });
   document.getElementById("decline").addEventListener("click", function () { finish("failed", "failed"); });
+  document.getElementById("slow").addEventListener("click", function () { finish("pending", "pending", Date.now() + 6000); });
 })();
 </script>
 </body>

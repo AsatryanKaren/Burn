@@ -3,5 +3,8 @@ Allow: /
 Disallow: /p/
 Disallow: /en/p/
 Disallow: /ru/p/
+Disallow: /payment/
+Disallow: /en/payment/
+Disallow: /ru/payment/
 Disallow: /admin/
 Sitemap: https://lightarmenia.com/sitemap.xml

@@ -26,7 +26,7 @@ test("InitPayment request", () => {
     orderId: 100001,
     amountAmd: 500,
     description: "Order 100001",
-    backUrl: "https://ref.supabase.co/functions/v1/pay-return-ameria",
+    backUrl: "https://lightarmenia.com/payment/return/",
     opaque: "abcdefghjk012345",
   });
   assert.equal(spec.url, "https://servicestest.ameriabank.am/VPOS/api/VPOS/InitPayment");
@@ -38,7 +38,7 @@ test("InitPayment request", () => {
     OrderID: 100001,
     Amount: 500,
     Currency: "051",
-    BackURL: "https://ref.supabase.co/functions/v1/pay-return-ameria",
+    BackURL: "https://lightarmenia.com/payment/return/",
     Opaque: "abcdefghjk012345",
     Timeout: 1200,
   });

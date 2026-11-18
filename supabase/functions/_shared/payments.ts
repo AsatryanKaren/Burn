@@ -86,7 +86,7 @@ async function ameriaInit(cfg: Config, creds: AmeriaCredentials, order: PayableO
     orderId: order.provider_order_num,
     amountAmd: order.amount_amd,
     description: paymentDescription(order.provider_order_num),
-    backUrl: ameriaBackUrl(cfg.functionsBase),
+    backUrl: ameriaBackUrl(cfg.siteUrl),
     opaque: order.code,
   });
 
