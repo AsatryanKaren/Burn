@@ -35,19 +35,19 @@
   },
   "company": {
     "legal_name": {
-      "hy": "Անհատ ձեռնարկատեր Արտուշ Հակոբյան",
-      "en": "Individual Entrepreneur Artush Hakobyan",
-      "ru": "Индивидуальный предприниматель Артуш Акопян"
+      "hy": "«ԻՆՈՎԱ ԹԵՔ» ՍՊԸ",
+      "en": "INOVA TECH LLC",
+      "ru": "ООО «ИНОВА ТЕХ»"
     },
-    "reg_number": "269.1494935",
-    "tax_id": "79083908",
+    "reg_number": "999.110.1627352",
+    "tax_id": "01106629",
     "address": {
-      "hy": "0074, ք. Երևան, Շենգավիթ, Արշակունյաց պող., տ. 286",
-      "en": "286 Arshakunyats Ave, Shengavit, Yerevan 0074, Armenia",
-      "ru": "0074, г. Ереван, Шенгавит, пр. Аршакуняц, д. 286"
+      "hy": "0052, ք. Երևան, Մալաթիա-Սեբաստիա, Բաբաջանյան փ., շ. 18, բն. 11",
+      "en": "18 Babajanyan St, Apt 11, Malatia-Sebastia, Yerevan 0052, Armenia",
+      "ru": "0052, г. Ереван, Малатия-Себастия, ул. Бабаджаняна, д. 18, кв. 11"
     },
     "email": "info@lightarmenia.com",
-    "phone": "+374 93 306 020"
+    "phone": "+374 41 048 585"
   },
   "social": {
     "instagram": null,

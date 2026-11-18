@@ -15,7 +15,7 @@ The service is provided by:
 - **Email:** {{company.email}}
 - **Phone:** {{company.phone}}
 
-We are an individual entrepreneur registered in the Republic of Armenia. In these terms, "we" and "us" mean {{company.legal_name}}, and "you" means the person who places an order.
+We are a limited liability company registered in the Republic of Armenia. In these terms, "we" and "us" mean {{company.legal_name}}, and "you" means the person who places an order.
 
 ## 2. What the service is
 
