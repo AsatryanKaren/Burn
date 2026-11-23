@@ -28,7 +28,7 @@ jobs:
       - uses: supabase/setup-cli@v1
         with:
           # Pinned: "latest" asks the GitHub API, which rate-limits shared runners.
-          version: 2.56.0
+          version: 3.1.0
       - name: Check the token is set
         run: |
           if [ -z "$SUPABASE_ACCESS_TOKEN" ]; then
