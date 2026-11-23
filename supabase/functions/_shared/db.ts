@@ -5,6 +5,7 @@ import { createClient, type SupabaseClient } from "npm:@supabase/supabase-js@2";
 import { getConfig } from "./env.ts";
 import { ApiError, ErrorCode } from "./errors.ts";
 import { ROOM_HOLDING_STATUSES } from "./validation.ts";
+import type { PendingAttempt } from "./ameria-settle.ts";
 import type {
   Lang,
   LightColor,
@@ -408,3 +409,28 @@ export async function orderCodeForAmeriaOrderId(orderId: number): Promise<string
   if (error) throw dbError("orderCodeForAmeriaOrderId", error);
   return (data?.order_code as string | undefined) ?? null;
 }
+
+/**
+ * InitPayments of orders that are still pending, between min age and max age
+ * (ameria_pending_attempts, migration 0018), oldest first. Used by
+ * ameria-reconcile for buyers who paid but never came back from the bank.
+ */
+export async function ameriaPendingAttempts(
+  minAgeSeconds: number,
+  maxAgeHours: number,
+  limit: number,
+): Promise<PendingAttempt[]> {
+  const { data, error } = await db().rpc("ameria_pending_attempts", {
+    p_min_age_seconds: minAgeSeconds,
+    p_max_age_hours: maxAgeHours,
+    p_limit: limit,
+  });
+  if (error) throw dbError("ameria_pending_attempts", error);
+  return ((data ?? []) as PendingAttempt[]).map((r) => ({
+    ...r,
+    amount_amd: Number(r.amount_amd),
+    provider_order_num: Number(r.provider_order_num),
+    attempt_order_id: Number(r.attempt_order_id),
+  }));
+}
+

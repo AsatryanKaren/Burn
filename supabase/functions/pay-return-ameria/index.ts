@@ -15,26 +15,19 @@
 
 import { getConfig } from "../_shared/env.ts";
 import { redirectResponse, textResponse } from "../_shared/http.ts";
-import { orderPageUrl, type PaymentResult } from "../_shared/config.ts";
+import { orderPageUrl } from "../_shared/config.ts";
 import { isValidOrderCode } from "../_shared/codes.ts";
-import {
-  evaluatePaymentDetails,
-  parseBackUrlParams,
-  parseConfirmPaymentResponse,
-  type PaymentDetailsVerdict,
-} from "../_shared/ameria.ts";
+import { parseBackUrlParams } from "../_shared/ameria.ts";
+import { settleAmeriaPayment } from "../_shared/ameria-settle.ts";
 import {
   ameriaOrderIdsForOrder,
-  confirmPayment,
   findOrderByCode,
   findOrderByProviderNum,
-  logNeedsRefund,
   logPaymentEvent,
-  markOrderFailed,
   type OrderRow,
   orderCodeForAmeriaOrderId,
 } from "../_shared/db.ts";
-import { ameriaConfirmPayment, ameriaPaymentDetails, sanitizeForLog } from "../_shared/payments.ts";
+import { ameriaPaymentDetails, ameriaSettleDeps, sanitizeForLog } from "../_shared/payments.ts";
 import {
   BodyTooLargeError,
   CALLBACK_MAX_BODY_BYTES,
@@ -159,65 +152,15 @@ Deno.serve(async (req) => {
       return redirectResponse(fallbackUrl);
     }
 
-    // The bank's OrderID must be one we sent for this order (current or an earlier attempt).
-    const bankOrderId = Number(details.OrderID);
-    const known = bankOrderId === order.provider_order_num ||
-      (await ameriaOrderIdsForOrder(order.code)).includes(bankOrderId);
-
-    const expected = { orderId: bankOrderId, amountAmd: order.amount_amd };
-    let verdict: PaymentDetailsVerdict = known
-      ? evaluatePaymentDetails(details, expected)
-      : { paid: false, declined: false, reason: "UNKNOWN_ORDER_ID" };
-
-    // Two-stage terminal: the amount is only blocked. Charge it, then ask again.
-    // An order that is already paid (by another payment) is left blocked; the bank releases it.
-    if (!verdict.paid && verdict.needsConfirm && order.status !== "paid") {
-      try {
-        const confirm = await ameriaConfirmPayment(cfg.ameria, back.paymentId, order.amount_amd);
-        const c = parseConfirmPaymentResponse(confirm);
-        await logPaymentEvent(PROVIDER, "confirm", order.code, {
-          PaymentID: back.paymentId,
-          response: await sanitizeForLog(cfg, confirm),
-        });
-        if (c.ok) {
-          details = (await ameriaPaymentDetails(cfg.ameria, back.paymentId)) as Record<string, unknown>;
-          await logPaymentEvent(PROVIDER, "details", order.code, {
-            PaymentID: back.paymentId,
-            details: await sanitizeForLog(cfg, details),
-          });
-          verdict = evaluatePaymentDetails(details, expected);
-        }
-      } catch (err) {
-        console.error("ConfirmPayment failed", err);
-        await logPaymentEvent(PROVIDER, "confirm_error", order.code, {
-          PaymentID: back.paymentId,
-          error: String(err).slice(0, 300),
-        });
-      }
-    }
-
-    // Which result page to show. The page still asks the server for the real status,
-    // and a pending page switches by itself once the order is paid or failed.
-    let outcome: PaymentResult = "pending";
-    if (verdict.paid) {
-      // 3. The only place money becomes `paid`.
-      const result = await confirmPayment(order.code, PROVIDER, back.paymentId, verdict.amountAmd);
-      await logPaymentEvent(PROVIDER, "outcome", order.code, { PaymentID: back.paymentId, result });
-      if (result.ok) outcome = "success";
-      if (!result.ok) {
-        console.error("confirm_payment refused", order.code, result.error);
-        if (result.error === "ORDER_PAID_BY_OTHER_PAYMENT") {
-          await logNeedsRefund(PROVIDER, order.code, back.paymentId, verdict.amountAmd, { reason: result.error });
-        }
-      }
-    } else {
-      if (verdict.declined) { await markOrderFailed(order.code); outcome = "failed"; }
-      await logPaymentEvent(PROVIDER, "outcome", order.code, {
-        PaymentID: back.paymentId,
-        result: verdict.reason,
-        declined: verdict.declined,
-      });
-    }
+    // 3. Settle with the bank (shared with ameria-reconcile). The bank's OrderID
+    // must be one we sent for this order (current or an earlier attempt).
+    // Which result page to show: the page still asks the server for the real
+    // status, and a pending page switches by itself once the order is paid or failed.
+    const { result: outcome } = await settleAmeriaPayment(ameriaSettleDeps(cfg, cfg.ameria), order, back.paymentId, details, {
+      knownOrderIds: [order.provider_order_num, ...(await ameriaOrderIdsForOrder(order.code))],
+      mayMarkFailed: true,
+      logPending: true,
+    });
 
     return redirectResponse(orderPageUrl(cfg.siteUrl, order.lang, order.code, outcome));
   } catch (err) {

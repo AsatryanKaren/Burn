@@ -21,6 +21,9 @@ export const LIMITS = {
   // (vercel.json), so many of them share a few proxy addresses: keep this roomy.
   ameriaReturn: { limit: 600, windowSeconds: 600 },
   idramCallback: { limit: 60, windowSeconds: 600 },
+  // ameria-reconcile (one global key): the cron calls it every 3 minutes; anyone
+  // else calling it only runs the same check sooner.
+  ameriaReconcile: { limit: 2, windowSeconds: 60 },
 } as const;
 
 export type LimitName = keyof typeof LIMITS;

@@ -19,7 +19,14 @@ import {
   parseInitPaymentResponse,
 } from "./ameria.ts";
 import { buildIdramForm } from "./idram.ts";
-import { logPaymentEvent, markOrderFailed } from "./db.ts";
+import {
+  ameriaOrderIdsForOrder,
+  confirmPayment,
+  logNeedsRefund,
+  logPaymentEvent,
+  markOrderFailed,
+} from "./db.ts";
+import type { ReconcileDeps } from "./ameria-settle.ts";
 import { sanitizePayload, saltedHasher } from "./sanitize.ts";
 
 export const PROVIDER_TIMEOUT_MS = 15_000;
@@ -133,4 +140,17 @@ export function paymentUnavailableError(): ApiError {
 
 export function paymentMisconfiguredError(): ApiError {
   return new ApiError(503, ErrorCode.PAYMENT_MISCONFIGURED, "Payments are temporarily unavailable.");
+}
+
+/** The real bank and database behind settleAmeriaPayment / reconcileAttempts. */
+export function ameriaSettleDeps(cfg: Config, creds: AmeriaCredentials): ReconcileDeps {
+  return {
+    paymentDetails: async (paymentId) => (await ameriaPaymentDetails(creds, paymentId)) as Record<string, unknown>,
+    confirmBankPayment: (paymentId, amountAmd) => ameriaConfirmPayment(creds, paymentId, amountAmd),
+    confirmOrder: (code, paymentId, amountAmd) => confirmPayment(code, "ameria", paymentId, amountAmd),
+    markFailed: markOrderFailed,
+    logNeedsRefund: (code, paymentId, amountAmd, detail) => logNeedsRefund("ameria", code, paymentId, amountAmd, detail),
+    log: async (kind, code, payload) => logPaymentEvent("ameria", kind, code, await sanitizeForLog(cfg, payload)),
+    knownOrderIds: ameriaOrderIdsForOrder,
+  };
 }

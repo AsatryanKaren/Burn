@@ -10,6 +10,7 @@ import "./firewish.test.ts";
 import "./iphash-sanitize.test.ts";
 import "./lights.test.ts";
 import "./mappack.test.ts";
+import "./reconcile.test.ts";
 import "./md5-idram.test.ts";
 import "./moderation.test.ts";
 import "./money-codes.test.ts";
