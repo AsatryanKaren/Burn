@@ -1,6 +1,6 @@
 # New Year 2027 (Ամանոր 2027)
 
-A New Year ritual website for Armenia and the diaspora: one map of Armenia split into 111,111 places (500×500 m plots, this year only). 20% of every payment goes to New Year gifts for children in Armenian children's homes.
+A New Year ritual website for Armenia and the diaspora: one map of Armenia split into 111,111 places (500×500 m plots, this year only). 35% of every payment goes to New Year gifts for children in Armenian children's homes.
 
 The home page introduces the project. In the **map app** (`/map/`) a buyer takes any free place, decorates its small 3D room (tree, sofa, fireplace, TV and so on; `site/assets/js/room.js`), sets how it looks on the map (icon, colour, message, signature) and pays 600 AMD. Every place includes exactly one wish, written in the map's Fire tab (`/map/#fire`) and burned live on 31 December at `/live/` and on a YouTube stream. Anyone can tap a taken place and step into its room. Papers are no longer sold separately; the old `/fire/` and `/burn/` addresses redirect to `/live/` and `/map/#fire`.
 

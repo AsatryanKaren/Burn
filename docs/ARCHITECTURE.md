@@ -30,8 +30,8 @@ Languages: Armenian (`hy`, default, at `/`), English (`/en/`), Russian (`/ru/`).
   **Since migration 0013 only `light` can be ordered**: one payment (600 AMD) buys a plot with its room **and exactly one wish burned in the fire** (`POST burn-wish`, see "Wish in the fire"). No separate payment for burning, no second wish for the same light. Every paper product (`burn`, `burn_wish`, `gift`, `midnight`) is retired for new orders: `create-order` answers `400 PRODUCT_RETIRED`. Existing paper orders keep working (start-payment, bank callbacks, the fire feed); the `burn` row stays `active` for them.
 
   `burn_wish`, `gift`, `midnight` and `light_big` are **no longer sold**: their rows stay in `products` with `active = false` (old orders reference them). `create-order` and `start-payment` answer `400 PRODUCT_UNAVAILABLE` for an inactive product. Their code paths (wish, recipient, big light) still exist but are unreachable while the rows are inactive.
-- **20% of every paid amount** goes to the New Year gift fund for children living in children's homes in Armenia (120 AMD per 600 AMD order). It is recorded per payment in `gift_ledger` at the moment the payment is confirmed, rounded down to whole AMD.
-- We are a for-profit company and say so. The 20% is a choice we made, not the business model.
+- **35% of every paid amount** goes to the New Year gift fund for children living in children's homes in Armenia (210 AMD per 600 AMD order; `0017_gift_share_35`). It is recorded per payment in `gift_ledger` at the moment the payment is confirmed, rounded down to whole AMD.
+- We are a for-profit company and say so. The 35% is a choice we made, not the business model.
 
 ## Security rules (non-negotiable)
 
@@ -52,7 +52,7 @@ Languages: Armenian (`hy`, default, at `/`), English (`/en/`), Russian (`/ru/`).
   `show_on_stream bool`, `moderation text` (`pending` | `approved` | `hidden` | `rejected`), `moderation_reason text null`,
   `burn_number int unique null` (assigned at payment, sequential), `provider text null`, `provider_payment_id text null unique`,
   `provider_order_num bigint unique` (numeric id some banks require), `ip_hash text`, `created_at`, `paid_at`, `streamed_at`, `updated_at`.
-- `gift_ledger(id, order_id fk unique, amount_amd int, created_at)` — 20% per paid order.
+- `gift_ledger(id, order_id fk unique, amount_amd int, created_at)` — 35% per paid order.
 - `waitlist(id, email unique (citext or lower-unique), lang, created_at, ip_hash)`.
 - `blogger_applications(id bigserial, name 1–80, link null or 1–300 (http(s) URL; optional since 0016), platform null (instagram|tiktok|youtube|facebook|telegram|other), audience null ≤40, email (lower-case), phone null ≤30, message null ≤500, lang, ip_hash, created_at, status 'new'|'contacted'|'accepted'|'declined' default 'new')` — bloggers who want to join the December 31 gift delivery (0009). Service role only.
 - `rate_limits(key text, window_start timestamptz, count int, pk(key, window_start))`.
@@ -96,7 +96,7 @@ Moderation at creation: texts the automatic checks reject are `rejected`/`hidden
 
 ### `GET order-status?code=...`
 
-Returns the buyer's own order: `{ code, status, product, amount_amd, burn_number, text, has_wish, recipient_name, created_at, paid_at, gift_share_amd }`. The wish itself is never returned (order links get shared); `has_wish` is a boolean (it is about the retired next-year wish, `wish_text`, not the wish in the fire). `gift_share_amd` is the gift_ledger amount once paid, else the floor(20%) the order will contribute. 404 if unknown.
+Returns the buyer's own order: `{ code, status, product, amount_amd, burn_number, text, has_wish, recipient_name, created_at, paid_at, gift_share_amd }`. The wish itself is never returned (order links get shared); `has_wish` is a boolean (it is about the retired next-year wish, `wish_text`, not the wish in the fire). `gift_share_amd` is the gift_ledger amount once paid, else the floor(35%) the order will contribute. 404 if unknown.
 
 ### `POST start-payment`
 
@@ -158,11 +158,11 @@ Header `x-admin-token` must equal secret `ADMIN_TOKEN` (≥ 32 chars, else alway
 
 | Path | Page |
 |---|---|
-| `/` | Home: how it works, live counters, the 20% gift fund, honesty statement, blogger call, questions |
+| `/` | Home: how it works, live counters, the 35% gift fund, honesty statement, blogger call, questions |
 | `/map/` | The map app: pick a place → room → look on the map → pay (or save with email while payments are closed); tabs for my room, fire (`/map/#fire`: the wish), warmest and how it works |
 | `/p/?c=CODE` | Your place: status, map card, edit room, link to the wish, share. Old paper orders still show their paper here |
 | `/live/` | The shared fire: burns recent paid wishes one by one (this page is what the YouTube stream captures) + stream embed slot |
-| `/gifts/` | Where the money goes: 20% gift fund, live fund total, honest for-profit statement, reports |
+| `/gifts/` | Where the money goes: 35% gift fund, live fund total, honest for-profit statement, reports |
 | `/terms/`, `/refund/`, `/privacy/`, `/delivery/`, `/contact/` | Legal pages the bank requires |
 | `/404.html` | Not found |
 
@@ -172,7 +172,7 @@ Each page exists under `/`, `/en/`, `/ru/`. The old `/fire/`, `/burn/` and `/faq
 
 ## Light up Armenia (the map)
 
-A second product: a night map of Armenia split into exactly **111,111 plots** of 500×500 m (Lake Sevan excluded; generated by `tools/make_map.py` from Natural Earth). The map is fixed for this year and will not be extended. A person buys one free plot and places a light on it: an icon, a colour, a short message and an optional signature. The country gradually lights up. Plots are finite and first come, first served. 20% of every light goes to the gift fund, like papers.
+A second product: a night map of Armenia split into exactly **111,111 plots** of 500×500 m (Lake Sevan excluded; generated by `tools/make_map.py` from Natural Earth). The map is fixed for this year and will not be extended. A person buys one free plot and places a light on it: an icon, a colour, a short message and an optional signature. The country gradually lights up. Plots are finite and first come, first served. 35% of every light goes to the gift fund, like papers.
 
 ### Products (`products` table and `site/config/site.json`)
 

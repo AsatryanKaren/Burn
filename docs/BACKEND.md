@@ -32,7 +32,7 @@ supabase/
 
 ## Products and prices
 
-One price since `0008_single_price`, **600 AMD** since `0014_price_600`: 20% (120 AMD) to the gift fund.
+One price since `0008_single_price`, **600 AMD** since `0014_price_600`: 35% (210 AMD) to the gift fund since `0017_gift_share_35`.
 
 | code | price | active | notes |
 |---|---|---|---|
@@ -96,7 +96,7 @@ Security model, enforced by 0001:
 - Default privileges for objects created by `postgres` in `public` no longer grant anything to `anon`/`authenticated`/`PUBLIC`: any future browser RPC needs an explicit `grant execute`.
 - Browser-callable: `get_public_stats()`, `get_fire_feed(after_number, max_rows)`, `get_map()`, `get_cell(p_cell_id)` (SECURITY DEFINER, `search_path = public`).
 - `service_role` only: `confirm_payment`, `check_rate_limit`, `begin_payment_attempt`, `hold_cell`, `peek_rate_limit`, `release_rate_limit`, `admin_*`, `room_add_warmth`, `room_add_visit`, `room_stats_prepare` (0011), `burn_wish`, `admin_moderate_wish` (0013; the trigger function `fire_wish_renumber_on_paid` is executable by nobody). Table `fire_wishes` (0013): RLS on, no policies, `service_role` only. Tables `room_stats` and `room_warmth_log` (0011): RLS on, no policies, `service_role` only. Table `blogger_applications` (0009) follows the `waitlist` model: RLS on, no policies, no `anon`/`authenticated` privileges, `service_role` only.
-- An order becomes `paid` only in `confirm_payment`, which locks the order row, checks provider, amount and payment id, is idempotent (same payment → `already: true`; a second, different payment for a paid order → `ORDER_PAID_BY_OTHER_PAYMENT`, needs a manual refund; one payment id can never pay two orders), assigns `burn_number` from `burn_number_seq`, writes the floor(20%) `gift_ledger` row and sets `paid_at`.
+- An order becomes `paid` only in `confirm_payment`, which locks the order row, checks provider, amount and payment id, is idempotent (same payment → `already: true`; a second, different payment for a paid order → `ORDER_PAID_BY_OTHER_PAYMENT`, needs a manual refund; one payment id can never pay two orders), assigns `burn_number` from `burn_number_seq`, writes the floor(35%) `gift_ledger` row and sets `paid_at`.
 
 Security advisor: the remaining notices are intentional — `rls_enabled_no_policy` (INFO, by design) and `anon/authenticated_security_definer_function_executable` (WARN) for exactly the four public RPCs the contract requires (`get_public_stats`, `get_fire_feed`, `get_map`, `get_cell`).
 
@@ -257,7 +257,7 @@ Node 22, no packages. `supabase/tests/package.json` points the directory at `ind
 | `validation.ts` | yes | text normalization, order/waitlist/blogger validation, `checkProductAvailable`, `validateRoom` / `checkRoomEditable` (rooms) |
 | `moderation.ts`, `moderation-data.ts` | yes | auto-moderation and its word lists |
 | `codes.ts` | yes | 16-char Crockford base32 order codes |
-| `money.ts` | yes | floor(20%) gift share, provider amount parsing |
+| `money.ts` | yes | floor(35%) gift share, provider amount parsing |
 | `md5.ts`, `idram.ts` | yes | Idram form, request classification, checksum |
 | `ameria.ts` | yes | Ameria request building and response evaluation |
 | `cors.ts`, `config.ts`, `http.ts` | yes | origin policy, env parsing + URLs, responses/handler wrapper |
